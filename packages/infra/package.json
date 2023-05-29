@@ -5,6 +5,9 @@
   "directories": {
     "bin": "./node_modules/.bin"
   },
+  "scripts": {
+    "bulk:topobuild": "cd $INIT_CWD && zx-bulk-release --dry-run --include-private --ignore=@antongolub/infra"
+  },
   "devDependencies": {
     "c8": "^7.13.0",
     "concurrently": "^8.0.1",
@@ -15,6 +18,7 @@
     "fast-glob": "^3.2.12",
     "ts-node": "^10.9.1",
     "typedoc": "^0.24.7",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "zx-bulk-release": "^2.9.0"
   }
 }

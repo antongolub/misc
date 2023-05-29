@@ -1,5 +1,5 @@
 # blank
-Template repository for TS projects
+> Template repository for TS projects
 
 ## License
 [MIT](./LICENSE)
