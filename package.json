@@ -8,6 +8,7 @@
   "description": "A monorepo for everything",
   "scripts": {
     "build": "yarn bulk:topobuild",
+    "readme:toc": "node ./packages/infra/scripts/readme-toc.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Anton Golub <antongolub@antongolub.com>",

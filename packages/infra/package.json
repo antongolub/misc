@@ -2,6 +2,7 @@
   "name": "@antongolub/infra",
   "private": true,
   "version": "0.0.0",
+  "description": "Repo infra assets",
   "directories": {
     "bin": "./node_modules/.bin"
   },
@@ -9,6 +10,8 @@
     "bulk:topobuild": "cd $INIT_CWD && zx-bulk-release --dry-run --include-private --ignore=@antongolub/infra"
   },
   "devDependencies": {
+    "@antongolub/git-root": "^1.5.11",
+    "@semrel-extra/topo": "^1.13.0",
     "c8": "^7.13.0",
     "concurrently": "^8.0.1",
     "esbuild": "^0.17.19",

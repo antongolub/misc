@@ -14,10 +14,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@antongolub/git-root@npm:^1.5.11":
+  version: 1.5.11
+  resolution: "@antongolub/git-root@npm:1.5.11"
+  checksum: 581966cc15da53153e329a6bcbf9039649c52d18046bdf9d7a9ad39768101ecdb6185bb7a043959b50330b18bf17f53dcbd457c46a639bafd271b0726efc3fbd
+  languageName: node
+  linkType: hard
+
 "@antongolub/infra@workspace:*, @antongolub/infra@workspace:packages/infra":
   version: 0.0.0-use.local
   resolution: "@antongolub/infra@workspace:packages/infra"
   dependencies:
+    "@antongolub/git-root": "npm:^1.5.11"
+    "@semrel-extra/topo": "npm:^1.13.0"
     c8: "npm:^7.13.0"
     concurrently: "npm:^8.0.1"
     esbuild: "npm:^0.17.19"
