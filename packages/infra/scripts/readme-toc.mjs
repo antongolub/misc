@@ -10,12 +10,12 @@ let readmeContents = await fs.readFile(readmeFile, 'utf8')
 
 const digest = Object.values(packages)
   .sort(({name: a}, {name: b}) => a.localeCompare(b))
-  .reduce((m, {manifest: {name, description, private: _private}}) => {
+  .reduce((m, {relPath, manifest: {name, description, private: _private}}) => {
     const badge = _private
       ? ''
       : `[![npm (scoped)](https://img.shields.io/npm/v/${name})](https://www.npmjs.com/package/${name})`
 
-    return m + `\n| ${name} | ${description} | ${badge} |`
+    return m + `\n| [${name}](./${relPath}) | ${description} | ${badge} |`
   }, '| Package | Description | Latest |\n|---------|-------------|--------|')
 
 readmeContents = readmeContents.replace(/(## Contents)([\s\S]+)(##)/, (_, pre, __, post) =>
