@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "module": "esnext",
+    "target": "esnext",
+    "strict": true,
+    "noImplicitAny": true,
+    "declaration": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": false
+  },
+  "ts-node": {
+    "transpileOnly": true,
+    "files": true,
+  }
+}

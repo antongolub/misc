@@ -1,0 +1,15 @@
+{
+  "name": "@antongolub/stuff",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "description": "A monorepo for everything",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Anton Golub <antongolub@antongolub.com>",
+  "license": "MIT",
+  "packageManager": "yarn@4.0.0-rc.44"
+}

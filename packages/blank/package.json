@@ -1,0 +1,44 @@
+{
+  "name": "@antongolub/blank",
+  "version": "0.0.0",
+  "description": "Blank TS package",
+  "type": "module",
+  "main": "target/cjs/index.cjs",
+  "exports": {
+    ".": {
+      "types": "./target/dts/index.d.ts",
+      "require": "./target/cjs/index.cjs",
+      "import": "./target/esm/index.mjs",
+      "default": "./target/esm/index.mjs"
+    }
+  },
+  "files": [
+    "target/cjs",
+    "target/esm",
+    "target/dts"
+  ],
+  "scripts": {
+    "build": "concurrently 'npm:build:*'",
+    "build:esm": "node ../infra/scripts/build.cjs",
+    "build:cjs": "node ../infra/scripts/build.cjs --cjs",
+    "build:dts": "tsc --emitDeclarationOnly --skipLibCheck --outDir target/dts",
+    "build:docs": "typedoc --options src/main/typedoc",
+    "test": "concurrently 'npm:test:*'",
+    "test:lint": "eslint -c src/test/lint/.eslintrc.json src",
+    "test:unit": "c8 -r lcov -r text -o target/coverage -x src/test node --loader ts-node/esm --experimental-specifier-resolution=node ../infra/scripts/test.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antongolub/stuff.git"
+  },
+  "author": "Anton Golub <antongolub@antongolub.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/antongolub/stuff/issues"
+  },
+  "homepage": "https://github.com/antongolub/stuff#readme",
+  "devDependencies": {
+    "@antongolub/infra": "workspace:*",
+    "@types/node": "^20.1.4"
+  }
+}
