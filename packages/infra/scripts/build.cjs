@@ -3,10 +3,13 @@
 const esbuild = require('esbuild')
 const { nodeExternalsPlugin } = require('esbuild-node-externals')
 
+const {argv} = process
+const bundle = !argv.includes('--no-bundle')
+
 const esmConfig = {
   entryPoints: ['./src/main/ts/index.ts'],
   outdir: './target/esm',
-  bundle: true,
+  bundle,
   minify: true,
   sourcemap: true,
   sourcesContent: false,
@@ -31,7 +34,7 @@ const cjsConfig = {
   }
 }
 
-const config = process.argv.includes('--cjs')
+const config = argv.includes('--cjs')
   ? cjsConfig
   : esmConfig
 

@@ -8,6 +8,9 @@ const {packages} = await topo({cwd: root})
 const readmeFile = path.resolve(root, 'README.md')
 let readmeContents = await fs.readFile(readmeFile, 'utf8')
 
+/**
+ * This snippet generates a md table by the package.jsons descriptions referenced by the root workspace
+ */
 const digest = Object.values(packages)
   .sort(({name: a}, {name: b}) => a.localeCompare(b))
   .reduce((m, {relPath, manifest: {name, description, private: _private}}) => {
