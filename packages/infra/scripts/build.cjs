@@ -19,6 +19,7 @@ const esmConfig = {
   outExtension: {
     '.js': '.mjs'
   },
+  // https://github.com/evanw/esbuild/issues/619
   plugins: [nodeExternalsPlugin()],
   tsconfig: './tsconfig.json'
 }
