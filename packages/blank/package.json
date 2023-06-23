@@ -29,6 +29,9 @@
     "test:lint": "eslint -c src/test/lint/.eslintrc.json src",
     "test:unit": "c8 -r lcov -r text -o target/coverage -x src/test node --loader ts-node/esm --experimental-specifier-resolution=node ../infra/scripts/test.mjs"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/antongolub/stuff.git"
