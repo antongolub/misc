@@ -7,21 +7,23 @@
     "bin": "./node_modules/.bin"
   },
   "scripts": {
+    "build": "exit 0",
+    "test": "exit 0",
     "bulk:topobuild": "cd $INIT_CWD && zx-bulk-release --dry-run --include-private --ignore=@antongolub/infra"
   },
   "devDependencies": {
-    "@antongolub/git-root": "^1.5.11",
+    "@antongolub/git-root": "^1.5.13",
     "@semrel-extra/topo": "^1.13.0",
-    "c8": "^7.13.0",
-    "concurrently": "^8.0.1",
-    "esbuild": "^0.17.19",
-    "esbuild-node-externals": "^1.7.0",
-    "eslint": "^8.40.0",
+    "c8": "^8.0.1",
+    "concurrently": "^8.2.0",
+    "esbuild": "^0.18.17",
+    "esbuild-node-externals": "^1.8.0",
+    "eslint": "^8.45.0",
     "eslint-config-qiwi": "^2.1.3",
-    "fast-glob": "^3.2.12",
+    "fast-glob": "^3.3.1",
     "ts-node": "^10.9.1",
-    "typedoc": "^0.24.7",
-    "typescript": "^5.0.4",
-    "zx-bulk-release": "^2.9.0"
+    "typedoc": "^0.24.8",
+    "typescript": "^5.1.6",
+    "zx-bulk-release": "^2.11.5"
   }
 }

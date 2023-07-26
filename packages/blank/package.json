@@ -1,7 +1,8 @@
 {
   "name": "@antongolub/blank",
   "version": "0.0.0",
-  "description": "Blank TS package",
+  "description": "Blank TS project",
+  "private": true,
   "type": "module",
   "main": "target/cjs/index.cjs",
   "exports": {
@@ -44,6 +45,6 @@
   "homepage": "https://github.com/antongolub/stuff#readme",
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
-    "@types/node": "^20.1.4"
+    "@types/node": "^20.4.5"
   }
 }
