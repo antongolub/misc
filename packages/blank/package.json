@@ -35,16 +35,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/antongolub/stuff.git"
+    "url": "git+https://github.com/antongolub/misc.git"
   },
   "author": "Anton Golub <antongolub@antongolub.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/antongolub/stuff/issues"
+    "url": "https://github.com/antongolub/misc/issues"
   },
-  "homepage": "https://github.com/antongolub/stuff#readme",
+  "homepage": "https://github.com/antongolub/misc#readme",
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
-    "@types/node": "^20.4.6"
+    "@types/node": "^20.6.5"
   }
 }
