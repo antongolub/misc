@@ -1,4 +1,4 @@
-import {TConfigOpts} from './interface'
+import {TDirective, TConfigOpts} from './interface'
 
 export * from './foo'
 
@@ -17,17 +17,18 @@ const providers = {
 }
 
 export const parseRefs = (chunk: string) => {
-  const refPattern = /\$[^\s$]+/g
+  const refPattern = /\$\w+/g
   const refs = chunk.match(refPattern) || []
 
   return refs.map(r => r.slice(1))
 }
 
-export const parseDirective = (value: string) => {
+export const parseDirective = (value: string): TDirective[] => {
   if (value[0] === '/') {
     return [{
       provider: 'echo',
-      args: [value.slice(1)]
+      args: [value.slice(1)],
+      refs: [],
     }]
   }
 
@@ -79,5 +80,5 @@ export const parseDirective = (value: string) => {
 
   capture()
 
-  return directives
+  return directives.map(({args, provider}) => ({provider, args, refs: args.map((a: string) => parseRefs(a)).flat()}))
 }
