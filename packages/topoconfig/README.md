@@ -25,14 +25,14 @@ const config = topoconfig({
     cwd: 'cwd',
     schema: 'file $cwd/schema.json:utf8 > json',
     external: 'fetch http://foo.example.com > get .body > json > get .prop > ajv $schema',
-    template: `dot {{? it.name }}
-<div>Oh, I love your name, {{=it.name}}!</div>
-{{?? it.age === 0}}
+    template: `dot {{? $name }}
+<div>Oh, I love your name, {{=$name}}!</div>
+{{?? $age === 0}}
 <div>Guess nobody named you yet!</div>
 {{??}}
-You are {{=it.age}} and still don't have a name?
-{{?}}`,
-    merged: 'extend $template $external'
+You are {{=$age}} and still don't have a name?
+{{?}} > assert $foo`,
+    merged: 'extend $b $external'
   }
 })
 ```
