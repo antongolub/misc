@@ -1,9 +1,11 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { foo } from '../../main/ts'
+import { topoconfig } from '../../main/ts'
 
 describe('foo()', () => {
   it('is callable', () => {
-    assert.equal(foo(), undefined)
+    assert.deepEqual(topoconfig({
+      data: ''
+    }), {})
   })
 })
