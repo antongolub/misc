@@ -3,8 +3,6 @@ import {TConfigOpts} from './interface'
 export * from './foo'
 
 export const topoconfig = ({data, sources = {}}: TConfigOpts) => {
-
-
   return {}
 }
 
@@ -16,6 +14,13 @@ const providers = {
   echo(v: any) {
     return v
   }
+}
+
+export const parseRefs = (chunk: string) => {
+  const refPattern = /\$[^\s$]+/g
+  const refs = chunk.match(refPattern) || []
+
+  return refs.map(r => r.slice(1))
 }
 
 export const parseDirective = (value: string) => {
@@ -47,6 +52,10 @@ export const parseDirective = (value: string) => {
 
   [...value].forEach((c, i) => {
     bb += c === '{' ? 1 : c === '}' ? -1 : 0
+    if (bb > 0) {
+      word += c
+      return
+    }
 
     if (/[^\s]/.test(c)) {
       word += c
@@ -72,5 +81,3 @@ export const parseDirective = (value: string) => {
 
   return directives
 }
-
-

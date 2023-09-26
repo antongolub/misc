@@ -4,7 +4,7 @@
 ## Usage
 
 ```ts
-import topoconfig from 'topoconfig'
+import {topoconfig} from 'topoconfig'
 
 const config = topoconfig({
   data: {
@@ -24,7 +24,7 @@ const config = topoconfig({
     c: 'get $b > assert type number',
     cwd: 'cwd',
     schema: 'file $cwd/schema.json:utf8 > json',
-    external: 'retry 3 2000 > fetch http://foo.example.com > get .body > json > get .prop > ajv $schema',
+    external: 'fetch http://foo.example.com > get .body > json > get .prop > ajv $schema',
     template: `dot {{? it.name }}
 <div>Oh, I love your name, {{=it.name}}!</div>
 {{?? it.age === 0}}
