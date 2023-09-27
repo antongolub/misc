@@ -1,7 +1,15 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { parse, parseDirectives, parseRefs, formatRefKey, resolveRefKey, TParseContext } from '../../main/ts/parse'
-import { TConfigDeclaration, TConfigGraph, TDirective } from '../../main/ts/interface'
+import {
+  parse,
+  parseDirectives,
+  parseRefs,
+  formatRefKey,
+  resolveRefKey,
+  TParseContext,
+  parseDataRefs
+} from '../../main/ts/parse'
+import {TConfigDeclaration, TConfigGraph, TData, TDirective} from '../../main/ts/interface'
 
 describe('formatRefKey()', () => {
   it('formats key str', () => {
@@ -63,9 +71,28 @@ describe('resolveRefKey', () => {
       ],
     ]
 
-    cases.forEach(([key, ctx, result]) => {
-      assert.equal(resolveRefKey(key, ctx), result)
-    })
+    cases.forEach(([key, ctx, result]) =>
+      assert.equal(resolveRefKey(key, ctx), result))
+  })
+})
+
+describe('parseDataRefs()', () => {
+  it('finds refs in data struct', () => {
+    const cases: [TData, string[]][] = [
+      ['foo', []],
+      ['aaa $a $b', ['a', 'b']],
+      [{
+        a: {
+          b: {
+            c: '$a $b'
+          }
+        },
+        d: ['   $e', { f: '$f' }]
+      }, ['a', 'b', 'e', 'f']],
+      [null, []]
+    ]
+    cases.forEach(([input, output]) =>
+      assert.deepEqual(parseDataRefs(input), output))
   })
 })
 
@@ -94,70 +121,81 @@ describe.skip('parse()', () => {
           }
         },
         {
-          vertexes: {},
-          edges: []
-        }
-      ],
-      [
-        {
-          data: '$foo',
-          sources: {
-            a: 'file ./a.json > json',
-            b: 'fetch https://example.com > get .body > json',
-            foo: 'bar $a $b'
-          }
-        },
-        {
           vertexes: {
-            a: [
-              {
-                cmd: 'file',
-                args: ['./a.json'],
-                refs: [],
-                mappings: {}
-              },
-              {
-                cmd: 'json',
-                args: [],
-                refs: [],
-                mappings: {}
-              }
-            ],
-            b: [
-              {
-                cmd: 'fetch',
-                args: ['https://example.com'],
-                refs: [],
-                mappings: {}
-              },
-              {
-                cmd: 'get',
-                args: ['.body'],
-                refs: [],
-                mappings: {},
-              },
-              {
-                cmd: 'json',
-                args: [],
-                refs: [],
-                mappings: {},
-              }
-            ],
-            foo: [
-              {
-                args: ['$a', '$b'],
-                cmd: 'bar',
-                refs: ['a', 'b'],
-                mappings: {},
-              }
-            ]
+            'a':   [{cmd: 'foo',  args: ['bar'],     refs: [],        mappings: {}}],
+            'b':   [{cmd: '_',    args: [],          refs: ['a'],     mappings: {a: 'b.a'}}],
+            'b:a': [{cmd: 'foo',  args: ['$c','$d'], refs: ['c','d'], mappings: {c: 'c', d: 'b:d'}}],
+            'b:d': [{cmd: 'bar',  args: ['ddd'],     refs: [],        mappings: {}}],
+            'c':   [{cmd: 'echo', args: ['$a'],      refs: ['a'],     mappings: {a: 'a'}}]
           },
           edges: [
-            ['a', 'foo'],
-            ['b', 'foo']
+            ['c',   'b:a'],
+            ['b:d', 'b:a'],
+            ['b:a', 'b'],
+            ['a',   'c']
           ]
         }
-      ]
+      ],
+      // [
+      //   {
+      //     data: '$foo',
+      //     sources: {
+      //       a: 'file ./a.json > json',
+      //       b: 'fetch https://example.com > get .body > json',
+      //       foo: 'bar $a $b'
+      //     }
+      //   },
+      //   {
+      //     vertexes: {
+      //       a: [
+      //         {
+      //           cmd: 'file',
+      //           args: ['./a.json'],
+      //           refs: [],
+      //           mappings: {}
+      //         },
+      //         {
+      //           cmd: 'json',
+      //           args: [],
+      //           refs: [],
+      //           mappings: {}
+      //         }
+      //       ],
+      //       b: [
+      //         {
+      //           cmd: 'fetch',
+      //           args: ['https://example.com'],
+      //           refs: [],
+      //           mappings: {}
+      //         },
+      //         {
+      //           cmd: 'get',
+      //           args: ['.body'],
+      //           refs: [],
+      //           mappings: {},
+      //         },
+      //         {
+      //           cmd: 'json',
+      //           args: [],
+      //           refs: [],
+      //           mappings: {},
+      //         }
+      //       ],
+      //       foo: [
+      //         {
+      //           args: ['$a', '$b'],
+      //           cmd: 'bar',
+      //           refs: ['a', 'b'],
+      //           mappings: {},
+      //         }
+      //       ]
+      //     },
+      //     edges: [
+      //       ['a', 'foo'],
+      //       ['b', 'foo']
+      //     ]
+      //   }
+      // ]
     ]
 
     cases.forEach(([input, output]) =>

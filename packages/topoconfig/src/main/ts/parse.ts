@@ -1,4 +1,4 @@
-import {TConfigDeclaration, TConfigGraph, TDirective} from './interface'
+import {TConfigDeclaration, TConfigGraph, TData, TDirective} from './interface'
 
 export const parseRefs = (chunk: string) => {
   const refPattern = /\$\w+/g
@@ -79,7 +79,7 @@ export type TParseContext = {
 
 export const formatRefKey = (key: string, prefix?: string, delimiter = ':') => `${prefix ? prefix + delimiter : ''}${key}`
 
-export const resolveRefKey = (key: string, ctx: TParseContext) => {
+export const resolveRefKey = (key: string, ctx: TParseContext): string => {
   let scope: TParseContext | undefined = ctx
   let ref
 
@@ -93,7 +93,27 @@ export const resolveRefKey = (key: string, ctx: TParseContext) => {
     scope = scope.parent
   }
 
-  return ref
+  return ref || key
+}
+
+export const parseDataRefs = (data: TData, refs: string[] = []) => {
+  const type = data === null ? 'null' : typeof(data)
+
+  switch (type) {
+    case 'string':
+      refs.push(...parseRefs(data as string))
+      break
+    case 'null':
+    case 'number':
+      break
+    case 'object':
+      Object.values(data).forEach(v => parseDataRefs(v, refs))
+      break
+    default:
+      throw new Error(`unsupported data type: ${type}`)
+  }
+
+  return refs
 }
 
 export const parse = ({data, sources}: TConfigDeclaration, parent: TParseContext = {
@@ -101,7 +121,7 @@ export const parse = ({data, sources}: TConfigDeclaration, parent: TParseContext
   vertexes: {},
   edges: [],
   refs: []
-}): TConfigGraph => {
+}, prefix = ''): TConfigGraph => {
   const {vertexes, edges} = parent
   const refs = Object.keys(sources)
   const ctx = {
@@ -109,27 +129,35 @@ export const parse = ({data, sources}: TConfigDeclaration, parent: TParseContext
     edges,
     refs,
     parent,
+    prefix,
   }
 
   refs.forEach(k => {
+    const key = resolveRefKey(k, ctx)
     const value = sources[k]
-    const key = k // formatKey(k, prefix)
+
     if (typeof value === 'string') {
       const directives = parseDirectives(value as string)
       vertexes[key] = directives
       directives.forEach(directive => {
-        const {refs} = directive
+        const {refs: _refs, mappings} = directive
 
-        refs.forEach(ref => edges.push([ref, key]))
+        _refs.forEach(ref => {
+          const from = resolveRefKey(ref, ctx)
+          mappings[ref] = from
+          edges.push([from, key])
+        })
       })
       return
     }
 
-    // parse(value, {
-    //   vertexes,
-    //   edges
-    // })
+    parse(value, {...ctx, prefix: k})
   })
+
+  console.log(
+    'vertexes=',JSON.stringify(vertexes),
+    'edges=', JSON.stringify(edges)
+  )
 
   return {
     vertexes,

@@ -1,6 +1,6 @@
 
 // https://github.com/microsoft/TypeScript/issues/14174#issuecomment-311335205
-export type TData = number | string | { [key: string | number]: TData }
+export type TData = number | string | { [key: string]: TData } | { [key: number]: TData }
 
 export type TConfigDeclaration = {
   data: TData,
