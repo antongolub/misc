@@ -5,7 +5,8 @@ import { topoconfig } from '../../main/ts'
 describe('foo()', () => {
   it('is callable', () => {
     assert.deepEqual(topoconfig({
-      data: ''
+      data: '',
+      sources: {}
     }), {})
   })
 })

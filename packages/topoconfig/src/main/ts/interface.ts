@@ -1,8 +1,10 @@
-export type TProtoConfig = null | string | number | TProtoConfig[] | Record<string, any>
+
+// https://github.com/microsoft/TypeScript/issues/14174#issuecomment-311335205
+export type TData = number | string | { [key: string | number]: TData }
 
 export type TConfigDeclaration = {
-  data: TProtoConfig,
-  sources: Record<any, TProtoConfig>
+  data: TData,
+  sources: Record<string, string | TConfigDeclaration>
 }
 
 export type TDirective = {

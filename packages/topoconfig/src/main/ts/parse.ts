@@ -72,10 +72,15 @@ export const parse = ({data, sources}: TConfigDeclaration): TConfigGraph => {
   const edges: [string, string][] = []
 
   Object.entries(sources).forEach(([k, value]) => {
-    const directives = parseDirectives(value as string)
-    vertexes[k] = directives
+    if (typeof value === 'string') {
+      const directives = parseDirectives(value as string)
+      vertexes[k] = directives
+      directives.forEach(({refs}) => refs.forEach(ref => edges.push([ref, k])))
+      return
+    }
 
-    directives.forEach(({refs}) => refs.forEach(ref => edges.push([ref, k])))
+    const nested = parse(value)
+
   })
 
   return {

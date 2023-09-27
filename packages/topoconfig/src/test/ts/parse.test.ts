@@ -8,6 +8,29 @@ describe('parse()', () => {
     const cases: [TConfigDeclaration, TConfigGraph][] = [
       [
         {
+          data: {
+            a: '$a',
+            b: '$b',
+            c: '$c'
+          },
+          sources: {
+            a: 'foo bar',
+            b: {
+              data: '$a',
+              sources: {
+                a: 'foo $c'
+              }
+            },
+            c: 'echo $a'
+          }
+        },
+        {
+          vertexes: {},
+          edges: []
+        }
+      ],
+      [
+        {
           data: '$foo',
           sources: {
             a: 'file ./a.json > json',
@@ -19,57 +42,44 @@ describe('parse()', () => {
           vertexes: {
             a: [
               {
-                args: [
-                  './a.json'
-                ],
                 provider: 'file',
+                args: ['./a.json'],
                 refs: []
               },
               {
-                args: [],
                 provider: 'json',
+                args: [],
                 refs: []
               }
             ],
             b: [
               {
-                args: [
-                  'https://example.com'
-                ],
                 provider: 'fetch',
+                args: ['https://example.com'],
                 refs: []
               },
               {
-                args: ['.body'],
                 provider: 'get',
+                args: ['.body'],
                 refs: []
               },
               {
-                args: [],
                 provider: 'json',
+                args: [],
                 refs: []
               }
             ],
             foo: [
               {
-                args: [
-                  '$a',
-                  '$b'
-                ],
+                args: ['$a', '$b'],
                 provider: 'bar',
                 refs: ['a', 'b']
               }
             ]
           },
           edges: [
-            [
-              'a',
-              'foo'
-            ],
-            [
-              'b',
-              'foo'
-            ]
+            ['a', 'foo'],
+            ['b', 'foo']
           ]
         }
       ]
@@ -111,11 +121,7 @@ describe.skip('parseDirective()', () => {
         [
           {
             provider: 'foo',
-            args: [
-              'a',
-              'b',
-              'c'
-            ],
+            args: ['a', 'b', 'c'],
             refs: []
           },
           {
@@ -125,9 +131,7 @@ describe.skip('parseDirective()', () => {
           },
           {
             provider: 'baz',
-            args: [
-              'qux'
-            ],
+            args: ['qux'],
             refs: []
           }
         ]
@@ -143,8 +147,7 @@ You are {{=$age}} and still don't have a name?
         [
           {
             provider: 'dot',
-            args: [
-              '{{? $name }}',
+            args: ['{{? $name }}',
               '<div>Oh,',
               'I',
               'love',
@@ -169,12 +172,7 @@ You are {{=$age}} and still don't have a name?
               'name?',
               '{{?}}'
             ],
-            refs: [
-              'name',
-              'name',
-              'age',
-              'age'
-            ]
+            refs: ['name', 'name', 'age', 'age']
           },
           {
             provider: 'assert',

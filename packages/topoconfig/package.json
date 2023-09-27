@@ -2,7 +2,7 @@
   "name": "topoconfig",
   "alias": "uco",
   "version": "0.0.0",
-  "description": "Toposource-driven uniconfig",
+  "description": "Toposource-enhanced uniconfig",
   "private": true,
   "type": "module",
   "main": "target/cjs/index.cjs",
