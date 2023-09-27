@@ -10,9 +10,10 @@ export const parseRefs = (chunk: string) => {
 export const parseDirectives = (value: string): TDirective[] => {
   if (value[0] === '/') {
     return [{
-      provider: 'echo',
+      cmd: 'echo',
       args: [value.slice(1)],
       refs: [],
+      mappings: {}
     }]
   }
 
@@ -23,15 +24,15 @@ export const parseDirectives = (value: string): TDirective[] => {
       return
     }
     directives.push({
-      provider,
+      cmd,
       args: [...args]
     })
-    provider = ''
+    cmd = ''
     word = ''
     args.length = 0
   }
   let args: string[] = []
-  let provider: string
+  let cmd: string
   let word = ''
   let bb = 0; // bracket balance
 
@@ -54,8 +55,8 @@ export const parseDirectives = (value: string): TDirective[] => {
       return
     }
 
-    if (!provider) {
-      provider = word
+    if (!cmd) {
+      cmd = word
     } else {
       args.push(word)
     }
@@ -64,23 +65,70 @@ export const parseDirectives = (value: string): TDirective[] => {
 
   capture()
 
-  return directives.map(({args, provider}) =>({provider, args, refs: args.map((a: string) => parseRefs(a)).flat()}))
+  return directives.map(({args, cmd}) =>({cmd, args, refs: args.map((a: string) => parseRefs(a)).flat(), mappings: {}}))
 }
 
-export const parse = ({data, sources}: TConfigDeclaration): TConfigGraph => {
-  const vertexes: Record<string, TDirective[]> = {}
-  const edges: [string, string][] = []
 
-  Object.entries(sources).forEach(([k, value]) => {
+export type TParseContext = {
+  prefix: string
+  vertexes: Record<string, TDirective[]>
+  edges: [string, string][]
+  refs: string[]
+  parent?: TParseContext
+}
+
+export const formatRefKey = (key: string, prefix?: string, delimiter = ':') => `${prefix ? prefix + delimiter : ''}${key}`
+
+export const resolveRefKey = (key: string, ctx: TParseContext) => {
+  let scope: TParseContext | undefined = ctx
+  let ref
+
+  while (scope) {
+    if (!ref && scope.refs.includes(key)) {
+      ref = key
+    }
+    if (ref && scope.prefix) {
+      ref = formatRefKey(ref, scope.prefix)
+    }
+    scope = scope.parent
+  }
+
+  return ref
+}
+
+export const parse = ({data, sources}: TConfigDeclaration, parent: TParseContext = {
+  prefix: '',
+  vertexes: {},
+  edges: [],
+  refs: []
+}): TConfigGraph => {
+  const {vertexes, edges} = parent
+  const refs = Object.keys(sources)
+  const ctx = {
+    vertexes,
+    edges,
+    refs,
+    parent,
+  }
+
+  refs.forEach(k => {
+    const value = sources[k]
+    const key = k // formatKey(k, prefix)
     if (typeof value === 'string') {
       const directives = parseDirectives(value as string)
-      vertexes[k] = directives
-      directives.forEach(({refs}) => refs.forEach(ref => edges.push([ref, k])))
+      vertexes[key] = directives
+      directives.forEach(directive => {
+        const {refs} = directive
+
+        refs.forEach(ref => edges.push([ref, key]))
+      })
       return
     }
 
-    const nested = parse(value)
-
+    // parse(value, {
+    //   vertexes,
+    //   edges
+    // })
   })
 
   return {

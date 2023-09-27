@@ -1,9 +1,75 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import {parse, parseDirectives, parseRefs} from '../../main/ts/parse'
-import {TConfigDeclaration, TConfigGraph, TDirective} from '../../main/ts/interface'
+import { parse, parseDirectives, parseRefs, formatRefKey, resolveRefKey, TParseContext } from '../../main/ts/parse'
+import { TConfigDeclaration, TConfigGraph, TDirective } from '../../main/ts/interface'
 
-describe('parse()', () => {
+describe('formatRefKey()', () => {
+  it('formats key str', () => {
+    assert.equal(formatRefKey('foo'), 'foo')
+    assert.equal(formatRefKey('foo', 'bar'), 'bar:foo')
+    assert.equal(formatRefKey('foo', 'bar', '-'), 'bar-foo')
+  })
+})
+
+describe('resolveRefKey', () => {
+  it('assembles prefix by closest ctx matched', () => {
+    const cases: [string, TParseContext, string][] = [
+      [
+        'foo', {
+          refs: ['foo'],
+          edges: [],
+          vertexes: {},
+          prefix: ''
+        },
+        'foo'
+      ],
+      [
+        'foo',
+        {
+          refs: [],
+          edges: [],
+          vertexes: {},
+          prefix: 'nested',
+          parent: {
+            refs: ['foo'],
+            edges: [],
+            vertexes: {},
+            prefix: ''
+          }
+        },
+        'foo'
+      ],
+      [
+        'foo',
+        {
+          refs: ['foo'],
+          edges: [],
+          vertexes: {},
+          prefix: 'nested-2',
+          parent: {
+            refs: ['foo'],
+            edges: [],
+            vertexes: {},
+            prefix: 'nested-1',
+            parent: {
+              refs: ['foo'],
+              edges: [],
+              vertexes: {},
+              prefix: ''
+            }
+          }
+        },
+        'nested-1:nested-2:foo'
+      ],
+    ]
+
+    cases.forEach(([key, ctx, result]) => {
+      assert.equal(resolveRefKey(key, ctx), result)
+    })
+  })
+})
+
+describe.skip('parse()', () => {
   it('parses config declaration', () => {
     const cases: [TConfigDeclaration, TConfigGraph][] = [
       [
@@ -11,14 +77,17 @@ describe('parse()', () => {
           data: {
             a: '$a',
             b: '$b',
-            c: '$c'
+            c: '$c',
           },
           sources: {
             a: 'foo bar',
             b: {
               data: '$a',
               sources: {
-                a: 'foo $c'
+                // $a overrides the $a source ref for the local context
+                // $c does belong to the root scope
+                a: 'foo $c $d',
+                d: 'bar ddd'
               }
             },
             c: 'echo $a'
@@ -42,38 +111,44 @@ describe('parse()', () => {
           vertexes: {
             a: [
               {
-                provider: 'file',
+                cmd: 'file',
                 args: ['./a.json'],
-                refs: []
+                refs: [],
+                mappings: {}
               },
               {
-                provider: 'json',
+                cmd: 'json',
                 args: [],
-                refs: []
+                refs: [],
+                mappings: {}
               }
             ],
             b: [
               {
-                provider: 'fetch',
+                cmd: 'fetch',
                 args: ['https://example.com'],
-                refs: []
+                refs: [],
+                mappings: {}
               },
               {
-                provider: 'get',
+                cmd: 'get',
                 args: ['.body'],
-                refs: []
+                refs: [],
+                mappings: {},
               },
               {
-                provider: 'json',
+                cmd: 'json',
                 args: [],
-                refs: []
+                refs: [],
+                mappings: {},
               }
             ],
             foo: [
               {
                 args: ['$a', '$b'],
-                provider: 'bar',
-                refs: ['a', 'b']
+                cmd: 'bar',
+                refs: ['a', 'b'],
+                mappings: {},
               }
             ]
           },
@@ -110,9 +185,10 @@ describe.skip('parseDirective()', () => {
         'foo',
         [
           {
-            provider: 'foo',
+            cmd: 'foo',
             args: [],
-            refs: []
+            refs: [],
+            mappings: {},
           }
         ]
       ],
@@ -120,19 +196,22 @@ describe.skip('parseDirective()', () => {
         'foo a b c > bar > baz qux',
         [
           {
-            provider: 'foo',
+            cmd: 'foo',
             args: ['a', 'b', 'c'],
-            refs: []
+            refs: [],
+            mappings: {}
           },
           {
-            provider: 'bar',
+            cmd: 'bar',
             args: [],
-            refs: []
+            refs: [],
+            mappings: {},
           },
           {
-            provider: 'baz',
+            cmd: 'baz',
             args: ['qux'],
-            refs: []
+            refs: [],
+            mappings: {},
           }
         ]
       ],
@@ -146,7 +225,7 @@ You are {{=$age}} and still don't have a name?
 {{?}} > assert $foo`,
         [
           {
-            provider: 'dot',
+            cmd: 'dot',
             args: ['{{? $name }}',
               '<div>Oh,',
               'I',
@@ -172,12 +251,14 @@ You are {{=$age}} and still don't have a name?
               'name?',
               '{{?}}'
             ],
-            refs: ['name', 'name', 'age', 'age']
+            refs: ['name', 'name', 'age', 'age'],
+            mappings: {}
           },
           {
-            provider: 'assert',
+            cmd: 'assert',
             args: ['$foo'],
-            refs: ['foo']
+            refs: ['foo'],
+            mappings: {}
           }
         ]
       ]

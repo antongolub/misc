@@ -8,9 +8,10 @@ export type TConfigDeclaration = {
 }
 
 export type TDirective = {
-  provider: string,
+  cmd: string,
   args: string[],
   refs: string[]
+  mappings: Record<string, string>
 }
 
 export type TConfigGraph = {
