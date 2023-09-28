@@ -68,7 +68,6 @@ export const parseDirectives = (value: string): TDirective[] => {
   return directives.map(({args, cmd}) =>({cmd, args, refs: args.map((a: string) => parseRefs(a)).flat(), mappings: {}}))
 }
 
-
 export type TParseContext = {
   prefix: string
   vertexes: Record<string, TDirective[]>
@@ -116,6 +115,18 @@ export const parseDataRefs = (data: TData, refs: string[] = []) => {
   return refs
 }
 
+export const populateMappings = (ctx: TParseContext, directives: TDirective[], key = ctx.prefix) => {
+  ctx.vertexes[key] = directives
+  directives.forEach(directive => {
+    const {refs: _refs, mappings} = directive
+    _refs.forEach(ref => {
+      const from = resolveRefKey(ref, ctx)
+      mappings[ref] = from
+      ctx.edges.push([from, key])
+    })
+  })
+}
+
 export const parse = ({data, sources}: TConfigDeclaration, parent: TParseContext = {
   prefix: '',
   vertexes: {},
@@ -124,6 +135,7 @@ export const parse = ({data, sources}: TConfigDeclaration, parent: TParseContext
 }, prefix = ''): TConfigGraph => {
   const {vertexes, edges} = parent
   const refs = Object.keys(sources)
+  const dataRefs = parseDataRefs(data)
   const ctx = {
     vertexes,
     edges,
@@ -132,32 +144,25 @@ export const parse = ({data, sources}: TConfigDeclaration, parent: TParseContext
     prefix,
   }
 
+  populateMappings(ctx, [{cmd: '_', args: [JSON.stringify(data)], refs: dataRefs, mappings: {}}])
+
   refs.forEach(k => {
     const key = resolveRefKey(k, ctx)
     const value = sources[k]
 
     if (typeof value === 'string') {
       const directives = parseDirectives(value as string)
-      vertexes[key] = directives
-      directives.forEach(directive => {
-        const {refs: _refs, mappings} = directive
-
-        _refs.forEach(ref => {
-          const from = resolveRefKey(ref, ctx)
-          mappings[ref] = from
-          edges.push([from, key])
-        })
-      })
+      populateMappings(ctx, directives, key)
       return
     }
 
-    parse(value, {...ctx, prefix: k})
+    parse(value, ctx, k)
   })
 
-  console.log(
-    'vertexes=',JSON.stringify(vertexes),
-    'edges=', JSON.stringify(edges)
-  )
+  // console.log(
+  //   'vertexes=',JSON.stringify(vertexes),
+  //   'edges=', JSON.stringify(edges)
+  // )
 
   return {
     vertexes,
