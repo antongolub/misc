@@ -1,6 +1,9 @@
 ## topoconfig
 > [toposource](https://github.com/semrel-extra/toposource)-enhanced [uniconfig](https://github.com/qiwi/uniconfig) remastered
 
+## Status
+Initial draft
+
 ## Install
 ```shell
 yarn add topoconfig
