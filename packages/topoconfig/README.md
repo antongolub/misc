@@ -64,7 +64,7 @@ if (config.has('optionalFeature.detail')) {
 When centralized configuration management came, the settings moved to the remote storage. Local pre-config (entrypoints, db credentials) was used to get the rest. Configuration assembly has become multi-stage.
 Later, specialized systems such as [vault](https://developer.hashicorp.com/vault/docs) appeared: env holds an access token and defines an entrypoint to make a POST request to reveal credentials profile to be  to the entire config.
 
-_How [uniconfig](https://github.com/qiwi/uniconfig/blob/master/examples/vault.md) obtains data from the vault storage:_
+_Here's how [uniconfig](https://github.com/qiwi/uniconfig/blob/master/examples/vault.md) obtains data from the vault storage:_
 ```json
 {
   "data": {
@@ -259,10 +259,27 @@ fix vault in kube yaml Jul 03	XS
 fix vault in kube yaml Jul 03	XS
 ...
 ```
-This is definitely not _configuration_ but more _guessing_. On a company scale, such exercises are a significant waste of resources. And this _experience_ is almost one-time only, which cannot be formalized and transmitted except by copy-paste. Every time we see the same thing, with a different number of attempts.
+This is definitely not _configuring_ but more _guessing_. On a company scale, such exercises are a significant waste of resources. And this _experience_ is almost one-time only, which cannot be formalized and transmitted except by copy-paste. Every time we see the same thing, with a different number of attempts.
 
 ## The what we need
 The problem comes from the fact that we combined resolving, processing and accessing data into one structure. Although the entire theory of programming / CS instructs us to do exactly the opposite.
+* Let `data` to represent how the result structure may be built if all the required transformations were made — like a pure mapping.
+* Let `sources` to describe how to obtain and process values for referencing in `data` map. Like pipelines.
+```json
+{
+  "a": "<pipeline 1>",
+  "b": "<pipeline 2>"
+}
+```
+* Let `pipeline` to compose actions in _natural_ form like CLI: `cmd param > cmd2 param param > ... > cmd3`
+* Let intermediate values be referenced by lateral (bubbling) or nested contexts.
+```json
+{
+  "a" : "cmd param",
+  "b": "cmd $a"
+}
+```
+* Apply [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph) processing.
 
 </details>
 
