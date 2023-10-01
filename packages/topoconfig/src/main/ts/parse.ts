@@ -13,36 +13,29 @@ const ops = {
   tif: '?',
   telse: ':',
   space: ' ',
-  eq: '='
+  eq: '=',
+  // sq: "'",
+  // dq: '"',
+  // rc: '}',
+  // lc: '{'
 }
 
-export const parseDirectives = (value: string): TDirective[] => {
-  if (value[0] === '/') {
-    return [{
-      cmd: 'echo',
-      args: [value.slice(1)],
-      refs: [],
-      mappings: {}
-    }]
-  }
+const rops = Object.entries(ops).reduce<Record<string, string>>((m, [k, v]) => {
+  m[v] = k
+  return m
+}, {})
 
-  const chars = [...value, ' ']
-  const directives: any[] = []
-  const vl = value.length
-  const capture = () => {
-    if (bb > 0) {
-      return
-    }
-    directives.push({
-      cmd,
-      args: [...args]
-    })
-    cmd = ''
-    chunk = ''
-    args.length = 0
-  }
-  let args: string[] = []
-  let cmd: string
+// cmd1 cmd2 ? cmd3 ? cmd4 : cmd5 : cmd6
+// cmd1 cmd2 cmd3 cmd4
+// cmd1 cmd2 cmd3 cmd5
+// cmd1 cmd6
+// cmd1 cmd2 cmd6
+
+// Maybe use smth like https://github.com/MeLlamoPablo/minimist-string/blob/master/index.js instead?
+export const parseWords = (value: string): string[] => {
+  const chars = [' ', ...value, ' ']
+  const words: string[] = []
+
   let chunk = ''
   let bb = 0 // brackets balance
   let qb = '' // quotes balance
@@ -52,35 +45,64 @@ export const parseDirectives = (value: string): TDirective[] => {
     const next = chars[i + 1]
     if (prev !== '\\') {
       bb += qb ? bb : c === '{' ? 1 : c === '}' ? -1 : 0
-      qb = (c === "'" || c === '"') && !bb && (!prev || prev === ops.space || prev === ops.eq || next === ops.space || !next) ? qb ? qb === c ? '' : qb : c : qb
+      qb = (c === "'" || c === '"') && !bb && (prev === ops.space || prev === ops.eq || next === ops.space) ? qb ? qb === c ? '' : qb : c : qb
     }
 
-    if (bb > 0 || qb) {
+    if (bb > 0 || qb || c !== ops.space) {
       chunk += c
       return
     }
 
-    if (c !== ops.space) {
-      chunk += c
-      return
-    }
-
-    if (chunk === ops.pipe) {
-      capture()
-      return
-    }
-
-    if (!cmd) {
-      cmd = chunk
-    } else {
-      args.push(chunk)
-    }
+    chunk && words.push(chunk)
     chunk = ''
+  })
+
+  return words
+}
+
+export const parseDirectives = (value: string): TDirective[] => {
+  if (value[0] === '\\') {
+    return [{
+      cmd: 'echo',
+      args: [value.slice(1)],
+      refs: [],
+      mappings: {}
+    }]
+  }
+
+  const words = parseWords(value)
+  const directives: any[] = []
+
+  let args: string[] = []
+  const capture = () => {
+    directives.push({
+      cmd: args.shift(),
+      args,
+      refs: args.map((a: string) => parseRefs(a)).flat(),
+      mappings: {}
+    })
+    args = []
+  }
+
+  words.forEach(w => {
+    const op = rops[w]
+    switch (op) {
+      case 'pipe':
+        capture()
+        return
+      case 'tif':
+      case 'telse':
+      case 'or':
+        capture()
+        directives.push({op})
+        return
+    }
+    args.push(w)
   })
 
   capture()
 
-  return directives.map(({args, cmd}) =>({cmd, args, refs: args.map((a: string) => parseRefs(a)).flat(), mappings: {}}))
+  return directives
 }
 
 export type TParseContext = {
@@ -174,10 +196,10 @@ export const parse = ({data, sources}: TConfigDeclaration, parent: TParseContext
     parse(value, ctx, k)
   })
 
-  // console.log(
-  //   'vertexes=',JSON.stringify(vertexes),
-  //   'edges=', JSON.stringify(edges)
-  // )
+  console.log(
+    'vertexes=',JSON.stringify(vertexes),
+    'edges=', JSON.stringify(edges)
+  )
 
   return {
     vertexes,

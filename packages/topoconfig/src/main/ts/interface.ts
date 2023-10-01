@@ -8,13 +8,20 @@ export type TConfigDeclaration = {
 }
 
 export type TDirective = {
+  op?: undefined
   cmd: string,
   args: string[],
   refs: string[]
   mappings: Record<string, string>
 }
 
+export type TOperator = {
+  op: string
+}
+
+export type TPipeline = Array<TOperator | TDirective>
+
 export type TConfigGraph = {
   edges: [string, string][]
-  vertexes: Record<string, TDirective[]>
+  vertexes: Record<string, TPipeline>
 }

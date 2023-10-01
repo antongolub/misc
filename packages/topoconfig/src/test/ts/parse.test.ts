@@ -226,7 +226,7 @@ describe('parseRefs()', () => {
   })
 })
 
-describe.only('parseDirective()', () => {
+describe('parseDirective()', () => {
   it('recognizes providers', () => {
     const cases: [string, TDirective[]][] = [
       [
