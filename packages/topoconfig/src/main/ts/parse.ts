@@ -7,6 +7,15 @@ export const parseRefs = (chunk: string) => {
   return refs.map(r => r.slice(1))
 }
 
+const ops = {
+  pipe: '>',
+  or: '||',
+  tif: '?',
+  telse: ':',
+  space: ' ',
+  eq: '='
+}
+
 export const parseDirectives = (value: string): TDirective[] => {
   if (value[0] === '/') {
     return [{
@@ -17,6 +26,7 @@ export const parseDirectives = (value: string): TDirective[] => {
     }]
   }
 
+  const chars = [...value, ' ']
   const directives: any[] = []
   const vl = value.length
   const capture = () => {
@@ -28,39 +38,44 @@ export const parseDirectives = (value: string): TDirective[] => {
       args: [...args]
     })
     cmd = ''
-    word = ''
+    chunk = ''
     args.length = 0
   }
   let args: string[] = []
   let cmd: string
-  let word = ''
-  let bb = 0; // bracket balance
+  let chunk = ''
+  let bb = 0 // brackets balance
+  let qb = '' // quotes balance
 
-  [...value].forEach((c, i) => {
-    bb += c === '{' ? 1 : c === '}' ? -1 : 0
-    if (bb > 0) {
-      word += c
+  chars.forEach((c, i) => {
+    const prev = chars[i - 1]
+    const next = chars[i + 1]
+    if (prev !== '\\') {
+      bb += qb ? bb : c === '{' ? 1 : c === '}' ? -1 : 0
+      qb = (c === "'" || c === '"') && !bb && (!prev || prev === ops.space || prev === ops.eq || next === ops.space || !next) ? qb ? qb === c ? '' : qb : c : qb
+    }
+
+    if (bb > 0 || qb) {
+      chunk += c
       return
     }
 
-    if (/[^\s]/.test(c)) {
-      word += c
-      if (i !== vl - 1) {
-        return
-      }
+    if (c !== ops.space) {
+      chunk += c
+      return
     }
 
-    if (word === '>') {
+    if (chunk === ops.pipe) {
       capture()
       return
     }
 
     if (!cmd) {
-      cmd = word
+      cmd = chunk
     } else {
-      args.push(word)
+      args.push(chunk)
     }
-    word = ''
+    chunk = ''
   })
 
   capture()

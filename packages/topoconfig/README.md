@@ -39,24 +39,25 @@ file = "payroll.dat"
 ```
 
 At the same time, another part of the configuration was supplied from [the environment variables](https://en.wikipedia.org/wiki/Environment_variable) or [CLI parameters](https://en.wikipedia.org/wiki/Command-line_interface).
-Or even form [dotenv-files](https://stackoverflow.com/questions/68267862/what-is-an-env-or-dotenv-file-exactly):
+Or even from [dotenv-files](https://stackoverflow.com/questions/68267862/what-is-an-env-or-dotenv-file-exactly):
 ```ini
 # https://hexdocs.pm/dotenvy/0.2.0/dotenv-file-format.html
 S3_BUCKET=YOURS3BUCKET
 SECRET_KEY=YOURSECRETKEYGOESHERE
 ```
 
-The composition logic began to penetrate into the app layer. 
+So, the resolution logic began to penetrate into the app layer.
 ```js
-// https://www.npmjs.com/package/config
+// Just an illustration. This problem has appeared before the JS was invented
 
-const config = require('config');
+const config = require('config')
+const logLevel = process.env.DEBUG ? 'trace' : config.get('log.level') || 'info'
 //...
-const dbConfig = config.get('Customer.dbConfig');
-db.connect(dbConfig, ...);
+const dbConfig = config.get('Customer.dbConfig')
+db.connect(dbConfig, ...)
 
 if (config.has('optionalFeature.detail')) {
-  const detail = config.get('optionalFeature.detail');
+  const detail = config.get('optionalFeature.detail')
   //...
 }
 ```
@@ -172,7 +173,7 @@ _Here's how [uniconfig](https://github.com/qiwi/uniconfig/blob/master/examples/v
 }
 ```
 
-Meanwhile, the formats evolved (JSON, JSON5, YAML), config entry points were constantly changing. This has become a problem that, fortunately, can be solved by tools like a [cosmiconfig](https://github.com/cosmiconfig/cosmiconfig).
+Meanwhile, the formats evolved (JSON, JSON5, YAML), config entry points were constantly changing. These fluctuations, fortunately, can be covered by tools like a [cosmiconfig](https://github.com/cosmiconfig/cosmiconfig).
 ```json
   'package.json',
   `.${moduleName}rc`,
@@ -264,6 +265,14 @@ This is definitely not _configuring_ but more _guessing_. On a company scale, su
 ## The what we need
 The problem comes from the fact that we combined resolving, processing and accessing data into one structure. Although the entire theory of programming / CS instructs us to do exactly the opposite.
 * Let `data` to represent how the result structure may be built if all the required transformations were made — like a pure mapping.
+```json
+{
+  a: {
+    b: '$b.some.nested.prop.value.of.b',
+    c: '$external.prop.of.prop'
+  }
+}
+```
 * Let `sources` to describe how to obtain and process values for referencing in `data` map. Like pipelines.
 ```json
 {

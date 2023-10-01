@@ -11,7 +11,7 @@ import {
 } from '../../main/ts/parse'
 import {TConfigDeclaration, TConfigGraph, TData, TDirective} from '../../main/ts/interface'
 
-describe.skip('formatRefKey()', () => {
+describe('formatRefKey()', () => {
   it('formats key str', () => {
     assert.equal(formatRefKey('foo'), 'foo')
     assert.equal(formatRefKey('foo', 'bar'), 'bar:foo')
@@ -19,7 +19,7 @@ describe.skip('formatRefKey()', () => {
   })
 })
 
-describe.skip('resolveRefKey', () => {
+describe('resolveRefKey', () => {
   it('assembles prefix by closest ctx matched', () => {
     const cases: [string, TParseContext, string][] = [
       [
@@ -77,7 +77,7 @@ describe.skip('resolveRefKey', () => {
 })
 
 describe('parseDataRefs()', () => {
-  it.skip('finds refs in data struct', () => {
+  it('finds refs in data struct', () => {
     const cases: [TData, string[]][] = [
       ['foo', []],
       ['aaa $a $b', ['a', 'b']],
@@ -213,7 +213,7 @@ describe('parse()', () => {
   })
 })
 
-describe.skip('parseRefs()', () => {
+describe('parseRefs()', () => {
   it('extracts refs', () => {
     const cases: [string, string[]][] = [
       ['no refs', []],
@@ -226,7 +226,7 @@ describe.skip('parseRefs()', () => {
   })
 })
 
-describe.skip('parseDirective()', () => {
+describe.only('parseDirective()', () => {
   it('recognizes providers', () => {
     const cases: [string, TDirective[]][] = [
       [
@@ -235,6 +235,28 @@ describe.skip('parseDirective()', () => {
           {
             cmd: 'foo',
             args: [],
+            refs: [],
+            mappings: {},
+          }
+        ]
+      ],
+      [
+        'foo \'quoted statement\' param',
+        [
+          {
+            cmd: 'foo',
+            args: ['\'quoted statement\'', 'param'],
+            refs: [],
+            mappings: {},
+          }
+        ]
+      ],
+      [
+        `mixed "quoted statement" param 'quoted "inner"' "deep \\"nested\\""`,
+        [
+          {
+            cmd: 'mixed',
+            args: ['"quoted statement"', 'param', '\'quoted "inner"\'', '"deep \\"nested\\""'],
             refs: [],
             mappings: {},
           }
@@ -274,21 +296,17 @@ You are {{=$age}} and still don't have a name?
         [
           {
             cmd: 'dot',
-            args: ['{{? $name }}',
-              '<div>Oh,',
+            args: [
+              '{{? $name }}\n<div>Oh,',
               'I',
               'love',
               'your',
               'name,',
-              '{{=$name}}!</div>',
-              '{{?? $age === 0}}',
-              '<div>Guess',
+              '{{=$name}}!</div>\n{{?? $age === 0}}\n<div>Guess',
               'nobody',
               'named',
               'you',
-              'yet!</div>',
-              '{{??}}',
-              'You',
+              'yet!</div>\n{{??}}\nYou',
               'are',
               '{{=$age}}',
               'and',
@@ -296,8 +314,7 @@ You are {{=$age}} and still don't have a name?
               "don't",
               'have',
               'a',
-              'name?',
-              '{{?}}'
+              'name?\n{{?}}'
             ],
             refs: ['name', 'name', 'age', 'age'],
             mappings: {}
