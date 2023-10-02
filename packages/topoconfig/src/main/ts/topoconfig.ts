@@ -1,10 +1,11 @@
 import {parse} from './parse'
-import {process, TProcessContext} from './process'
-import {TConfigDeclaration} from './interface'
-import {DATA} from "./constants";
+import {process} from './process'
+import {TConfigDeclaration, TProcessContext} from './interface'
+
+export type {TConfigDeclaration} from './interface'
 
 export const topoconfig = (cfg: TConfigDeclaration) => {
-  const cmds = {[DATA]: (v: any) => typeof v === 'string' && (v.startsWith('{') || v.startsWith('[')) ? JSON.parse(v) : v}
+  const { cmds = {} } = cfg
   const {vertexes, edges} = parse(cfg)
   const ctx: TProcessContext = {
     vertexes,
@@ -15,3 +16,4 @@ export const topoconfig = (cfg: TConfigDeclaration) => {
 
   return process(ctx)
 }
+

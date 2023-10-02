@@ -1,7 +1,8 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
 
-import {process, TProcessContext} from '../../main/ts/process'
+import {process} from '../../main/ts/process'
+import {TProcessContext} from '../../main/ts/interface'
 
 describe('process()', () => {
   it('processes the TProcessContext', async () => {

@@ -18,6 +18,6 @@ describe('topoconfig()', () => {
       }
     })
 
-    console.log(config)
+    assert.equal(config, 'd')
   })
 })

@@ -1,9 +1,9 @@
 import assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { foo } from 'topoconfig'
+import { topoconfig } from 'topoconfig'
 
-describe('mjs foo()', () => {
-  it('is callable', () => {
-    assert.equal(foo(), undefined)
+describe('mjs topoconfig()', () => {
+  it('is exported', () => {
+    assert.equal(typeof topoconfig, 'function')
   })
 })

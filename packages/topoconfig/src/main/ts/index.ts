@@ -1,1 +1,1 @@
-export {topoconfig} from './topoconfig'
+export * from './topoconfig'

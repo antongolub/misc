@@ -1,5 +1,5 @@
-import {TDirective, TOperator, TPipeline, TProcessContext} from './interface'
-import {DROP} from './constants'
+import {TCmds, TDirective, TOperator, TPipeline, TProcessContext} from './interface'
+import {DATA, DROP} from './constants'
 
 type TPromiseAction<T = any> = (value: T | PromiseLike<T>) => void
 
@@ -30,7 +30,11 @@ const get = <T = any>(obj: any, path: string, defaultValue = undefined): T => {
 }
 
 export const process = async <T = any>(ctx: TProcessContext, vertex = ''): Promise<T> => {
-  const {vertexes, edges, cmds, values} = ctx
+  const {vertexes, edges, cmds: _cmds, values} = ctx
+  const cmds: TCmds = {
+    [DATA]: JSON.parse,
+    ..._cmds
+  }
   if (values[vertex]) {
     return values[vertex]
   }
