@@ -1,8 +1,8 @@
 ## topoconfig
 > [toposource](https://github.com/semrel-extra/toposource)-enhanced [uniconfig](https://github.com/qiwi/uniconfig) remastered
 
-## Status
-Initial draft
+## Motivation
+Dynamic configs will always be complex. Let's try to make them a little more convenient.
 
 <details>
 <summary><b>Bla-bla-bla</b></summary>
@@ -294,16 +294,51 @@ The problem comes from the fact that we combined resolving, processing and acces
 
 </details>
 
+## Status
+🚧 Working draft
+
 ## Install
 ```shell
 yarn add topoconfig
 ```
 
-## Proposal
+## Usage
 ```ts
 import {topoconfig} from 'topoconfig'
 
-const config = topoconfig({
+const config = await topoconfig({
+  // define functions to use in pipelines
+  cmds: {
+    foo: () => 'bar',
+    baz: async (v) => v + 'qux'
+  },
+  // pipelines to resolve intermediate variables
+  sources: {
+    a: 'foo > baz', // pipeline returns 'barqux'
+    b: {            // b refers to b.data
+      data: {
+        c: {
+          d: 'e'
+        }
+      }
+    }
+  },
+  // output value
+  data: {
+    // $name.inner.path populates var ref with its value
+    x: '$b.c.d',  // 'e'
+    y: {
+      z: '$a'     // 'barqux'
+    }
+  }
+})
+```
+
+Real-world usage example may look like:
+```ts
+import {topoconfig} from 'topoconfig'
+
+const config = await topoconfig({
   data: {
     foo: '$a',
     url: 'https://some.url',
@@ -357,7 +392,18 @@ You are {{=$age}} and still don't have a name?
 })
 ```
 
-## API
+## Notes
+```ts
+export type TData = number | string | { [key: string]: TData } | { [key: number]: TData }
+export type TCmd = (...opts: any[]) => any
+export type TCmds = Record<string | symbol, TCmd>
+export type TConfigDeclaration = {
+  data: TData,
+  sources: Record<string, string | TConfigDeclaration>
+  cmds?: TCmds
+}
+```
+
 `TConfigDeclaration` defines two sections: `data` and `sources`:
 * `data` describes how to build the result value based on the bound sources: it populates `$`-prefixed refs with their values in every place.
 * `sources` is a map, which declares the _algorithm_ to resolve intermediate values through `cmd` calls composition. To fetch data from remote, to read from file, to convert, etc.
@@ -410,6 +456,11 @@ type TCmd = (...opts: any[]) => any
   }
 }
 ```
+
+## Refs and Inspirations
+* [cosmiconfig](https://github.com/cosmiconfig/cosmiconfig)
+* [node-config](https://github.com/node-config/node-config)
+* [uniconfig](https://github.com/qiwi/uniconfig)
 
 ## License
 [MIT](./LICENSE)

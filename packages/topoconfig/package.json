@@ -1,6 +1,6 @@
 {
   "name": "topoconfig",
-  "version": "0.0.0-draft.3",
+  "version": "0.0.0-draft.4",
   "description": "Toposource-enhanced uniconfig",
   "type": "module",
   "main": "target/cjs/index.cjs",
@@ -42,7 +42,7 @@
   "bugs": {
     "url": "https://github.com/antongolub/misc/issues"
   },
-  "homepage": "https://github.com/antongolub/misc#readme",
+  "homepage": "https://github.com/antongolub/misc/blob/master/packages/topoconfig/README.md",
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
     "@types/node": "^20.6.5"
