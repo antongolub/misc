@@ -1,17 +1,7 @@
-import {TDirective, TOperator, TPipeline} from './interface'
-
-export type TCmd = (...opts: any[]) => any
-
-export type TProcessContext = {
-  vertexes: Record<string, TPipeline>
-  edges: [string, string][]
-  cmds: Record<string, TCmd>
-  values: Record<string, Promise<any> | undefined>
-}
+import {TDirective, TOperator, TPipeline, TProcessContext} from './interface'
+import {DROP} from './constants'
 
 type TPromiseAction<T = any> = (value: T | PromiseLike<T>) => void
-
-const drop = Symbol('drop')
 
 const getPromise = <T = any>() => {
   let resolve: TPromiseAction<T> = () => {}
@@ -26,8 +16,10 @@ const getPromise = <T = any>() => {
 }
 
 // https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_get
-const get = (obj: any, path: string, defaultValue = undefined) => {
+const get = <T = any>(obj: any, path: string, defaultValue = undefined): T => {
   if (!path) return obj
+  if (path.startsWith('.')) return get(obj, path.slice(1), defaultValue)
+
   const travel = (regexp: RegExp) =>
     String.prototype.split
       .call(path, regexp)
@@ -53,7 +45,7 @@ export const process = async <T = any>(ctx: TProcessContext, vertex = ''): Promi
 
   let i = 0
   let pipe: TDirective | TOperator | undefined = pipeline[i]
-  let result: T | symbol = drop
+  let result: T | symbol = DROP
   let err: any
 
   while (pipe) {
@@ -65,19 +57,21 @@ export const process = async <T = any>(ctx: TProcessContext, vertex = ''): Promi
 
     const {cmd, refs, mappings, args} = pipe
     const _cmd = cmds[cmd]
+    if (!_cmd) {
+      throw new Error(`cmd not found: ${String(cmd)}`)
+    }
+
     const _refs = (await Promise.all(refs.map(async v => ({[v]: await process(ctx, mappings[v])}))))
       .reduce((m, mixin) => Object.assign(m, mixin), {})
-
+    const replacer = (_: string, ref: string, path: string) => JSON.stringify(get(_refs[ref], path))
     const _args = [
-      ...(result === drop ? [] : [result]),
+      ...(result === DROP ? [] : [result]),
       ...args.map(chunk =>
         /^\$\w+$/.test(chunk)
           ? _refs[chunk.slice(1)]
           : chunk
-            .replace(
-              /"\$(\w+)(\.[^" ]+)?"/g,
-              (_, $1, $2) => JSON.stringify(get(_refs[$1], $2))
-            )
+            .replace(/"\$(\w+)(\.[^" ]+)?"/g, replacer)
+            .replace(/\$(\w+)(\.[^" ]+)?/g, replacer)
       )
     ]
 
@@ -93,7 +87,5 @@ export const process = async <T = any>(ctx: TProcessContext, vertex = ''): Promi
     pipe = pipeline[i]
   }
 
-
   return promise
 }
-

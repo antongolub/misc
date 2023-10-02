@@ -10,6 +10,7 @@ import {
   parseDataRefs
 } from '../../main/ts/parse'
 import {TConfigDeclaration, TConfigGraph, TData, TDirective} from '../../main/ts/interface'
+import {DATA} from '../../main/ts/constants'
 
 describe('formatRefKey()', () => {
   it('formats key str', () => {
@@ -119,9 +120,9 @@ describe('parse()', () => {
         },
         {
           vertexes: {
-            '':    [{cmd:  '_',   args: ['{"b":"$b"}'], refs: ['b'],  mappings: {b: 'b'}}],
+            '':    [{cmd:  DATA,  args: ['{"b":"$b"}'], refs: ['b'],  mappings: {b: 'b'}}],
             'a':   [{cmd: 'foo',  args: ['bar'],     refs: [],        mappings: {}}],
-            'b':   [{cmd:  '_',   args: ['\"$a\"'],  refs: ['a'],     mappings: {a: 'b:a'}}],
+            'b':   [{cmd:  DATA,  args: ['\"$a\"'],  refs: ['a'],     mappings: {a: 'b:a'}}],
             'b:a': [{cmd: 'baz',  args: ['$c'],      refs: ['c'],     mappings: {c: 'c'}}],
             'c':   [{cmd: 'echo', args: ['$a'],      refs: ['a'],     mappings: {a: 'a'}}]
           },
@@ -146,7 +147,7 @@ describe('parse()', () => {
           vertexes: {
             '':[
               {
-                cmd: '_',
+                cmd: DATA,
                 args: ['\"$foo\"'],
                 refs: ['foo'],
                 mappings: { foo: 'foo' }

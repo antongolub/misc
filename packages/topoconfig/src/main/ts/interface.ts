@@ -2,14 +2,24 @@
 // https://github.com/microsoft/TypeScript/issues/14174#issuecomment-311335205
 export type TData = number | string | { [key: string]: TData } | { [key: number]: TData }
 
+export type TCmd = (...opts: any[]) => any
+
 export type TConfigDeclaration = {
   data: TData,
   sources: Record<string, string | TConfigDeclaration>
+  cmds?: Record<string | symbol, TCmd>
+}
+
+export type TProcessContext = {
+  vertexes: Record<string, TPipeline>
+  edges: [string, string][]
+  cmds: Record<string | symbol, TCmd>
+  values: Record<string, Promise<any> | undefined>
 }
 
 export type TDirective = {
   op?: undefined
-  cmd: string,
+  cmd: string | symbol,
   args: string[],
   refs: string[]
   mappings: Record<string, string>

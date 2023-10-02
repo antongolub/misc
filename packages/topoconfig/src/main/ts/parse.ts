@@ -1,4 +1,5 @@
 import {TConfigDeclaration, TConfigGraph, TData, TDirective, TPipeline} from './interface'
+import {DATA} from './constants'
 
 export const parseRefs = (chunk: string) => {
   const refPattern = /\$\w+/g
@@ -25,11 +26,7 @@ const rops = Object.entries(ops).reduce<Record<string, string>>((m, [k, v]) => {
   return m
 }, {})
 
-// cmd1 cmd2 ? cmd3 ? cmd4 : cmd5 : cmd6
-// cmd1 cmd2 cmd3 cmd4
-// cmd1 cmd2 cmd3 cmd5
-// cmd1 cmd6
-// cmd1 cmd2 cmd6
+export const populate = Symbol('polupate')
 
 // Maybe use smth like https://github.com/MeLlamoPablo/minimist-string/blob/master/index.js instead?
 export const parseWords = (value: string): string[] => {
@@ -184,7 +181,7 @@ export const parse = ({data, sources}: TConfigDeclaration, parent: TParseContext
     prefix,
   }
 
-  populateMappings(ctx, [{cmd: '_', args: [JSON.stringify(data)], refs: dataRefs, mappings: {}}])
+  populateMappings(ctx, [{cmd: DATA, args: [JSON.stringify(data)], refs: dataRefs, mappings: {}}])
 
   refs.forEach(k => {
     const key = resolveRefKey(k, ctx)

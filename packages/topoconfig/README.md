@@ -307,7 +307,7 @@ const config = topoconfig({
     url: 'https://some.url',
     param: 'regular param value',
     num: 123,
-    pwd: '\$to.prevent.value.inject.use.\.prefix',
+    pwd: '\\$to.prevent.value.inject.use.\.prefix',
     a: {
       b: '$b.some.nested.prop.value.of.b',
       c: '$external.prop.of.prop'
@@ -318,7 +318,7 @@ const config = topoconfig({
     b: 'json $a',
     c: 'get $b > assert type number',
     cwd: 'cwd',
-    schema: 'file $cwd/schema.json:utf8 > json',
+    schema: 'file $cwd/schema.json utf8 > json',
     external: 'fetch http://foo.example.com > get .body > json > get .prop > ajv $schema',
     template: `dot {{? $name }}
 <div>Oh, I love your name, {{=$name}}!</div>
@@ -328,6 +328,29 @@ const config = topoconfig({
 You are {{=$age}} and still don't have a name?
 {{?}} > assert $foo`,
     extended: 'extend $b $external'
+  },
+  cmds: {
+    extend: Object.assign,
+    // http://olado.github.io/doT/index.html
+    dot: (...chunks) => dot.template(chunks.join(' '))({}),
+    fetch: async (url) => {
+      const res = await fetch(url)
+      const code = res.status
+      const headers = Object.fromEntries(res.headers)
+      const body = await res.body()
+
+      return {
+        res,
+        headers,
+        body,
+        code
+      }
+    },
+    cwd: () => process.cwd(),
+    file: (file, opts) => fs.readFile(file, opts),
+    json: JSON.parse,
+    get: lodash.get,
+    //...
   }
 })
 ```
@@ -344,7 +367,7 @@ You are {{=$age}} and still don't have a name?
   }
 }
 ```
-* `cmd` is a provider that performs some specific action.
+* `cmd` is a provider that performs a specific action.
 * `directive` is a template to define value transformation pipeline
 ```
 // fetch http://foo.example.com > get body > json > get .prop
