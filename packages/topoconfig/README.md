@@ -386,14 +386,18 @@ type TCmd = (...opts: any[]) => any
 * Provide lazy-loading for cmds:
 ```js
 {
-  foo: 'some/package',
-  bar: './local/plugin.js'
+  cmds: {
+    foo: 'some/package',
+    bar: './local/plugin.js'
+  }
 }
 ```
 * Support a pipeline factory as cmd declaration.
 ```js
 {
-  'readjson': 'path $0 resolve > file $1 > json'
+  cmds: {
+    readjson: 'path $0 resolve > file $1 > json'
+  }
 }
 ```
 * Use vars as cmd refs:
