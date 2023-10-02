@@ -327,7 +327,7 @@ const config = topoconfig({
 {{??}}
 You are {{=$age}} and still don't have a name?
 {{?}} > assert $foo`,
-    : 'extend $b $external'
+    extended: 'extend $b $external'
   }
 })
 ```

@@ -1,4 +1,4 @@
-import {TConfigDeclaration, TConfigGraph, TData, TDirective} from './interface'
+import {TConfigDeclaration, TConfigGraph, TData, TDirective, TPipeline} from './interface'
 
 export const parseRefs = (chunk: string) => {
   const refPattern = /\$\w+/g
@@ -60,7 +60,7 @@ export const parseWords = (value: string): string[] => {
   return words
 }
 
-export const parseDirectives = (value: string): TDirective[] => {
+export const parseDirectives = (value: string): TPipeline => {
   if (value[0] === '\\') {
     return [{
       cmd: 'echo',
@@ -71,18 +71,18 @@ export const parseDirectives = (value: string): TDirective[] => {
   }
 
   const words = parseWords(value)
-  const directives: any[] = []
-
-  let args: string[] = []
+  const directives: TPipeline = []
   const capture = () => {
-    directives.push({
-      cmd: args.shift(),
+    args.length && directives.push({
+      cmd: args.shift() as string,
       args,
       refs: args.map((a: string) => parseRefs(a)).flat(),
       mappings: {}
     })
     args = []
   }
+
+  let args: string[] = []
 
   words.forEach(w => {
     const op = rops[w]
@@ -107,7 +107,7 @@ export const parseDirectives = (value: string): TDirective[] => {
 
 export type TParseContext = {
   prefix: string
-  vertexes: Record<string, TDirective[]>
+  vertexes: Record<string, TPipeline>
   edges: [string, string][]
   refs: string[]
   parent?: TParseContext
@@ -152,9 +152,12 @@ export const parseDataRefs = (data: TData, refs: string[] = []) => {
   return refs
 }
 
-export const populateMappings = (ctx: TParseContext, directives: TDirective[], key = ctx.prefix) => {
+export const populateMappings = (ctx: TParseContext, directives: TPipeline, key = ctx.prefix) => {
   ctx.vertexes[key] = directives
   directives.forEach(directive => {
+    if (directive.op !== undefined) {
+      return
+    }
     const {refs: _refs, mappings} = directive
     _refs.forEach(ref => {
       const from = resolveRefKey(ref, ctx)
@@ -196,10 +199,10 @@ export const parse = ({data, sources}: TConfigDeclaration, parent: TParseContext
     parse(value, ctx, k)
   })
 
-  console.log(
-    'vertexes=',JSON.stringify(vertexes),
-    'edges=', JSON.stringify(edges)
-  )
+  // console.log(
+  //   'vertexes=',JSON.stringify(vertexes),
+  //   'edges=', JSON.stringify(edges)
+  // )
 
   return {
     vertexes,
