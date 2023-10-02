@@ -40,7 +40,7 @@ file = "payroll.dat"
 
 At the same time, another part of the configuration was supplied from [the environment variables](https://en.wikipedia.org/wiki/Environment_variable) or [CLI parameters](https://en.wikipedia.org/wiki/Command-line_interface) reflecting the idea of dynamic settings.  
 
-_Years later we use [dotenv-files](https://stackoverflow.com/questions/68267862/what-is-an-env-or-dotenv-file-exactly), ironic :_
+_Now we use [dotenv-files](https://stackoverflow.com/questions/68267862/what-is-an-env-or-dotenv-file-exactly), ironic :_
 ```ini
 # https://hexdocs.pm/dotenvy/0.2.0/dotenv-file-format.html
 S3_BUCKET=YOURS3BUCKET
@@ -174,7 +174,7 @@ _Here's how [uniconfig](https://github.com/qiwi/uniconfig/blob/master/examples/v
 }
 ```
 
-Meanwhile, the formats evolved (JSON, JSON5, YAML), config entry points were constantly changing. These fluctuations, fortunately, were covered by tools like the [cosmiconfig](https://github.com/cosmiconfig/cosmiconfig).
+Meanwhile, formats have been evolving ([JSON5](https://json5.org/), [YAML](https://yaml.org/)), config entry points are constantly changing. These fluctuations, fortunately, were covered by tools like the [cosmiconfig](https://github.com/cosmiconfig/cosmiconfig).
 ```js
 [
   'package.json',
@@ -242,9 +242,10 @@ Then templates inside templates. With commands and scripts invocations inside dy
         id: check-artifact
         run: echo "::set-output name=exists::$([ -e "artifact.tar" ] && echo true || echo false)"
 ```
+As we can see, syntax complexity increases as the cost of declarativeness. It's still unclear how this problem can be mitigated. Perhaps new specialized formats will appear or more strict forms (schemas) of using existing ones will be introduced.
 
 ## The budget loss
-`::$([` is definitely not a _perfect_ solution. Сonfusing, fragile and overcomplicated for the most developers. For example, here is how Python Engineer was fighting against `kube.yaml`:
+Anyway, `::$([` is definitely not an _optimal_ solution. Сonfusing, fragile and overcomplicated for the most developers. For example, here is how Python Engineer was fighting against `kube.yaml`:
 ```text
 fix vault in kube yaml Jul 04	XS		
 fix vault in kube yaml Jul 04	XS
