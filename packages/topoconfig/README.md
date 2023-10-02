@@ -49,7 +49,7 @@ SECRET_KEY=YOURSECRETKEYGOESHERE
 
 Even then, the resolution logic began to penetrate into the app layer.
 ```js
-// Just an illustration. This problem was aroung before the JS was invented
+// Just an illustration. This problem existed before JS was invented
 
 const config = require('config')
 const logLevel = process.env.DEBUG ? 'trace' : config.get('log.level') || 'info'
@@ -308,7 +308,7 @@ yarn add topoconfig
 import {topoconfig} from 'topoconfig'
 
 const config = await topoconfig({
-  // define functions to use in pipelines
+  // define functions to use in pipelines: sync or async
   cmds: {
     foo: () => 'bar',
     baz: async (v) => v + 'qux'
@@ -341,23 +341,24 @@ import {topoconfig} from 'topoconfig'
 
 const config = await topoconfig({
   data: {
-    foo: '$a',
-    url: 'https://some.url',
-    param: 'regular param value',
-    num: 123,
-    pwd: '\\$to.prevent.value.inject.use.\.prefix',
+    foo:      '$a',
+    url:      'https://some.url',
+    param:    'regular param value',
+    num:      123,
+    pwd:      '\\$to.prevent.value.inject.use.\.prefix',
     a: {
-      b: '$b.some.nested.prop.value.of.b',
-      c: '$external.prop.of.prop'
+      b:      '$b.some.nested.prop.value.of.b',
+      c:      '$external.prop.of.prop'
     }
   },
   sources: {
-    a: 'file ./file.json utf8',
-    b: 'json $a',
-    c: 'get $b > assert type number',
-    cwd: 'cwd',
-    schema: 'file $cwd/schema.json utf8 > json',
+    a:        'file ./file.json utf8',
+    b:        'json $a',
+    c:        'get $b > assert type number',
+    cwd:      'cwd',
+    schema:   'file $cwd/schema.json utf8 > json',
     external: 'fetch http://foo.example.com > get .body > json > get .prop > ajv $schema',
+    extended: 'extend $b $external',
     template: `dot {{? $name }}
 <div>Oh, I love your name, {{=$name}}!</div>
 {{?? $age === 0}}
@@ -365,13 +366,16 @@ const config = await topoconfig({
 {{??}}
 You are {{=$age}} and still don't have a name?
 {{?}} > assert $foo`,
-    extended: 'extend $b $external'
   },
   cmds: {
-    extend: Object.assign,
     // http://olado.github.io/doT/index.html
-    dot: (...chunks) => dot.template(chunks.join(' '))({}),
-    fetch: async (url) => {
+    dot:      (...chunks) => dot.template(chunks.join(' '))({}),
+    extend:   Object.assign,
+    cwd:      () => process.cwd(),
+    file:     (file, opts) => fs.readFile(file, opts),
+    json:     JSON.parse,
+    get:      lodash.get,
+    fetch:    async (url) => {
       const res = await fetch(url)
       const code = res.status
       const headers = Object.fromEntries(res.headers)
@@ -384,10 +388,6 @@ You are {{=$age}} and still don't have a name?
         code
       }
     },
-    cwd: () => process.cwd(),
-    file: (file, opts) => fs.readFile(file, opts),
-    json: JSON.parse,
-    get: lodash.get,
     //...
   }
 })
