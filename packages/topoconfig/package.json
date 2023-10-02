@@ -1,9 +1,7 @@
 {
   "name": "topoconfig",
-  "alias": "uco",
-  "version": "0.0.0-draft.0",
+  "version": "0.0.0-draft.1",
   "description": "Toposource-enhanced uniconfig",
-  "private": true,
   "type": "module",
   "main": "target/cjs/index.cjs",
   "exports": {
@@ -30,7 +28,7 @@
     "test": "concurrently 'npm:test:*'",
     "test:lint": "eslint -c src/test/lint/.eslintrc.json src",
     "test:unit": "c8 -r lcov -r text -o target/coverage -x src/test node --loader ts-node/esm --experimental-specifier-resolution=node ../infra/scripts/test.mjs",
-    "publish:snapshot": "npm publish --no-git-tag-version --tag draft"
+    "publish:draft": "npm publish --no-git-tag-version --tag draft"
   },
   "publishConfig": {
     "access": "public"
