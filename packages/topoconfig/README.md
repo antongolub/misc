@@ -174,7 +174,8 @@ _Here's how [uniconfig](https://github.com/qiwi/uniconfig/blob/master/examples/v
 ```
 
 Meanwhile, the formats evolved (JSON, JSON5, YAML), config entry points were constantly changing. These fluctuations, fortunately, can be covered by tools like a [cosmiconfig](https://github.com/cosmiconfig/cosmiconfig).
-```json
+```js
+[
   'package.json',
   `.${moduleName}rc`,
   `.${moduleName}rc.json`,
@@ -267,9 +268,9 @@ The problem comes from the fact that we combined resolving, processing and acces
 * Let `data` to represent how the result structure may be built if all the required transformations were made — like a pure mapping.
 ```json
 {
-  a: {
-    b: '$b.some.nested.prop.value.of.b',
-    c: '$external.prop.of.prop'
+  "a": {
+    "b": "$b.some.nested.prop.value.of.b",
+    "c": "$external.prop.of.prop"
   }
 }
 ```
