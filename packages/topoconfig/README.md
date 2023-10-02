@@ -38,17 +38,18 @@ port = 143
 file = "payroll.dat"
 ```
 
-At the same time, another part of the configuration was supplied from [the environment variables](https://en.wikipedia.org/wiki/Environment_variable) or [CLI parameters](https://en.wikipedia.org/wiki/Command-line_interface).
-Or even from [dotenv-files](https://stackoverflow.com/questions/68267862/what-is-an-env-or-dotenv-file-exactly):
+At the same time, another part of the configuration was supplied from [the environment variables](https://en.wikipedia.org/wiki/Environment_variable) or [CLI parameters](https://en.wikipedia.org/wiki/Command-line_interface) reflecting the idea of dynamic settings.  
+
+_Years later we use [dotenv-files](https://stackoverflow.com/questions/68267862/what-is-an-env-or-dotenv-file-exactly), ironic :_
 ```ini
 # https://hexdocs.pm/dotenvy/0.2.0/dotenv-file-format.html
 S3_BUCKET=YOURS3BUCKET
 SECRET_KEY=YOURSECRETKEYGOESHERE
 ```
 
-So, the resolution logic began to penetrate into the app layer.
+Even then, the resolution logic began to penetrate into the app layer.
 ```js
-// Just an illustration. This problem has appeared before the JS was invented
+// Just an illustration. This problem was aroung before the JS was invented
 
 const config = require('config')
 const logLevel = process.env.DEBUG ? 'trace' : config.get('log.level') || 'info'
@@ -62,10 +63,10 @@ if (config.has('optionalFeature.detail')) {
 }
 ```
 
-When centralized configuration management came, the settings moved to the remote storage. Local pre-config (entrypoints, db credentials) was used to get the rest. Configuration assembly has become multi-stage.
-Later, specialized systems such as [vault](https://developer.hashicorp.com/vault/docs) appeared: env holds an access token and defines an entrypoint to make a POST request to reveal credentials profile to be  to the entire config.
+When centralized configuration management came, the settings has been moved partially to the remote storage. Local pre-config (entrypoints, db credentials) was used to get the rest. Configuration assembly has become multi-stage.
+Later, specialized systems such as [vault](https://developer.hashicorp.com/vault/docs) made a new additions: env holds an access token and defines an entrypoint to make a POST request to reveal credentials profile to be  to the entire config.
 
-_Here's how [uniconfig](https://github.com/qiwi/uniconfig/blob/master/examples/vault.md) obtains data from the vault storage:_
+_Here's how [uniconfig](https://github.com/qiwi/uniconfig/blob/master/examples/vault.md) obtains the entire secret data from the vault storage:_
 ```json
 {
   "data": {
@@ -173,7 +174,7 @@ _Here's how [uniconfig](https://github.com/qiwi/uniconfig/blob/master/examples/v
 }
 ```
 
-Meanwhile, the formats evolved (JSON, JSON5, YAML), config entry points were constantly changing. These fluctuations, fortunately, can be covered by tools like a [cosmiconfig](https://github.com/cosmiconfig/cosmiconfig).
+Meanwhile, the formats evolved (JSON, JSON5, YAML), config entry points were constantly changing. These fluctuations, fortunately, were covered by tools like the [cosmiconfig](https://github.com/cosmiconfig/cosmiconfig).
 ```js
 [
   'package.json',
@@ -243,7 +244,7 @@ Then templates inside templates. With commands and scripts invocations inside dy
 ```
 
 ## The budget loss
-`::$([`. Сonfusing, fragile and overcomplicated for the most developers. For example, here is how Python Engineer was fighting against `kube.yaml`:
+`::$([` is definitely not a _perfect_ solution. Сonfusing, fragile and overcomplicated for the most developers. For example, here is how Python Engineer was fighting against `kube.yaml`:
 ```text
 fix vault in kube yaml Jul 04	XS		
 fix vault in kube yaml Jul 04	XS
@@ -281,15 +282,15 @@ The problem comes from the fact that we combined resolving, processing and acces
   "b": "<pipeline 2>"
 }
 ```
-* Let `pipeline` to compose actions in _natural_ form like CLI: `cmd param > cmd2 param param > ... > cmd3`
-* Let intermediate values be referenced by lateral (bubbling) or nested contexts.
+* Let `pipeline` to compose actions in _natural_ ~~human~~ dev-readable format like CLI: `cmd param > cmd2 param param > ... > cmd3`
+* Let intermediate values be referenced by lateral (bubbling concept) or nested contexts.
 ```json
 {
   "a" : "cmd param",
   "b": "cmd $a"
 }
 ```
-* Apply [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph) processing.
+* Apply [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph) for consistency checks and processing.
 
 </details>
 
@@ -298,7 +299,7 @@ The problem comes from the fact that we combined resolving, processing and acces
 yarn add topoconfig
 ```
 
-## Usage
+## Proposal
 ```ts
 import {topoconfig} from 'topoconfig'
 
@@ -359,7 +360,7 @@ You are {{=$age}} and still don't have a name?
 ## API
 `TConfigDeclaration` defines two sections: `data` and `sources`:
 * `data` describes how to build the result value based on the bound sources: it populates `$`-prefixed refs with their values in every place.
-* `sources` is a map, which declares the _algorithm_ to resolve some values through `cmd` calls composition. To fetch data from remote, to read from file, to convert, etc.
+* `sources` is a map, which declares the _algorithm_ to resolve intermediate values through `cmd` calls composition. To fetch data from remote, to read from file, to convert, etc.
 ```json
 {
   "data": "$res",
@@ -369,10 +370,41 @@ You are {{=$age}} and still don't have a name?
 }
 ```
 * `cmd` is a provider that performs a specific action.
-* `directive` is a template to define value transformation pipeline
+```ts
+type TCmd = (...opts: any[]) => any
+```
+* `directive` is a template for defining a value transformation pipeline
 ```
 // fetch http://foo.example.com > get body > json > get .prop
 // ↑ cmd ↑opts                  ↑ pipes delimiter
+```
+
+## Next steps
+* Add ternaries: `cmd ? cmd1 > cmd2 ... : cmd`
+* Handle _or_ statement: `cmd > cmd || cmd > cmd`
+* Expose commands presets: `import {cmds} from 'topoconfig/cmds'` or `@topoconfig/cmds`
+* Provide lazy-loading for cmds:
+```js
+{
+  foo: 'some/package',
+  bar: './local/plugin.js'
+}
+```
+* Support a pipeline factory as cmd declaration.
+```js
+{
+  'readjson': 'path $0 resolve > file $1 > json'
+}
+```
+* Use vars as cmd refs:
+```js
+{
+  sources: {
+    files: 'glob ./*.*'
+    reader: 'detect $files'
+    foo: 'file $files.0 > $reader'
+  }
+}
 ```
 
 ## License
