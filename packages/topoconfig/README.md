@@ -7,7 +7,7 @@ Configs can be complex. Let's try to make them a little more convenient.
 <details>
 <summary><b>Bla-bla-bla</b></summary>
 
-## The config mess
+## Config mess
 
 Many years ago [configs](https://en.wikipedia.org/wiki/Configuration_file) were pretty simple. They looked more or less like [.properties-files](https://en.wikipedia.org/wiki/.properties) or [INI-files](https://en.wikipedia.org/wiki/INI_file), simple kv-maps with sections or composite keys to bring some kind of context:
 
@@ -245,7 +245,7 @@ Then templates inside templates. With commands and scripts invocations inside dy
 ```
 As we can see, syntax complexity increases as the cost of declarativeness. It's still unclear how this problem can be mitigated. Perhaps new specialized formats will appear or more strict forms (schemas) of using existing ones will be introduced.
 
-## The budget loss
+## Budget loss
 Anyway, `::$([` is definitely not an _optimal_ solution. Сonfusing, fragile and overcomplicated for the most developers. For example, here is how Python Engineer was fighting against `kube.yaml`:
 ```text
 fix vault in kube yaml Jul 04	XS		
@@ -266,30 +266,36 @@ fix vault in kube yaml Jul 03	XS
 ```
 This is definitely not _configuring_ but more _guessing_. On a company scale, such exercises are a significant waste of resources. And this _experience_ is almost one-time only, which cannot be formalized and transmitted except by copy-paste. Every time we see the same thing, with a different number of attempts.
 
-## The what we need
+## What we need
 The overcomplexity problem seems to have arisen from the fact that we combined resolving, processing and accessing data into one structure. Although the entire theory of programming / CS instructs us to do exactly the opposite.
-* Let `data` to represent how the result structure may be built if all the required transformations were made — like a pure mapping.
+* Let `data` to represent how the result structure may be built if all the required transformations were made — like a pure _mapping_.
 ```json
 {
-  "a": {
-    "b": "$b.some.nested.prop.value.of.b",
-    "c": "$external.prop.of.prop"
+  "data": {
+    "a": {
+      "b": "$b.some.nested.prop.value.of.b",
+      "c": "$external.prop.of.prop"
+    }
   }
 }
 ```
-* Let `sources` to describe how to obtain and process values for referencing in `data` map. Like pipelines.
+* Let `sources` to describe how to obtain and process values for referencing in `data` map. Like _reducing_ pipelines.
 ```json
 {
-  "a": "<pipeline 1>",
-  "b": "<pipeline 2>"
+  "sources": {
+    "a": "<pipeline 1>",
+    "b": "<pipeline 2>"
+  }
 }
 ```
 * Let `pipeline` to compose actions in natural ~~human~~ dev-readable format like CLI: `cmd param > cmd2 param param > ... > cmd3`
 * Let intermediate values be referenced by lateral (bubbling concept) or nested contexts.
-```json
+```json5
 {
-  "a" : "cmd param",
-  "b": "cmd $a"
+  "sources": {
+    "a" : "cmd param",
+    "b": "cmd $a" // b refers to a
+  }
 }
 ```
 * Apply [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph) for consistency checks and processing.
