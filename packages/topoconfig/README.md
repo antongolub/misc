@@ -275,7 +275,7 @@ The overcomplexity problem seems to have arisen from the fact that we combined r
   "cmds": "<available cmds/ops/fns>"
 }
 ```
-* Let `data` to represent how the result structure may be built if all the required transformations were made — like a pure _mapping_.
+* Let `data` to represent how the result structure may be built if all the required transformations were made — like a _mapping_.
 ```json
 {
   "data": {
@@ -286,6 +286,14 @@ The overcomplexity problem seems to have arisen from the fact that we combined r
   }
 }
 ```
+Templating bases on regular substring replacements:
+```java
+String.format("foo %s", "bar")                   // gives 'foobar'
+// But positional contract is enhanced with named refmap
+String.format("foo $a $b $a", {"a": "A", "b": "B"}) // returns 'foo A B A'
+//            ↑ data chunks ↑ sources map
+```
+
 * Let `sources` to describe how to obtain and process values for referencing in `data` map. Like _reducing_ pipelines.
 ```json
 {
@@ -295,7 +303,10 @@ The overcomplexity problem seems to have arisen from the fact that we combined r
   }
 }
 ```
-* Let `pipeline` to compose actions in natural ~~human~~ dev-readable format like CLI: `cmd param > cmd2 param param > ... > cmd3`
+* Let `pipeline` to compose actions in natural ~~human~~ dev-readable format like CLI:
+```bash
+cmd param > cmd2 param param > ... > cmd3
+```
 * Let intermediate values be referenced by lateral (bubbling concept) or nested contexts.
 ```json5
 {
@@ -305,7 +316,7 @@ The overcomplexity problem seems to have arisen from the fact that we combined r
   }
 }
 ```
-* Apply [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph) for consistency checks and processing.
+* Apply [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph) walker for consistency checks and processing.
 
 </details>
 
