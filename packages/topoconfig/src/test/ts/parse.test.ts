@@ -122,7 +122,7 @@ describe('parse()', () => {
           vertexes: {
             '':    [{cmd:  DATA,  args: ['{"b":"$b"}'], refs: ['b'],  mappings: {b: 'b'}}],
             'a':   [{cmd: 'foo',  args: ['bar'],     refs: [],        mappings: {}}],
-            'b':   [{cmd:  DATA,  args: ['\"$a\"'],  refs: ['a'],     mappings: {a: 'b:a'}}],
+            'b':   [{cmd:  DATA,  args: ['"$a"'],    refs: ['a'],     mappings: {a: 'b:a'}}],
             'b:a': [{cmd: 'baz',  args: ['$c'],      refs: ['c'],     mappings: {c: 'c'}}],
             'c':   [{cmd: 'echo', args: ['$a'],      refs: ['a'],     mappings: {a: 'a'}}]
           },
@@ -148,7 +148,7 @@ describe('parse()', () => {
             '':[
               {
                 cmd: DATA,
-                args: ['\"$foo\"'],
+                args: ['"$foo"'],
                 refs: ['foo'],
                 mappings: { foo: 'foo' }
               }

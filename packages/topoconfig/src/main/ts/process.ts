@@ -1,4 +1,4 @@
-import {TCmds, TDirective, TOperator, TPipeline, TProcessContext} from './interface'
+import {TCmds, TDirective, TOperator, TProcessContext} from './interface'
 import {DATA, DROP} from './constants'
 
 type TPromiseAction<T = any> = (value: T | PromiseLike<T>) => void
@@ -16,7 +16,7 @@ const getPromise = <T = any>() => {
 }
 
 // https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_get
-const get = <T = any>(obj: any, path: string, defaultValue = undefined): T => {
+const get = <T = any>(obj: any, path: string, defaultValue?: any): T => {
   if (!path) return obj
   if (path.startsWith('.')) return get(obj, path.slice(1), defaultValue)
 
@@ -79,13 +79,13 @@ export const process = async <T = any>(ctx: TProcessContext, vertex = ''): Promi
       )
     ]
 
-    console.log(cmd, _cmd)
-    console.log('args', _args)
+    // console.log(cmd, _cmd)
+    // console.log('args', _args)
 
     result = await _cmd(..._args) as T
     resolve(result)
 
-    console.log('result', result)
+    // console.log('result', result)
 
     i++
     pipe = pipeline[i]

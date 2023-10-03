@@ -37,6 +37,7 @@ export const parseWords = (value: string): string[] => {
   let bb = 0 // brackets balance
   let qb = '' // quotes balance
 
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   chars.forEach((c, i) => {
     const prev = chars[i - 1]
     const next = chars[i + 1]
@@ -70,10 +71,10 @@ export const parseDirectives = (value: string): TPipeline => {
   const words = parseWords(value)
   const directives: TPipeline = []
   const capture = () => {
-    args.length && directives.push({
+    args.length > 0 && directives.push({
       cmd: args.shift() as string,
       args,
-      refs: args.map((a: string) => parseRefs(a)).flat(),
+      refs: args.flatMap((a: string) => parseRefs(a)),
       mappings: {}
     })
     args = []
