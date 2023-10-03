@@ -266,7 +266,7 @@ fix vault in kube yaml Jul 03	XS
 This is definitely not _configuring_ but more _guessing_. On a company scale, such exercises are a significant waste of resources. And this _experience_ is almost one-time only, which cannot be formalized and transmitted except by copy-paste. Every time we see the same thing, with a different number of attempts.
 
 ## The what we need
-The problem comes from the fact that we combined resolving, processing and accessing data into one structure. Although the entire theory of programming / CS instructs us to do exactly the opposite.
+The overcomplexity problem seems to have arisen from the fact that we combined resolving, processing and accessing data into one structure. Although the entire theory of programming / CS instructs us to do exactly the opposite.
 * Let `data` to represent how the result structure may be built if all the required transformations were made — like a pure mapping.
 ```json
 {
@@ -349,6 +349,9 @@ const config = await topoconfig({
     a: {
       b:      '$b.some.nested.prop.value.of.b',
       c:      '$external.prop.of.prop'
+    },
+    log: {
+      level:  `$loglevel`
     }
   },
   sources: {
@@ -359,6 +362,7 @@ const config = await topoconfig({
     schema:   'file $cwd/schema.json utf8 > json',
     external: 'fetch http://foo.example.com > get .body > json > get .prop > ajv $schema',
     extended: 'extend $b $external',
+    loglevel: 'find $env.LOG_LEVEL $argv.log-level $argv.log.level info',
     template: `dot {{? $name }}
 <div>Oh, I love your name, {{=$name}}!</div>
 {{?? $age === 0}}
@@ -375,6 +379,9 @@ You are {{=$age}} and still don't have a name?
     file:     (file, opts) => fs.readFile(file, opts),
     json:     JSON.parse,
     get:      lodash.get,
+    argv:     () => minimist(process.argv.slice(2)),
+    env:      () => process.env,
+    find:     (...args) => args.find(Boolean),
     fetch:    async (url) => {
       const res = await fetch(url)
       const code = res.status
