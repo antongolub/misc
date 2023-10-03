@@ -2,7 +2,7 @@
 > [toposource](https://github.com/semrel-extra/toposource)-enhanced [uniconfig](https://github.com/qiwi/uniconfig) remastered
 
 ## Motivation
-Dynamic configs will always be complex. Let's try to make them a little more convenient.
+Configs can be complex. Let's try to make them a little more convenient.
 
 <details>
 <summary><b>Bla-bla-bla</b></summary>
@@ -64,9 +64,10 @@ if (config.has('optionalFeature.detail')) {
 ```
 
 When centralized configuration management came, the settings has been moved partially to the remote storage. Local pre-config (entrypoints, db credentials) was used to get the rest. Configuration assembly has become multi-stage.
-Later, specialized systems such as [vault](https://developer.hashicorp.com/vault/docs) made a new additions: env holds an access token and defines an entrypoint to make a POST request to reveal credentials profile to be  to the entire config.
 
-_Here's how [uniconfig](https://github.com/qiwi/uniconfig/blob/master/examples/vault.md) obtains the entire secret data from the vault storage:_
+Later, specialized systems such as [vault](https://developer.hashicorp.com/vault/docs) made new additions: now env holds an access token and defines an entrypoint by running mode to make a POST request to reveal credentials profile to mix this data to the entire config.
+
+_Here's how [uniconfig](https://github.com/qiwi/uniconfig/blob/master/examples/vault.md) obtains secrets from the vault storage:_
 ```json
 {
   "data": {
@@ -464,6 +465,7 @@ type TCmd = (...opts: any[]) => any
   }
 }
 ```
+* Bring smth like watchers to trigger graph re-resolution from the specified vertex
 
 ## Refs and Inspirations
 * [cosmiconfig](https://github.com/cosmiconfig/cosmiconfig)

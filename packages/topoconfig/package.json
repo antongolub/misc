@@ -1,6 +1,6 @@
 {
   "name": "topoconfig",
-  "version": "0.0.0-draft.6",
+  "version": "0.0.0-draft.8",
   "description": "Toposource-enhanced uniconfig",
   "type": "module",
   "main": "target/cjs/index.cjs",

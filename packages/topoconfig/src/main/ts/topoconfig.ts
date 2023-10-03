@@ -4,6 +4,12 @@ import {TConfigDeclaration, TProcessContext} from './interface'
 
 export type {TConfigDeclaration} from './interface'
 
+/**
+ * Processes config declaration to resolve the output data value.
+ *
+ * @param {TConfigDeclaration} cfg Config declaration
+ * @returns {Promise<any>} Populated config data
+ */
 export const topoconfig = (cfg: TConfigDeclaration) => {
   const { cmds = {} } = cfg
   const {vertexes, edges} = parse(cfg)
