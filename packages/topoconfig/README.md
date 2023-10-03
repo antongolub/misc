@@ -283,7 +283,7 @@ The overcomplexity problem seems to have arisen from the fact that we combined r
   "b": "<pipeline 2>"
 }
 ```
-* Let `pipeline` to compose actions in _natural_ ~~human~~ dev-readable format like CLI: `cmd param > cmd2 param param > ... > cmd3`
+* Let `pipeline` to compose actions in natural ~~human~~ dev-readable format like CLI: `cmd param > cmd2 param param > ... > cmd3`
 * Let intermediate values be referenced by lateral (bubbling concept) or nested contexts.
 ```json
 {
@@ -469,6 +469,9 @@ type TCmd = (...opts: any[]) => any
 * [cosmiconfig](https://github.com/cosmiconfig/cosmiconfig)
 * [node-config](https://github.com/node-config/node-config)
 * [uniconfig](https://github.com/qiwi/uniconfig)
+* [toposource](https://github.com/semrel-extra/toposource)
+* [symfony/config](https://github.com/symfony/config)
+* [gookit/config](https://github.com/gookit/config)
 
 ## License
 [MIT](./LICENSE)
