@@ -267,7 +267,7 @@ fix vault in kube yaml Jul 03	XS
 This is definitely not _configuring_ but more _guessing_. On a company scale, such exercises are a significant waste of resources. And this _experience_ is almost one-time only, which cannot be formalized and transmitted except by copy-paste. Every time we see the same thing, with a different number of attempts.
 
 ## What we need
-The overcomplexity problem seems to have arisen from the fact that we combined resolving, processing and accessing data into one structure. Although the entire theory of programming / CS instructs us to do exactly the opposite.
+The overcomplexity problem seems to have arisen from the fact that we combined resolving, processing and accessing data into one structure. Although the entire theory of programming / CS instructs us to do exactly the opposite. [Separation of concerns](https://en.wikipedia.org/wiki/Separation_of_concerns):
 * Let `data` to represent how the result structure may be built if all the required transformations were made — like a pure _mapping_.
 ```json
 {
