@@ -452,6 +452,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@topoconfig/cmds@workspace:packages/topoconfig/cmds":
+  version: 0.0.0-use.local
+  resolution: "@topoconfig/cmds@workspace:packages/topoconfig/cmds"
+  dependencies:
+    "@antongolub/infra": "workspace:*"
+    "@types/node": "npm:^20.6.5"
+    topoconfig: "workspace:*"
+  languageName: unknown
+  linkType: soft
+
 "@tsconfig/node10@npm:^1.0.7":
   version: 1.0.9
   resolution: "@tsconfig/node10@npm:1.0.9"
@@ -3807,9 +3817,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"topoconfig@workspace:packages/topoconfig":
+"topoconfig@workspace:*, topoconfig@workspace:packages/topoconfig/core":
   version: 0.0.0-use.local
-  resolution: "topoconfig@workspace:packages/topoconfig"
+  resolution: "topoconfig@workspace:packages/topoconfig/core"
   dependencies:
     "@antongolub/infra": "workspace:*"
     "@types/node": "npm:^20.6.5"

@@ -325,12 +325,13 @@ cmd param > cmd2 param param > ... > cmd3
 
 ## Install
 ```shell
-yarn add topoconfig
+yarn add topoconfig@draft
 ```
 
 ## Usage
+
 ```ts
-import {topoconfig} from 'topoconfig'
+import {topoconfig} from './index'
 
 const config = await topoconfig({
   // define functions to use in pipelines: sync or async

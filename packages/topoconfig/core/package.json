@@ -21,13 +21,13 @@
   ],
   "scripts": {
     "build": "concurrently 'npm:build:*'",
-    "build:esm": "node ../infra/scripts/build.cjs",
-    "build:cjs": "node ../infra/scripts/build.cjs --cjs",
+    "build:esm": "node ../../infra/scripts/build.cjs",
+    "build:cjs": "node ../../infra/scripts/build.cjs --cjs",
     "build:dts": "tsc --emitDeclarationOnly --skipLibCheck --outDir target/dts",
     "build:docs": "typedoc --options src/main/typedoc",
     "test": "concurrently 'npm:test:*'",
     "test:lint": "eslint -c src/test/lint/.eslintrc.json src",
-    "test:unit": "c8 -r lcov -r text -o target/coverage -x src/test node --loader ts-node/esm --experimental-specifier-resolution=node ../infra/scripts/test.mjs",
+    "test:unit": "c8 -r lcov -r text -o target/coverage -x src/test node --loader ts-node/esm --experimental-specifier-resolution=node ../../infra/scripts/test.mjs",
     "publish:draft": "npm publish --no-git-tag-version --tag draft"
   },
   "publishConfig": {
@@ -42,7 +42,7 @@
   "bugs": {
     "url": "https://github.com/antongolub/misc/issues"
   },
-  "homepage": "https://github.com/antongolub/misc/blob/master/packages/topoconfig/README.md",
+  "homepage": "https://github.com/antongolub/misc/blob/master/packages/topoconfig/core/README.md",
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
     "@types/node": "^20.6.5"

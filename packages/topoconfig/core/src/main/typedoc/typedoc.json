@@ -1,0 +1,10 @@
+{
+  "name": "topoconfig",
+  "extends": ["../../../../../infra/typedoc.json"],
+  "entryPoints": ["../../../src/main/ts/"],
+  "exclude": ["../../../src/test", "**/node_modules/**"],
+  "externalPattern": ["**/node_modules/**"],
+  "out": "../../../target/docs",
+  "readme": "../../../README.md",
+  "tsconfig": "../../../tsconfig.json"
+}

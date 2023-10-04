@@ -1,0 +1,53 @@
+{
+  "name": "@topoconfig/cmds",
+  "version": "0.0.0",
+  "description": "Topoconfig basic cmds preset",
+  "private": true,
+  "type": "module",
+  "main": "target/cjs/index.cjs",
+  "exports": {
+    ".": {
+      "types": "./target/dts/index.d.ts",
+      "require": "./target/cjs/index.cjs",
+      "import": "./target/esm/index.mjs",
+      "default": "./target/esm/index.mjs"
+    }
+  },
+  "module": "target/esm/index.mjs",
+  "types": "target/dts/index.d.ts",
+  "files": [
+    "target/cjs",
+    "target/esm",
+    "target/dts"
+  ],
+  "scripts": {
+    "build": "concurrently 'npm:build:*'",
+    "build:esm": "node ../../infra/scripts/build.cjs",
+    "build:cjs": "node ../../infra/scripts/build.cjs --cjs",
+    "build:dts": "tsc --emitDeclarationOnly --skipLibCheck --outDir target/dts",
+    "build:docs": "typedoc --options src/main/typedoc",
+    "test": "concurrently 'npm:test:*'",
+    "test:lint": "eslint -c src/test/lint/.eslintrc.json src",
+    "test:unit": "c8 -r lcov -r text -o target/coverage -x src/test node --loader ts-node/esm --experimental-specifier-resolution=node ../../infra/scripts/test.mjs"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antongolub/misc.git"
+  },
+  "author": "Anton Golub <antongolub@antongolub.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/antongolub/misc/issues"
+  },
+  "homepage": "https://github.com/antongolub/misc/blob/master/packages/topoconfig/cmds/README.md",
+  "dependencies": {
+    "topoconfig": "workspace:*"
+  },
+  "devDependencies": {
+    "@antongolub/infra": "workspace:*",
+    "@types/node": "^20.6.5"
+  }
+}
