@@ -1,9 +1,13 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { foo } from '../../main/ts'
+import * as cmds from '../../main/ts'
 
-describe('foo()', () => {
-  it('is callable', () => {
-    assert.equal(foo(), undefined)
+describe('index', () => {
+  it('exports cmds as expected', () => {
+    const names = [
+      'get'
+    ];
+
+    names.forEach(name => assert.equal(typeof cmds[name], 'function'))
   })
 })
