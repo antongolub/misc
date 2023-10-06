@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true,
+    "strict": true,
     "module": "esnext",
     "target": "esnext",
-    "strict": true,
+    "esModuleInterop": true,
+    "allowJs": false,
+    "allowImportingTsExtensions": true,
     "noImplicitAny": true,
     "declaration": true,
-    "forceConsistentCasingInFileNames": true,
-    "allowJs": false
+    "forceConsistentCasingInFileNames": true
   },
   "ts-node": {
     "transpileOnly": true,

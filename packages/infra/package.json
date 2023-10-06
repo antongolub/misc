@@ -16,7 +16,7 @@
     "@semrel-extra/topo": "^1.14.0",
     "c8": "^8.0.1",
     "concurrently": "^8.2.1",
-    "esbuild": "^0.19.3",
+    "esbuild": "^0.19.4",
     "esbuild-node-externals": "^1.9.0",
     "eslint": "^8.50.0",
     "eslint-config-qiwi": "^2.1.3",
