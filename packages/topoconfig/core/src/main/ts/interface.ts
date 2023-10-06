@@ -21,8 +21,8 @@ export type TProcessContext = {
 
 export type TDirective = {
   op?: undefined
-  cmd: string | symbol,
-  args: string[],
+  cmd: string | symbol
+  args: any[]
   refs: string[]
   mappings: Record<string, string>
 }

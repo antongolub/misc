@@ -25,7 +25,10 @@ describe('process()', () => {
         lower: v => v.toLowerCase(),
         echo: v => v,
         baz: v => (v + 'baz'),
-        _: (v) => typeof v === 'string' && (v.startsWith('{') || v.startsWith('[')) ? JSON.parse(v) : v,
+        _: (...v) => {
+          const _v = v.join('')
+          return (_v.startsWith('{') || _v.startsWith('[')) ? JSON.parse(_v) : _v
+        },
       },
       values: {}
     }

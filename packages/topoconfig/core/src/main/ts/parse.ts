@@ -1,5 +1,6 @@
 import {TConfigDeclaration, TConfigGraph, TData, TDirective, TPipeline} from './interface'
 import {DATA} from './constants'
+import {flatten} from './util.ts'
 
 export const parseRefs = (chunk: string) => {
   const refPattern = /\$\w+/g
@@ -25,8 +26,6 @@ const rops = Object.entries(ops).reduce<Record<string, string>>((m, [k, v]) => {
   m[v] = k
   return m
 }, {})
-
-export const populate = Symbol('polupate')
 
 // Maybe use smth like https://github.com/MeLlamoPablo/minimist-string/blob/master/index.js instead?
 export const parseWords = (value: string): string[] => {
@@ -150,6 +149,8 @@ export const parseDataRefs = (data: TData, refs: string[] = []) => {
   return refs
 }
 
+export const parseDataArgs = (data: any) => typeof data === 'string' ? [data] : Object.entries(flatten(data)).flat()
+
 export const populateMappings = (ctx: TParseContext, directives: TPipeline, key = ctx.prefix) => {
   ctx.vertexes[key] = directives
   directives.forEach(directive => {
@@ -182,7 +183,12 @@ export const parse = ({data, sources}: TConfigDeclaration, parent: TParseContext
     prefix,
   }
 
-  populateMappings(ctx, [{cmd: DATA, args: [JSON.stringify(data)], refs: dataRefs, mappings: {}}])
+  populateMappings(ctx, [{
+    cmd: DATA,
+    args: parseDataArgs(data),
+    refs: dataRefs,
+    mappings: {}
+  }])
 
   refs.forEach(k => {
     const key = resolveRefKey(k, ctx)

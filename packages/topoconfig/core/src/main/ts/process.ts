@@ -1,38 +1,11 @@
 import {TCmds, TDirective, TOperator, TProcessContext} from './interface'
 import {DATA, DROP} from './constants'
-
-type TPromiseAction<T = any> = (value: T | PromiseLike<T>) => void
-
-const getPromise = <T = any>() => {
-  let resolve: TPromiseAction<T> = () => {}
-  let reject: TPromiseAction<T> = () => {}
-  const promise = new Promise<T>((...args) => { [resolve, reject] = args })
-
-  return {
-    reject,
-    resolve,
-    promise
-  }
-}
-
-// https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_get
-const get = <T = any>(obj: any, path: string, defaultValue?: any): T => {
-  if (!path) return obj
-  if (path.startsWith('.')) return get(obj, path.slice(1), defaultValue)
-
-  const travel = (regexp: RegExp) =>
-    String.prototype.split
-      .call(path, regexp)
-      .filter(Boolean)
-      .reduce((res, key) => (res !== null && res !== undefined ? res[key] : res), obj)
-  const result = travel(/[,[\]]+?/) || travel(/[,[\].]+?/)
-  return result === undefined || result === obj ? defaultValue : result
-}
+import {expand, get, getPromise} from './util.ts'
 
 export const process = async <T = any>(ctx: TProcessContext, vertex = ''): Promise<T> => {
   const {vertexes, edges, cmds: _cmds, values} = ctx
   const cmds: TCmds = {
-    [DATA]: JSON.parse,
+    [DATA]: processData,
     ..._cmds
   }
   if (values[vertex]) {
@@ -67,25 +40,39 @@ export const process = async <T = any>(ctx: TProcessContext, vertex = ''): Promi
 
     const _refs = (await Promise.all(refs.map(async v => ({[v]: await process(ctx, mappings[v])}))))
       .reduce((m, mixin) => Object.assign(m, mixin), {})
-    const replacer = (_: string, ref: string, path: string) => JSON.stringify(get(_refs[ref], path))
     const _args = [
       ...(result === DROP ? [] : [result]),
-      ...args.map(chunk =>
-        /^\$\w+$/.test(chunk)
-          ? _refs[chunk.slice(1)]
+      ...args.flatMap(chunk =>
+        typeof chunk === 'string'
+          ? chunk.split(/(\$[\w.]+)/g).map((m, i) => {
+            if (i % 2 === 0) return m || undefined
+
+            const d = m.indexOf('.')
+            const [r, p] = d === -1 ? [m.slice(1), '.'] : [m.slice(1, d), m.slice(d + 1)]
+
+            console.log('r=', r, 'p=', p, 'chunk=', chunk)
+
+            return get(_refs[r], p, m)
+          })
+            .filter(v => v !== undefined)
           : chunk
-            .replace(/"\$(\w+)(\.[^" ]+)?"/g, replacer)
-            .replace(/\$(\w+)(\.[^" ]+)?/g, replacer)
+        // /^\$\w+$/.test(chunk)
+        //   ? _refs[chunk.slice(1,-1)]
+        //   : chunk
+        //     .replace(/"\$(\w+)(\.[^" ]+)?"/g, replacer)
+        //     .replace(/\$(\w+)(\.[^" ]+)?/g, replacer)
       )
     ]
 
-    // console.log(cmd, _cmd)
-    // console.log('args', _args)
+    console.log(cmd, _cmd)
+    console.log('args', args)
+    console.log('_args=', _args)
+    console.log('_refs=', _refs)
 
     result = await _cmd(..._args) as T
     resolve(result)
 
-    // console.log('result', result)
+    console.log('result', result)
 
     i++
     pipe = pipeline[i]
@@ -93,3 +80,13 @@ export const process = async <T = any>(ctx: TProcessContext, vertex = ''): Promi
 
   return promise
 }
+
+export const processData = (...chunks: any[]) =>
+  chunks.length === 1
+    ? chunks[0]
+    : expand(chunks.reduce((m, v, k) => {
+      if (k % 2) {
+        m[chunks[k - 1]] = v
+      }
+      return m
+    }, {}))
