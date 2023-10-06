@@ -10,7 +10,7 @@ export type {TConfigDeclaration} from './interface'
  * @param {TConfigDeclaration} cfg Config declaration
  * @returns {Promise<any>} Populated config data
  */
-export const topoconfig = (cfg: TConfigDeclaration) => {
+export const topoconfig = <T = any>(cfg: TConfigDeclaration): Promise<T> => {
   const { cmds = {} } = cfg
   const {vertexes, edges} = parse(cfg)
   const ctx: TProcessContext = {
@@ -20,6 +20,6 @@ export const topoconfig = (cfg: TConfigDeclaration) => {
     cmds,
   }
 
-  return process(ctx)
+  return process<T>(ctx)
 }
 
