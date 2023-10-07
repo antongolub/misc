@@ -5,7 +5,7 @@
 Configs can be complex. Let's try to make them a little more convenient.
 
 <details>
-<summary><b>Bla-bla-bla</b></summary>
+<summary><b>Blah-blah-blah</b></summary>
 
 ## Config mess
 
@@ -323,21 +323,28 @@ cmd param > cmd2 param param > ... > cmd3
 ## Status
 🚧 Working draft
 
+## Key features
+* Declarative notation. Atomic transformations. No syntax bloating by design.
+* Injecting values using dot-prop paths
+* Explicit CLI-like pipelines
+* Customizable cmds
+
 ## Install
 ```shell
 yarn add topoconfig@draft
 ```
 
 ## Usage
-
 ```ts
-import {topoconfig} from './index'
+import {topoconfig} from 'topoconfig'
+import * as cmds from '@topoconfig/cmds' // optional
 
 const config = await topoconfig({
   // define functions to use in pipelines: sync or async
   cmds: {
     foo: () => 'bar',
-    baz: async (v) => v + 'qux'
+    baz: async (v) => v + 'qux',
+    ...cmds
   },
   // pipelines to resolve intermediate variables
   sources: {
@@ -361,7 +368,9 @@ const config = await topoconfig({
 })
 ```
 
-Real-world usage example may look like:
+## Customization
+Just as bash gives the ability to use any commands from the environment, so does topoconfig. Declare custom handlers to use in your pipelines. Real-world usage example may look like:
+
 ```ts
 import {topoconfig} from 'topoconfig'
 
@@ -426,6 +435,32 @@ You are {{=$age}} and still don't have a name?
 })
 ```
 
+You can also use the default [@topoconfig/cmds](https://github.com/antongolub/misc/tree/master/packages/topoconfig/cmds) preset or create your own. No limitations.
+```ts
+import {topoconfig} from 'topoconfig'
+import * as cmds from '@topoconfig/cmds'
+
+const config = await topoconfig<ReturnType<typeof cmds.conf>>({
+  cmds,
+  data: '$output',
+  sources: {
+    // resolve a config file name by env profile 
+    env: 'env',
+    name: 'dot {{ $env.ENVIRONMENT_PROFILE_NAME || "config" }}.json',
+
+    // read the config as json
+    config: 'file $name > json',
+    // read its schema
+    schema: 'file schema.json > json',
+
+    // and finally wrap the result with Conf API
+    // https://github.com/antongolub/misc/tree/master/packages/topoconfig/cmds#conf
+    output: 'conf $config $schema',
+  }
+})
+```
+
+
 ## Notes
 ```ts
 export type TData = number | string | { [key: string]: TData } | { [key: number]: TData }
@@ -462,7 +497,7 @@ type TCmd = (...opts: any[]) => any
 ## Next steps
 * Add ternaries: `cmd ? cmd1 > cmd2 ... : cmd`
 * Handle _or_ statement: `cmd > cmd || cmd > cmd`
-* Expose commands presets: `import {cmds} from 'topoconfig/cmds'` or `@topoconfig/cmds`
+* 🚧 Provide commands presets: `import {cmds} from 'topoconfig/cmds'` or [@topoconfig/cmds](https://github.com/antongolub/misc/tree/master/packages/topoconfig/cmds)
 * Provide lazy-loading for cmds:
 ```js
 {
@@ -472,7 +507,7 @@ type TCmd = (...opts: any[]) => any
   }
 }
 ```
-* Support a pipeline factory as cmd declaration.
+* Provide pipeline factories as cmd declaration.
 ```js
 {
   cmds: {

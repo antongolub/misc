@@ -50,29 +50,22 @@ export const process = async <T = any>(ctx: TProcessContext, vertex = ''): Promi
             const d = m.indexOf('.')
             const [r, p] = d === -1 ? [m.slice(1), '.'] : [m.slice(1, d), m.slice(d + 1)]
 
-            console.log('r=', r, 'p=', p, 'chunk=', chunk)
-
             return get(_refs[r], p, m)
           })
             .filter(v => v !== undefined)
           : chunk
-        // /^\$\w+$/.test(chunk)
-        //   ? _refs[chunk.slice(1,-1)]
-        //   : chunk
-        //     .replace(/"\$(\w+)(\.[^" ]+)?"/g, replacer)
-        //     .replace(/\$(\w+)(\.[^" ]+)?/g, replacer)
       )
     ]
 
-    console.log(cmd, _cmd)
-    console.log('args', args)
-    console.log('_args=', _args)
-    console.log('_refs=', _refs)
+    // console.log(cmd, _cmd)
+    // console.log('args', args)
+    // console.log('_args=', _args)
+    // console.log('_refs=', _refs)
 
     result = await _cmd(..._args) as T
     resolve(result)
 
-    console.log('result', result)
+    // console.log('result', result)
 
     i++
     pipe = pipeline[i]

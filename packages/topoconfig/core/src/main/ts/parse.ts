@@ -73,7 +73,7 @@ export const parseDirectives = (value: string): TPipeline => {
     args.length > 0 && directives.push({
       cmd: args.shift() as string,
       args,
-      refs: args.flatMap((a: string) => parseRefs(a)),
+      refs: args.flatMap(parseRefs),
       mappings: {}
     })
     args = []
@@ -157,8 +157,8 @@ export const populateMappings = (ctx: TParseContext, directives: TPipeline, key 
     if (directive.op !== undefined) {
       return
     }
-    const {refs: _refs, mappings} = directive
-    _refs.forEach(ref => {
+    const {refs, mappings} = directive
+    refs.forEach(ref => {
       const from = resolveRefKey(ref, ctx)
       mappings[ref] = from
       ctx.edges.push([from, key])
