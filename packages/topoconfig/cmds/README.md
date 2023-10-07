@@ -91,5 +91,28 @@ config.get('foo.bar')     // 'baz'
 config.set('foo.bar', 1)  // Error: Config schema violation: `foo/bar` must be string
 ```
 
+## `dot`
+Applies [dot](https://github.com/olado/doT) to value resolution. FSee [the v2 API guides](https://github.com/olado/doT/tree/v2) for details.
+
+```ts
+import {topoconfig} from 'topoconfig'
+import {dot} from 'topoconfig/cmds'
+
+const config = await topoconfig({
+  cmds: {dot},
+  data: {
+    filename: '$filename'
+  },
+  sources: {
+    filename: 'dot {{= "$env.ENVIRONMENT_PROFILE_NAME" || "kube" }}.json',
+    env: {
+      data: { ENVIRONMENT_PROFILE_NAME: 'prod' },
+      sources: {}
+    }
+  }
+})
+// prod.json
+```
+
 ## License
 [MIT](./LICENSE)
