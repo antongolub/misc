@@ -34,8 +34,26 @@ const config = await topoconfig({
 }
 ```
 
+### `http`
+Invokes [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/fetch) to get data from remotes.
+```ts
+const config = await topoconfig({
+  data: {
+    price: '$price',
+    title: '$title'
+  },
+  sources: {
+    res: 'http https://dummyjson.com/products > get body > json',
+    title: 'get $res products.0.title',
+    price: 'get $res products.0.price',
+  }
+})
+
+// {title: 'iPhone 9', price: 549}
+```
+
 ### `conf`
-Wrap the value with [conf](https://github.com/sindresorhus/conf/) API, to bring dot-prop r/w opts, validation, file sync, etc.
+Wraps the value with [conf](https://github.com/sindresorhus/conf/) API, to bring dot-prop r/w opts, validation, file sync, etc.
 
 ```ts
 import {topoconfig} from 'topoconfig'

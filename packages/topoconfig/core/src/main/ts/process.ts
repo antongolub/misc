@@ -63,13 +63,13 @@ export const process = async <T = any>(ctx: TProcessContext, vertex = ''): Promi
     // console.log('_refs=', _refs)
 
     result = await _cmd(..._args) as T
-    resolve(result)
-
-    // console.log('result', result)
+    // console.log(cmd, 'result=', result)
 
     i++
     pipe = pipeline[i]
   }
+
+  resolve(result as T)
 
   return promise
 }

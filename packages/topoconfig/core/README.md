@@ -369,7 +369,7 @@ const config = await topoconfig({
 ```
 
 ## Customization
-Just as bash gives the ability to use any commands from the environment, so does topoconfig. Declare custom handlers to use in your pipelines. Real-world usage example may look like:
+Just as bash allows you to use any commands from the environment, so does topoconfig. Declare custom handlers for your pipelines. Real-world usage example may look like:
 
 ```ts
 import {topoconfig} from 'topoconfig'
@@ -421,7 +421,7 @@ You are {{=$age}} and still don't have a name?
       const res = await fetch(url)
       const code = res.status
       const headers = Object.fromEntries(res.headers)
-      const body = await res.body()
+      const body = await res.text()
 
       return {
         res,
@@ -435,7 +435,7 @@ You are {{=$age}} and still don't have a name?
 })
 ```
 
-You can also use the default [@topoconfig/cmds](https://github.com/antongolub/misc/tree/master/packages/topoconfig/cmds) preset or create your own. No limitations.
+You can also use the default [@topoconfig/cmds](https://github.com/antongolub/misc/tree/master/packages/topoconfig/cmds) preset as a shortcut or create your own. No limitations.
 ```ts
 import {topoconfig} from 'topoconfig'
 import * as cmds from '@topoconfig/cmds'
