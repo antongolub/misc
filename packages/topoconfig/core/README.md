@@ -320,8 +320,8 @@ cmd param > cmd2 param param > ... > cmd3
 
 </details>
 
-## Status
-🚧 Working draft
+## 🚧 Status
+Working draft. The API may change significantly
 
 ## Key features
 * Declarative notation. Atomic transformations. No syntax bloating by design.
