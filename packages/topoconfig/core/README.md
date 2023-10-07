@@ -327,7 +327,7 @@ cmd param > cmd2 param param > ... > cmd3
 * Declarative notation. Atomic transformations. No syntax bloating by design.
 * Injecting values using dot-prop paths
 * Explicit CLI-like pipelines
-* Customizable cmds
+* Customizable transformers (aka `cmds`)
 
 ## Install
 ```shell

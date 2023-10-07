@@ -1,5 +1,5 @@
 import {TConfigDeclaration, TConfigGraph, TData, TDirective, TPipeline} from './interface'
-import {DATA} from './constants'
+import {DATA, VARARG} from './constants'
 import {flatten} from './util.ts'
 
 export const parseRefs = (chunk: string) => {
@@ -149,7 +149,9 @@ export const parseDataRefs = (data: TData, refs: string[] = []) => {
   return refs
 }
 
-export const parseDataArgs = (data: any) => typeof data === 'string' ? [data] : Object.entries(flatten(data)).flat()
+export const parseDataArgs = (data: any) => typeof data === 'string'
+  ? [data]
+  : Object.entries(flatten(data)).map(entry => [VARARG, ...entry]).flat()
 
 export const populateMappings = (ctx: TParseContext, directives: TPipeline, key = ctx.prefix) => {
   ctx.vertexes[key] = directives

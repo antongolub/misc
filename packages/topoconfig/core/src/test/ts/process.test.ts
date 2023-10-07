@@ -10,7 +10,7 @@ describe('process()', () => {
       vertexes: {
         '':    [{cmd:  '_',    args: ['{"b":"$b.1"}'], refs: ['b'],  mappings: {b: 'b'}}],
         'a':   [{cmd: 'upper', args: ['bAr'],     refs: [],      mappings: {}}],
-        'b':   [{cmd:  '_',    args: ['$a'],      refs: ['a'],   mappings: {a: 'b:a'}}],
+        'b':   [{cmd:  '_',    args: ['$a.'],     refs: ['a'],   mappings: {a: 'b:a'}}],
         'b:a': [{cmd: 'baz',   args: ['$c'],      refs: ['c'],   mappings: {c: 'c'}}],
         'c':   [{cmd: 'echo',  args: ['$a'],      refs: ['a'],   mappings: {a: 'a'}}]
       },

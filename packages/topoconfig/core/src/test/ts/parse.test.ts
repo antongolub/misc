@@ -10,7 +10,7 @@ import {
   parseDataRefs
 } from '../../main/ts/parse'
 import {TConfigDeclaration, TConfigGraph, TData, TDirective} from '../../main/ts/interface'
-import {DATA} from '../../main/ts/constants'
+import {DATA, VARARG} from '../../main/ts/constants'
 
 describe('formatRefKey()', () => {
   it('formats key str', () => {
@@ -120,11 +120,11 @@ describe('parse()', () => {
         },
         {
           vertexes: {
-            '':    [{cmd:  DATA,  args: ['b', '$b'], refs: ['b'],   mappings: {b: 'b'}}],
-            'a':   [{cmd: 'foo',  args: ['bar'],     refs: [],      mappings: {}}],
-            'b':   [{cmd:  DATA,  args: ['$a'],      refs: ['a'],   mappings: {a: 'b:a'}}],
-            'b:a': [{cmd: 'baz',  args: ['$c'],      refs: ['c'],   mappings: {c: 'c'}}],
-            'c':   [{cmd: 'echo', args: ['$a'],      refs: ['a'],   mappings: {a: 'a'}}]
+            '':    [{cmd:  DATA,  args: [VARARG, 'b', '$b'],  refs: ['b'],   mappings: {b: 'b'}}],
+            'a':   [{cmd: 'foo',  args: ['bar'],  refs: [],     mappings: {}}],
+            'b':   [{cmd:  DATA,  args: ['$a'],   refs: ['a'],  mappings: {a: 'b:a'}}],
+            'b:a': [{cmd: 'baz',  args: ['$c'],   refs: ['c'],  mappings: {c: 'c'}}],
+            'c':   [{cmd: 'echo', args: ['$a'],   refs: ['a'],  mappings: {a: 'a'}}]
           },
           edges: [
             ['b',''],

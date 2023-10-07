@@ -1,24 +1,21 @@
 import {TCmds, TDirective, TOperator, TProcessContext} from './interface'
-import {DATA, DROP} from './constants'
+import {DATA, DROP, VARARG} from './constants'
 import {expand, get, getPromise} from './util.ts'
 
 export const process = async <T = any>(ctx: TProcessContext, vertex = ''): Promise<T> => {
   const {vertexes, edges, cmds: _cmds, values} = ctx
-  const cmds: TCmds = {
-    [DATA]: processData,
-    ..._cmds
-  }
   if (values[vertex]) {
     return values[vertex]
   }
+
+  const cmds: TCmds = {[DATA]: processData, ..._cmds}
   const { promise, resolve, reject} = getPromise<T>()
   const pipeline = vertexes[vertex]
-
-  values[vertex] = promise
-
   if (!pipeline) {
     throw new Error(`Unknown vertex: ${vertex}`)
   }
+
+  values[vertex] = promise
 
   let i = 0
   let pipe: TDirective | TOperator | undefined = pipeline[i]
@@ -44,7 +41,7 @@ export const process = async <T = any>(ctx: TProcessContext, vertex = ''): Promi
       ...(result === DROP ? [] : [result]),
       ...args.flatMap(chunk =>
         typeof chunk === 'string'
-          ? chunk.split(/(\$[\w.]+)/g).map((m, i) => {
+          ? chunk.split(/(\$\w+(?:.\w+)*(?:\.(?=\.))?)/g).map((m, i) => {
             if (i % 2 === 0) return m || undefined
 
             const d = m.indexOf('.')
@@ -78,8 +75,13 @@ export const processData = (...chunks: any[]) =>
   chunks.length === 1
     ? chunks[0]
     : expand(chunks.reduce((m, v, k) => {
-      if (k % 2) {
-        m[chunks[k - 1]] = v
+      if (v === VARARG) {
+        const key = chunks[k + 1]
+        const rest = chunks.slice(k + 2)
+        const next = rest.findIndex(c => c === VARARG)
+        const values = next === -1 ? rest : rest.slice(0, next)
+        m[key] = values.length === 1 ? values[0] : values.join('')
       }
+
       return m
     }, {}))

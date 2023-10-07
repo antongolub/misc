@@ -7,6 +7,7 @@ describe('get()', () => {
     assert.deepEqual(get({foo: {bar: 'baz'}}, '.'), {foo: {bar: 'baz'}})
     assert.equal(get({foo: {bar: 'baz'}}, 'foo.bar'), 'baz')
     assert.equal(get({foo: {bar: 'baz'}}, '.foo.bar'), 'baz')
+    assert.equal(get({foo: {bar: 'baz'}}, '.foo.bar.'), 'baz')
     assert.equal(get({foo: [{bar: 'baz'}]}, 'foo.0.bar'), 'baz')
   })
 

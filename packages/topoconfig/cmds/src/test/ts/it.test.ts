@@ -15,7 +15,8 @@ describe('integration', () => {
             foo: {
               bar: 'baz'
             },
-            remote: '$remote'
+            remote: '$remote',
+            filename: '$cwd/$filename..json'
           },
           sources: {}
         },
@@ -46,6 +47,14 @@ describe('integration', () => {
           },
           sources: {}
         },
+        filename: {
+          data: 'config',
+          sources: {}
+        },
+        cwd: {
+          data: 'cwd',
+          sources: {}
+        }
       }
     })
 
@@ -53,5 +62,6 @@ describe('integration', () => {
     assert.equal(config.get('foo.bar'), 'baz')
     assert.equal(config.get('remote.title'), 'iPhone 9')
     assert.equal(config.get('remote.price'), 549)
+    assert.equal(config.get('filename'), 'cwd/config.json')
   })
 })
