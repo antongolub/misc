@@ -23,7 +23,8 @@ describe('integration', () => {
         remote: {
           data: {
             price: '$price',
-            title: '$title'
+            title: '$title',
+            formatted: '$title - $price'
           },
           sources: {
             res: 'http https://dummyjson.com/products/1 > get body > json',
@@ -62,6 +63,7 @@ describe('integration', () => {
     assert.equal(config.get('foo.bar'), 'baz')
     assert.equal(config.get('remote.title'), 'iPhone 9')
     assert.equal(config.get('remote.price'), 549)
+    assert.equal(config.get('remote.formatted'), 'iPhone 9 - 549')
     assert.equal(config.get('filename'), 'cwd/config.json')
   })
 })

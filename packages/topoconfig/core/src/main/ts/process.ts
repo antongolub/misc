@@ -35,24 +35,8 @@ export const process = async <T = any>(ctx: TProcessContext, vertex = ''): Promi
       throw new Error(`cmd not found: ${String(cmd)}`)
     }
 
-    const _refs = (await Promise.all(refs.map(async v => ({[v]: await process(ctx, mappings[v])}))))
-      .reduce((m, mixin) => Object.assign(m, mixin), {})
-    const _args = [
-      ...(result === DROP ? [] : [result]),
-      ...args.flatMap(chunk =>
-        typeof chunk === 'string'
-          ? chunk.split(/(\$\w+(?:.\w+)*(?:\.(?=\.))?)/g).map((m, i) => {
-            if (i % 2 === 0) return m || undefined
-
-            const d = m.indexOf('.')
-            const [r, p] = d === -1 ? [m.slice(1), '.'] : [m.slice(1, d), m.slice(d + 1)]
-
-            return get(_refs[r], p, m)
-          })
-            .filter(v => v !== undefined)
-          : chunk
-      )
-    ]
+    const _refs = await processRefs(refs, mappings, ctx)
+    const _args = injectRefs(args, _refs, result)
 
     // console.log(cmd, _cmd)
     // console.log('args', args)
@@ -85,3 +69,24 @@ export const processData = (...chunks: any[]) =>
 
       return m
     }, {}))
+
+export const injectRefs = (args: any[], refs: Record<string, any>, result: any): any[] => [
+  ...(result === DROP ? [] : [result]),
+  ...args.flatMap(chunk =>
+    typeof chunk === 'string'
+      ? chunk.split(/(\$\w+(?:.\w+)*(?:\.(?=\.))?)/g).map((m, i) => {
+        if (i % 2 === 0) return m || undefined
+
+        const d = m.indexOf('.')
+        const [r, p] = d === -1 ? [m.slice(1), '.'] : [m.slice(1, d), m.slice(d + 1)]
+
+        return get(refs[r], p, m)
+      })
+        .filter(v => v !== undefined)
+      : chunk
+  )
+]
+
+export const processRefs = async (refs: string[], mappings: Record<string, string>, ctx: TProcessContext) =>
+  (await Promise.all(refs.map(async v => ({[v]: await process(ctx, mappings[v])}))))
+    .reduce((m, mixin) => Object.assign(m, mixin), {})
