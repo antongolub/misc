@@ -457,7 +457,6 @@ __metadata:
   resolution: "@topoconfig/cmds@workspace:packages/topoconfig/cmds"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/dot": "npm:^1.1.5"
     "@types/dotenv": "npm:^8.2.0"
     "@types/ip": "npm:^1.1.1"
     "@types/js-yaml": "npm:^4.0.6"
@@ -465,7 +464,7 @@ __metadata:
     ajv: "npm:^8.12.0"
     app-root-path: "npm:^3.1.0"
     conf: "npm:^11.0.2"
-    dot: "npm:^1.1.3"
+    dot: "npm:^2.0.0-beta.1"
     dotenv: "npm:^16.3.1"
     ip: "npm:^1.1.8"
     js-yaml: "npm:^4.1.0"
@@ -511,13 +510,6 @@ __metadata:
     "@types/node": "npm:*"
     "@types/responselike": "npm:^1.0.0"
   checksum: 5f54ee509d84e0c3750c4426096b634efb160eb4c38021f829209475bb9167c6b3bcf3b80417040a811b14e68c5961e78f0f43aea3bed4c249b8cdc602849bd6
-  languageName: node
-  linkType: hard
-
-"@types/dot@npm:^1.1.5":
-  version: 1.1.5
-  resolution: "@types/dot@npm:1.1.5"
-  checksum: d07aa31b2b61f9fa3eb8a4d5cd090e451942f7e67aa1561b3511488ebebf728db632164ebb0e13abad244d12e187c1bde2a4a6e7f6d7065ced11fba685310204
   languageName: node
   linkType: hard
 
@@ -1417,12 +1409,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dot@npm:^1.1.3":
-  version: 1.1.3
-  resolution: "dot@npm:1.1.3"
-  bin:
-    dottojs: ./bin/dot-packer
-  checksum: ce64e29248613d8d0284a76bdf8350b4d4bf0410c55d74e679f522f177d7611059b9d949b47af4fe8502f43f2729e6907f7bf3a4965430e2cbcc88c0c056bf81
+"dot@npm:^2.0.0-beta.1":
+  version: 2.0.0-beta.1
+  resolution: "dot@npm:2.0.0-beta.1"
+  checksum: 4f2c0a08bae206016e791a7be4532c82d979eb988378c8d58b22214dc6e56d22b8d645852851a6bbe07a3a804c2abea2d0d225b39f00d03b2c82f749a3ccb509
   languageName: node
   linkType: hard
 

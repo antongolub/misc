@@ -16,10 +16,12 @@ describe('integration', () => {
               bar: 'baz'
             },
             remote: '$remote',
-            filename: '$cwd/$filename..json'
+            filename: '$cwd/$filename..json',
+            kubeconfigName: '$kubeconfigName'
           },
           sources: {}
         },
+        kubeconfigName: 'dot {{= "$env.ENVIRONMENT_PROFILE_NAME" || "kube" }}.json',
         remote: {
           data: {
             price: '$price',
@@ -55,6 +57,10 @@ describe('integration', () => {
         cwd: {
           data: 'cwd',
           sources: {}
+        },
+        env: {
+          data: { ENVIRONMENT_PROFILE_NAME: 'prod' },
+          sources: {}
         }
       }
     })
@@ -65,5 +71,6 @@ describe('integration', () => {
     assert.equal(config.get('remote.price'), 549)
     assert.equal(config.get('remote.formatted'), 'iPhone 9 - 549')
     assert.equal(config.get('filename'), 'cwd/config.json')
+    assert.equal(config.get('kubeconfigName'), 'prod.json')
   })
 })

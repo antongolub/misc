@@ -80,7 +80,7 @@ export const injectRefs = (args: any[], refs: Record<string, any>, result: any):
         const d = m.indexOf('.')
         const [r, p] = d === -1 ? [m.slice(1), '.'] : [m.slice(1, d), m.slice(d + 1)]
 
-        return get(refs[r], p, m)
+        return get(refs[r], p)
       })
         .filter(v => v !== undefined)
       : chunk

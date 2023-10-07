@@ -47,7 +47,7 @@
     "ajv": "^8.12.0",
     "app-root-path": "^3.1.0",
     "conf": "^11.0.2",
-    "dot": "^1.1.3",
+    "dot": "^2.0.0-beta.1",
     "dotenv": "^16.3.1",
     "ip": "^1.1.8",
     "js-yaml": "^4.1.0",
@@ -56,7 +56,6 @@
   },
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
-    "@types/dot": "^1.1.5",
     "@types/dotenv": "^8.2.0",
     "@types/ip": "^1.1.1",
     "@types/js-yaml": "^4.0.6",
