@@ -468,7 +468,7 @@ export type TCmd = (...opts: any[]) => any
 export type TCmds = Record<string | symbol, TCmd>
 export type TConfigDeclaration = {
   data: TData,
-  sources: Record<string, string | TConfigDeclaration>
+  sources?: Record<string, string | TConfigDeclaration>
   cmds?: TCmds
 }
 ```

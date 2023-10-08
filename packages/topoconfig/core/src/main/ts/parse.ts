@@ -168,7 +168,7 @@ export const populateMappings = (ctx: TParseContext, directives: TPipeline, key 
   })
 }
 
-export const parse = ({data, sources}: TConfigDeclaration, parent: TParseContext = {
+export const parse = ({data, sources = {}}: TConfigDeclaration, parent: TParseContext = {
   prefix: '',
   vertexes: {},
   edges: [],

@@ -1,5 +1,5 @@
 # @topoconfig/cmds
-> Topoconfig basic cmds preset
+> [topoconfig](https://github.com/antongolub/misc/tree/master/packages/topoconfig/core) basic cmds preset
 
 ## Install
 ```shell
@@ -17,10 +17,16 @@ const config = await topoconfig({
   cmds
 })
 ```
+
 ### `get`
 [lodash.get](https://www.npmjs.com/package/lodash.get)-inspired dot-prop reader.
+
 ```ts
-{
+import {topoconfig} from 'topoconfig'
+import {http, get, json} from 'topoconfig/cmds'
+
+const config = await topconfig({
+  data: '$b',
   sources: {
     a: {
       data: {
@@ -31,13 +37,22 @@ const config = await topoconfig({
     },
     b: 'get $a .foo.bar' // gives 'baz'
   }
-}
+})
 ```
 
 ### `http`
 Invokes [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/fetch) to get data from remotes.
+
 ```ts
+import {topoconfig} from 'topoconfig'
+import {http, get, json} from 'topoconfig/cmds'
+
 const config = await topoconfig({
+  cmds: {
+    http,
+    get,
+    json
+  },
   data: {
     price: '$price',
     title: '$title'
@@ -92,7 +107,7 @@ config.set('foo.bar', 1)  // Error: Config schema violation: `foo/bar` must be s
 ```
 
 ## `dot`
-Applies [dot](https://github.com/olado/doT) to value resolution. FSee [the v2 API guides](https://github.com/olado/doT/tree/v2) for details.
+Applies [doT](https://github.com/olado/doT) to value resolution. Follow [the v2 API guides](https://github.com/olado/doT/tree/v2) for details.
 
 ```ts
 import {topoconfig} from 'topoconfig'
@@ -106,8 +121,7 @@ const config = await topoconfig({
   sources: {
     filename: 'dot {{= "$env.ENVIRONMENT_PROFILE_NAME" || "kube" }}.json',
     env: {
-      data: { ENVIRONMENT_PROFILE_NAME: 'prod' },
-      sources: {}
+      data: { ENVIRONMENT_PROFILE_NAME: 'prod' }
     }
   }
 })

@@ -9,8 +9,8 @@ describe('integration', () => {
       cmds,
       data: '$output',
       sources: {
-        output: 'conf $raw $schema',
-        raw: {
+        output: 'conf $config $schema',
+        config: {
           data: {
             foo: {
               bar: 'baz'
@@ -18,8 +18,7 @@ describe('integration', () => {
             remote: '$remote',
             filename: '$cwd/$filename..json',
             kubeconfigName: '$kubeconfigName'
-          },
-          sources: {}
+          }
         },
         kubeconfigName: 'dot {{= "$env.ENVIRONMENT_PROFILE_NAME" || "kube" }}.json',
         remote: {
@@ -51,16 +50,13 @@ describe('integration', () => {
           sources: {}
         },
         filename: {
-          data: 'config',
-          sources: {}
+          data: 'config'
         },
         cwd: {
-          data: 'cwd',
-          sources: {}
+          data: 'cwd'
         },
         env: {
-          data: { ENVIRONMENT_PROFILE_NAME: 'prod' },
-          sources: {}
+          data: { ENVIRONMENT_PROFILE_NAME: 'prod' }
         }
       }
     })
