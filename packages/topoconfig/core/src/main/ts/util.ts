@@ -58,3 +58,6 @@ export const getPromise = <T = any>() => {
     promise
   }
 }
+
+export const reverseMap = (map: Record<string, string>): Record<string, string> =>
+  Object.fromEntries(Object.entries(map).map(entry => entry.reverse()))

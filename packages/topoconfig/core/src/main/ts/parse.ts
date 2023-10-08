@@ -1,6 +1,6 @@
-import {TConfigDeclaration, TConfigGraph, TData, TDirective, TPipeline} from './interface'
-import {DATA, VARARG} from './constants'
-import {flatten} from './util.ts'
+import { TConfigDeclaration, TConfigGraph, TData, TPipeline } from './interface'
+import { DATA, VARARG } from './constants'
+import { flatten, reverseMap } from './util.ts'
 
 export const parseRefs = (chunk: string) => {
   const refPattern = /\$\w+/g
@@ -22,10 +22,7 @@ const ops = {
   // lc: '{'
 }
 
-const rops = Object.entries(ops).reduce<Record<string, string>>((m, [k, v]) => {
-  m[v] = k
-  return m
-}, {})
+const rops = reverseMap(ops)
 
 // Maybe use smth like https://github.com/MeLlamoPablo/minimist-string/blob/master/index.js instead?
 export const parseWords = (value: string): string[] => {
