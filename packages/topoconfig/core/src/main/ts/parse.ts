@@ -2,6 +2,14 @@ import { TConfigDeclaration, TConfigGraph, TData, TPipeline } from './interface'
 import { DATA, VARARG } from './constants'
 import { flatten, reverseMap } from './util.ts'
 
+export type TParseContext = {
+  prefix: string
+  vertexes: Record<string, TPipeline>
+  edges: [string, string][]
+  refs: string[]
+  parent?: TParseContext
+}
+
 export const parseRefs = (chunk: string) => {
   const refPattern = /\$\w+/g
   const refs = chunk.match(refPattern) || []
@@ -97,14 +105,6 @@ export const parseDirectives = (value: string): TPipeline => {
   capture()
 
   return directives
-}
-
-export type TParseContext = {
-  prefix: string
-  vertexes: Record<string, TPipeline>
-  edges: [string, string][]
-  refs: string[]
-  parent?: TParseContext
 }
 
 export const formatRefKey = (key: string, prefix?: string, delimiter = ':') => `${prefix ? prefix + delimiter : ''}${key}`

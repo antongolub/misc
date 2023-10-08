@@ -45,9 +45,15 @@ export const expand = (obj: Record<string, TPrimitive>, sep = '.') => Object
     return m || root
   }, null)
 
-type TPromiseAction<T = any> = (value: T | PromiseLike<T>) => void
+export type TPromiseAction<T = any> = (value: T | PromiseLike<T>) => void
 
-export const getPromise = <T = any>() => {
+export type TPromiseInverted<T = any> = {
+  promise: Promise<T>,
+  resolve: TPromiseAction<T>,
+  reject: TPromiseAction<T>
+}
+
+export const getPromise = <T = any>(): TPromiseInverted<T> => {
   let resolve: TPromiseAction<T> = () => {}
   let reject: TPromiseAction<T> = () => {}
   const promise = new Promise<T>((...args) => { [resolve, reject] = args })

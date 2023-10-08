@@ -1,27 +1,33 @@
-import {TCmds, TDirective, TOperator, TProcessContext} from './interface'
+import {TCmds, TDirective, TOperator, TPipeline, TProcessContext} from './interface'
 import {DATA, DROP, VARARG} from './constants'
 import {expand, get, getPromise} from './util.ts'
 
-export const process = async <T = any>(ctx: TProcessContext, vertex = ''): Promise<T> => {
+export const process = <T = any>(ctx: TProcessContext, vertex = ''): Promise<T> => {
   const {vertexes, edges, cmds: _cmds, values} = ctx
-  if (values[vertex]) {
-    return values[vertex]
-  }
-
-  const cmds: TCmds = {[DATA]: processData, ..._cmds}
-  const { promise, resolve, reject} = getPromise<T>()
   const pipeline = vertexes[vertex]
+
   if (!pipeline) {
     throw new Error(`Unknown vertex: ${vertex}`)
   }
 
-  values[vertex] = promise
+  if (values[vertex]) {
+    return values[vertex] as Promise<T>
+  }
 
+  const { promise, resolve } = getPromise<T>()
+  values[vertex] = promise
+  resolve(processPipeline(pipeline, ctx))
+
+  return promise
+}
+
+export const processPipeline = async <T>(pipeline: TPipeline, ctx: TProcessContext): Promise<T> => {
   let i = 0
   let pipe: TDirective | TOperator | undefined = pipeline[i]
   let result: T | symbol = DROP
   let err: any
 
+  const cmds: TCmds = {[DATA]: processData, ...ctx.cmds}
   while (pipe) {
     const {op} = pipe
     if (typeof op === 'string') {
@@ -50,9 +56,7 @@ export const process = async <T = any>(ctx: TProcessContext, vertex = ''): Promi
     pipe = pipeline[i]
   }
 
-  resolve(result as T)
-
-  return promise
+  return result as T
 }
 
 export const processData = (...chunks: any[]) =>
