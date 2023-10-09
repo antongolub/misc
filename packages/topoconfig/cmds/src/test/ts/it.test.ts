@@ -2,9 +2,11 @@ import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
 import { topoconfig } from 'topoconfig'
 import * as cmds from '../../main/ts'
+import * as url from 'node:url'
 
 describe('integration', () => {
   it('applies everything at once', async () => {
+    const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
     const config = await topoconfig<ReturnType<typeof cmds.conf>>({
       cmds,
       data: '$output',
@@ -17,7 +19,8 @@ describe('integration', () => {
             },
             remote: '$remote',
             filename: '$cwd/$filename..json',
-            kubeconfigName: '$kubeconfigName'
+            kubeconfigName: '$kubeconfigName',
+            somefilecontents: '$somefilecontents'
           }
         },
         kubeconfigName: 'dot {{= "$env.ENVIRONMENT_PROFILE_NAME" || "kube" }}.json',
@@ -46,18 +49,15 @@ describe('integration', () => {
                 }
               }
             }
-          },
-          sources: {}
+          }
         },
-        filename: {
-          data: 'config'
-        },
-        cwd: {
-          data: 'cwd'
-        },
-        env: {
-          data: { ENVIRONMENT_PROFILE_NAME: 'prod' }
-        }
+        filename: {data: 'config'},
+        cwd:      {data: 'cwd'},
+        env:      {data: { ENVIRONMENT_PROFILE_NAME: 'prod' }},
+        dirname:  {data: __dirname},
+        ext:      {data: 'ts'},
+        encoding: {data: 'utf8'},
+        somefilecontents: 'file $dirname/it.test.$ext $encoding'
       }
     })
 
@@ -68,5 +68,6 @@ describe('integration', () => {
     assert.equal(config.get('remote.formatted'), 'iPhone 9 - 549')
     assert.equal(config.get('filename'), 'cwd/config.json')
     assert.equal(config.get('kubeconfigName'), 'prod.json')
+    assert.ok(config.get('somefilecontents').startsWith('import * as assert'))
   })
 })
