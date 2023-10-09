@@ -2,8 +2,9 @@
   "name": "@topoconfig/cmds",
   "extends": ["../../../../../infra/typedoc.json"],
   "entryPoints": ["../../../src/main/ts/"],
-  "exclude": ["../../../src/test", "**/node_modules/**"],
+  "excludeExternals": true,
   "externalPattern": ["**/node_modules/**"],
+  "exclude": ["../../../src/test", "**/node_modules/**"],
   "out": "../../../target/docs",
   "readme": "../../../README.md",
   "tsconfig": "../../../tsconfig.json"

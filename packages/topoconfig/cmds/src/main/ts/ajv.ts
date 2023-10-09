@@ -1,13 +1,15 @@
 import Ajv from 'ajv'
-import addAjvFormats from 'ajv-formats'
+import { createRequire } from 'module'
 
 const DEFAULT_OPTS = {}
 const ajvStack: Record<string, any> = {}
+const require = global.require || createRequire(import.meta.url)
+const addAjvFormats = require('ajv-formats') // Smth goes wrong with ajv typings and TS 5.3
 const getAjv = (opts: Record<string, any>): Record<string, any> => {
   const key = JSON.stringify(opts)
 
   if (!ajvStack[key]) {
-    ajvStack[key] = new Ajv(opts)
+    ajvStack[key] = new (Ajv as any)(opts)
     addAjvFormats(ajvStack[key])
   }
 

@@ -23,9 +23,10 @@ const config = await topoconfig({
 
 ```ts
 import {topoconfig} from 'topoconfig'
-import {http, get, json} from 'topoconfig/cmds'
+import {get} from 'topoconfig/cmds'
 
 const config = await topconfig({
+  cmds: {get},
   data: '$b',
   sources: {
     a: {

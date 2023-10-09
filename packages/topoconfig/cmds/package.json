@@ -1,8 +1,7 @@
 {
   "name": "@topoconfig/cmds",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Topoconfig basic cmds preset",
-  "private": true,
   "type": "module",
   "main": "target/cjs/index.cjs",
   "exports": {
@@ -46,7 +45,7 @@
   "homepage": "https://github.com/antongolub/misc/blob/master/packages/topoconfig/cmds/README.md",
   "dependencies": {
     "ajv": "^8.12.0",
-    "ajv-formats": "^2.1.1",
+    "ajv-formats": "^3.0.0-rc.0",
     "app-root-path": "^3.1.0",
     "conf": "^11.0.2",
     "dot": "^2.0.0-beta.1",
