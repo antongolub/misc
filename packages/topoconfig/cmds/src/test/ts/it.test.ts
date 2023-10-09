@@ -25,7 +25,8 @@ describe('integration', () => {
             fromjson: '$validjson.a',
             fromyaml: '$someyaml.foo',
             ip: '$ip',
-            pwdfromenv: '$realenv.PWD'
+            pwdfromenv: '$realenv.PWD',
+            pkg: '$pkg'
             // g: '$g' // Conf does not process circular refs
           }
         },
@@ -72,6 +73,7 @@ describe('integration', () => {
         validjson: 'ajv $somejson $someschema',
         ip: 'ip',
         realenv: 'env',
+        pkg: 'pkg'
         // g: 'g'
       }
     })
@@ -86,6 +88,7 @@ describe('integration', () => {
     assert.equal(config.get('argvfoo'), 'bar')
     assert.equal(config.get('fromjson'), 'b')
     assert.equal(config.get('fromyaml'), 'bar')
+    assert.equal(config.get('pkg.name'), '@topoconfig/cmds')
     assert.equal(config.get('pwdfromenv'), process.env.PWD)
     assert.match(config.get('ip'), /^\d+\.\d+\.\d+\.\d+$/)
     // assert.equal(config.get('g.fetch'), fetch)

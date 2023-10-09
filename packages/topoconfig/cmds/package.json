@@ -54,6 +54,7 @@
     "ip": "^2.0.0",
     "js-yaml": "^4.1.0",
     "minimist": "^1.2.8",
+    "read-pkg-up": "^10.1.0",
     "topoconfig": "workspace:*"
   },
   "devDependencies": {

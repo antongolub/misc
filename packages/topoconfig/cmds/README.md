@@ -278,5 +278,21 @@ const config = await topoconfig({
 // refers to this.globalThis.foo
 ```
 
+### `pkg`
+Reads the closest package.json via [read-pkg-up](https://github.com/sindresorhus/read-pkg-up)
+
+```ts
+import {topoconfig} from 'topoconfig'
+import {pkg} from 'topoconfig/cmds'
+
+const config = await topoconfig({
+  cmds: {pkg},
+  data: '$pkg.name',
+  sources: {
+    pkg: 'pkg'
+  }
+}) // 'toposource'
+```
+
 ## License
 [MIT](./LICENSE)
