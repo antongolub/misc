@@ -188,6 +188,23 @@ const config = await topoconfig({
 // prod.json
 ```
 
+### `cwd`
+Returns `process.cwd()`
+
+```ts
+import {topoconfig} from 'topoconfig'
+import {cwd} from 'topoconfig/cmds'
+
+const config = await topoconfig({
+  cmds: {cwd},
+  data: '$cwd',
+  sources: {
+    cwd: 'cwd'
+  }
+})
+// /current/working/dir
+```
+
 ### `ip`
 Resolves current [ip](https://github.com/indutny/node-ip).
 
