@@ -12,8 +12,7 @@ describe('topoconfig()', () => {
             b: {
               c: 'd'
             }
-          },
-          sources: {}
+          }
         }
       }
     })

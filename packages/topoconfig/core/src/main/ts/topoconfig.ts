@@ -12,9 +12,9 @@ export type {TConfigDeclaration} from './interface'
  */
 export const topoconfig = <T = any>(cfg: TConfigDeclaration): Promise<T> => {
   const { cmds = {} } = cfg
-  const { vertexes, edges } = parse(cfg)
+  const { pipelines, edges } = parse(cfg)
   const ctx: TProcessContext = {
-    pipelines: vertexes,
+    pipelines,
     edges,
     values: {},
     cmds,

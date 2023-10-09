@@ -8,11 +8,35 @@ describe('process()', () => {
   it('processes the TProcessContext', async () => {
     const ctx: TProcessContext = {
       pipelines: {
-        '':    [{cmd:  '_',    args: ['{"b":"$b.1"}'], refs: ['b'],  mappings: {b: 'b'}}],
-        'a':   [{cmd: 'upper', args: ['bAr'],     refs: [],      mappings: {}}],
-        'b':   [{cmd:  '_',    args: ['$a.'],     refs: ['a'],   mappings: {a: 'b:a'}}],
-        'b:a': [{cmd: 'baz',   args: ['$c'],      refs: ['c'],   mappings: {c: 'c'}}],
-        'c':   [{cmd: 'echo',  args: ['$a'],      refs: ['a'],   mappings: {a: 'a'}}]
+        '': [{
+          cmd:  '_',
+          args: ['{"b":"$b.1"}'],
+          injects: {'$b.1': {raw: '$b.1', ref: 'b', path: '1' }},
+          mappings: {b: 'b'}
+        }],
+        'a':[{
+          cmd: 'upper',
+          args: ['bAr'],
+          injects: {},
+          mappings: {}
+        }],
+        'b': [{
+          cmd:'_',
+          args: ['$a.'],
+          injects: {$a: {raw: '$a', ref: 'a', path: '.'}},
+          mappings: {a: 'b:a'}}],
+        'b:a': [{
+          cmd: 'baz',
+          args: ['$c'],
+          injects: {$c: {raw: '$c', ref: 'c', path: '.'}},
+          mappings: {c: 'c'}
+        }],
+        'c': [{
+          cmd: 'echo',
+          args: ['$a'],
+          injects: {$a: {raw: '$a', ref: 'a', path: '.'}},
+          mappings: {a: 'a'}
+        }]
       },
       edges: [
         ['b',''],
