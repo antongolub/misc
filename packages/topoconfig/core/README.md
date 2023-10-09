@@ -493,6 +493,11 @@ type TCmd = (...opts: any[]) => any
 // ↑ cmd ↑opts                  ↑ pipes delimiter
 ```
 
+### Pipings
+The first queued cmd operates only with explicitly declared params:
+`cmd foo bar` invokes `cmd('foo', 'bar')`. But every next chunk accepts the result of previous call as the first argument and applies the rest declared after:
+`cmd1 foo bar > cmd2 baz` will be transformed to `cmd2(cmd1('foo', 'bar'), 'baz')`.
+
 ## Next steps
 * Add ternaries: `cmd ? cmd1 > cmd2 ... : cmd`
 * Handle _or_ statement: `cmd > cmd || cmd > cmd`
