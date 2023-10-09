@@ -7,7 +7,7 @@ import {TProcessContext} from '../../main/ts/interface'
 describe('process()', () => {
   it('processes the TProcessContext', async () => {
     const ctx: TProcessContext = {
-      vertexes: {
+      pipelines: {
         '':    [{cmd:  '_',    args: ['{"b":"$b.1"}'], refs: ['b'],  mappings: {b: 'b'}}],
         'a':   [{cmd: 'upper', args: ['bAr'],     refs: [],      mappings: {}}],
         'b':   [{cmd:  '_',    args: ['$a.'],     refs: ['a'],   mappings: {a: 'b:a'}}],

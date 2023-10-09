@@ -3,13 +3,12 @@ import { describe, it } from 'node:test'
 import {
   parse,
   parseDirectives,
-  parseRefs,
+  parseInjects,
+  parseDataInjects,
   formatRefKey,
-  resolveRefKey,
-  TParseContext,
-  parseDataRefs
+  resolveRefKey
 } from '../../main/ts/parse'
-import {TConfigDeclaration, TConfigGraph, TData, TDirective} from '../../main/ts/interface'
+import {TConfigDeclaration, TConfigGraph, TData, TDirective, TInjects, TParseContext} from '../../main/ts/interface'
 import {DATA, VARARG} from '../../main/ts/constants'
 
 describe('formatRefKey()', () => {
@@ -25,9 +24,9 @@ describe('resolveRefKey', () => {
     const cases: [string, TParseContext, string][] = [
       [
         'foo', {
-          refs: ['foo'],
+          nodes: ['foo'],
           edges: [],
-          vertexes: {},
+          pipelines: {},
           prefix: ''
         },
         'foo'
@@ -35,14 +34,14 @@ describe('resolveRefKey', () => {
       [
         'foo',
         {
-          refs: [],
+          nodes: [],
           edges: [],
-          vertexes: {},
+          pipelines: {},
           prefix: 'nested',
           parent: {
-            refs: ['foo'],
+            nodes: ['foo'],
             edges: [],
-            vertexes: {},
+            pipelines: {},
             prefix: ''
           }
         },
@@ -51,19 +50,19 @@ describe('resolveRefKey', () => {
       [
         'foo',
         {
-          refs: ['foo'],
+          nodes: ['foo'],
           edges: [],
-          vertexes: {},
+          pipelines: {},
           prefix: 'nested-2',
           parent: {
-            refs: ['foo'],
+            nodes: ['foo'],
             edges: [],
-            vertexes: {},
+            pipelines: {},
             prefix: 'nested-1',
             parent: {
-              refs: ['foo'],
+              nodes: ['foo'],
               edges: [],
-              vertexes: {},
+              pipelines: {},
               prefix: ''
             }
           }
@@ -77,153 +76,57 @@ describe('resolveRefKey', () => {
   })
 })
 
-describe('parseDataRefs()', () => {
-  it('finds refs in data struct', () => {
-    const cases: [TData, string[]][] = [
-      ['foo', []],
-      ['aaa $a $b', ['a', 'b']],
-      [{
-        a: {
-          b: {
-            c: '$a $b'
-          }
-        },
-        d: ['   $e', { f: '$f' }]
-      }, ['a', 'b', 'e', 'f']],
-      [null, []]
+describe('parseInjects()', () => {
+  it('extracts injects', () => {
+    const cases: [string, TInjects][] = [
+      ['no refs', {}],
+      ['$foo', {$foo: {raw: '$foo', path: '.', ref: 'foo'}}],
+      ['prefix prefix$foo$bar.baz', {
+        $foo:       {raw: '$foo', ref: 'foo', path: '.' },
+        '$bar.baz': {raw: '$bar.baz', ref: 'bar', path: 'baz' },
+      }],
     ]
-    cases.forEach(([input, output]) =>
-      assert.deepEqual(parseDataRefs(input), output))
+
+    cases.forEach(([input, result]) =>
+      assert.deepEqual(parseInjects(input), result))
   })
 })
 
-describe('parse()', () => {
-  it('parses config declaration', () => {
-    const cases: [TConfigDeclaration, TConfigGraph][] = [
+describe('parseDataInjects()', () => {
+  it('finds injects in data struct', () => {
+    const cases: [TData, TInjects][] = [
       [
+        'foo',
+        {}
+      ],
+      [
+        'aaa $a $b',
         {
-          data: {
-            b: '$b',
-          },
-          sources: {
-            a: 'foo bar',
-            b: {
-              data: '$a',
-              sources: {
-                // $a overrides the $a source ref for the local context
-                // $c does belong to the root scope
-                a: 'baz $c'
-              }
-            },
-            c: 'echo $a'
-          }
-        },
-        {
-          vertexes: {
-            '':    [{cmd:  DATA,  args: [VARARG, 'b', '$b'],  refs: ['b'],   mappings: {b: 'b'}}],
-            'a':   [{cmd: 'foo',  args: ['bar'],  refs: [],     mappings: {}}],
-            'b':   [{cmd:  DATA,  args: ['$a'],   refs: ['a'],  mappings: {a: 'b:a'}}],
-            'b:a': [{cmd: 'baz',  args: ['$c'],   refs: ['c'],  mappings: {c: 'c'}}],
-            'c':   [{cmd: 'echo', args: ['$a'],   refs: ['a'],  mappings: {a: 'a'}}]
-          },
-          edges: [
-            ['b',''],
-            ['b:a','b'],
-            ['c','b:a'],
-            ['a','c']
-          ]
+          $a: {raw: '$a', ref: 'a', path: '.'},
+          $b: {raw: '$b', ref: 'b', path: '.'},
         }
       ],
       [
         {
-          data: '$foo',
-          sources: {
-            a: 'file ./a.json > json',
-            b: 'fetch https://example.com > get .body > json',
-            foo: 'bar $a $b'
-          }
-        },
-        {
-          vertexes: {
-            '':[
-              {
-                cmd: DATA,
-                args: ['$foo'],
-                refs: ['foo'],
-                mappings: { foo: 'foo' }
-              }
-            ],
-            a: [
-              {
-                cmd: 'file',
-                args: ['./a.json'],
-                refs: [],
-                mappings: {}
-              },
-              {
-                cmd: 'json',
-                args: [],
-                refs: [],
-                mappings: {}
-              }
-            ],
-            b: [
-              {
-                cmd: 'fetch',
-                args: ['https://example.com'],
-                refs: [],
-                mappings: {}
-              },
-              {
-                cmd: 'get',
-                args: ['.body'],
-                refs: [],
-                mappings: {},
-              },
-              {
-                cmd: 'json',
-                args: [],
-                refs: [],
-                mappings: {},
-              }
-            ],
-            foo: [
-              {
-                args: ['$a', '$b'],
-                cmd: 'bar',
-                refs: ['a', 'b'],
-                mappings: {a: 'a', b: 'b'},
-              }
-            ]
+          a: {
+            b: {
+              c: '$a $b'
+            }
           },
-          edges: [
-            ['foo', ''],
-            ['a', 'foo'],
-            ['b', 'foo']
-          ]
+          d: ['   $e', { f: '$f$g.h$i.j.k' }]
+        }, {
+        $a:       {raw: '$a', ref: 'a', path: '.'},
+        $b:       {raw: '$b', ref: 'b', path: '.'},
+        $e:       {raw: '$e', ref: 'e', path: '.'},
+        $f:       {raw: '$f', ref: 'f', path: '.'},
+        '$g.h':   {raw: '$g.h', ref: 'g', path: 'h'},
+        '$i.j.k': {raw: '$i.j.k', ref: 'i', path: 'j.k'},
         }
-      ]
+      ],
+      [null, {}]
     ]
-
     cases.forEach(([input, output]) =>
-      // {
-      //   console.log('1>', JSON.stringify(parse(input)))
-      //   console.log('2>', JSON.stringify(output))
-      // })
-      assert.deepEqual(parse(input), output))
-  })
-})
-
-describe('parseRefs()', () => {
-  it('extracts refs', () => {
-    const cases: [string, string[]][] = [
-      ['no refs', []],
-      ['$foo', ['foo']],
-      ['prefix prefix$foo$bar', ['foo', 'bar']],
-    ]
-
-    cases.forEach(([input, result]) =>
-      assert.deepEqual(parseRefs(input), result))
+      assert.deepEqual(parseDataInjects(input), output))
   })
 })
 
@@ -236,7 +139,7 @@ describe('parseDirective()', () => {
           {
             cmd: 'foo',
             args: [],
-            refs: [],
+            injects: {},
             mappings: {},
           }
         ]
@@ -247,7 +150,7 @@ describe('parseDirective()', () => {
           {
             cmd: 'foo',
             args: ['\'quoted statement\'', 'param'],
-            refs: [],
+            injects: {},
             mappings: {},
           }
         ]
@@ -258,7 +161,7 @@ describe('parseDirective()', () => {
           {
             cmd: 'mixed',
             args: ['"quoted statement"', 'param', '\'quoted "inner"\'', '"deep \\"nested\\""'],
-            refs: [],
+            injects: {},
             mappings: {},
           }
         ]
@@ -269,19 +172,19 @@ describe('parseDirective()', () => {
           {
             cmd: 'foo',
             args: ['a', 'b', 'c'],
-            refs: [],
+            injects: {},
             mappings: {}
           },
           {
             cmd: 'bar',
             args: [],
-            refs: [],
+            injects: {},
             mappings: {},
           },
           {
             cmd: 'baz',
             args: ['qux'],
-            refs: [],
+            injects: {},
             mappings: {},
           }
         ]
@@ -317,13 +220,18 @@ You are {{=$age}} and still don't have a name?
               'a',
               'name?\n{{?}}'
             ],
-            refs: ['name', 'name', 'age', 'age'],
+            injects: {
+              $name: {raw: '$name', ref: 'name', path: '.'},
+              $age: {raw: '$age', ref: 'age', path: '.'},
+            },
             mappings: {}
           },
           {
             cmd: 'assert',
             args: ['$foo'],
-            refs: ['foo'],
+            injects: {
+              $foo: {raw: '$foo', ref: 'foo', path: '.'},
+            },
             mappings: {}
           }
         ]
@@ -334,3 +242,149 @@ You are {{=$age}} and still don't have a name?
       assert.deepEqual(parseDirectives(input), result))
   })
 })
+
+describe('parse()', () => {
+  it('parses config declaration', () => {
+    const cases: [TConfigDeclaration, TConfigGraph][] = [
+      [
+        {
+          data: {
+            b: '$b',
+          },
+          sources: {
+            a: 'foo bar',
+            b: {
+              data: '$a',
+              sources: {
+                // $a overrides the $a source ref for the local context
+                // $c does belong to the root scope
+                a: 'baz $c'
+              }
+            },
+            c: 'echo $a'
+          }
+        },
+        {
+          pipelines: {
+            '': [{
+              cmd:  DATA,
+              args: [VARARG, 'b', '$b'],
+              injects: {$b: {raw: '$b', ref: 'b', path: '.'}},
+              mappings: {b: 'b'}}
+            ],
+            'a': [{
+              cmd: 'foo',
+              args: ['bar'],
+              injects: {},
+              mappings: {}
+            }],
+            'b': [{
+              cmd: DATA,
+              args: ['$a'],
+              injects: {$a: {raw: '$a', ref: 'a', path: '.'}},
+              mappings: {a: 'b:a'}
+            }],
+            'b:a': [{
+              cmd: 'baz',
+              args: ['$c'],
+              injects: {$c: {raw: '$c', ref: 'c', path: '.'}},
+              mappings: {c: 'c'}}
+            ],
+            'c': [{
+              cmd: 'echo',
+              args: ['$a'],
+              injects: {$a: {raw: '$a', ref: 'a', path: '.'}},
+              mappings: {a: 'a'}
+            }]
+          },
+          edges: [
+            ['b',''],
+            ['b:a','b'],
+            ['c','b:a'],
+            ['a','c']
+          ]
+        }
+      ],
+      [
+        {
+          data: '$foo',
+          sources: {
+            a: 'file ./a.json > json',
+            b: 'fetch https://example.com > get .body > json',
+            foo: 'bar $a $b'
+          }
+        },
+        {
+          pipelines: {
+            '':[
+              {
+                cmd: DATA,
+                args: ['$foo'],
+                injects: {$foo: {raw: '$foo', ref: 'foo', path: '.'}},
+                mappings: { foo: 'foo' }
+              }
+            ],
+            a: [
+              {
+                cmd: 'file',
+                args: ['./a.json'],
+                injects: {},
+                mappings: {}
+              },
+              {
+                cmd: 'json',
+                args: [],
+                injects: {},
+                mappings: {}
+              }
+            ],
+            b: [
+              {
+                cmd: 'fetch',
+                args: ['https://example.com'],
+                injects: {},
+                mappings: {}
+              },
+              {
+                cmd: 'get',
+                args: ['.body'],
+                injects: {},
+                mappings: {},
+              },
+              {
+                cmd: 'json',
+                args: [],
+                injects: {},
+                mappings: {},
+              }
+            ],
+            foo: [
+              {
+                args: ['$a', '$b'],
+                cmd: 'bar',
+                injects: {
+                  $a:       {raw: '$a', ref: 'a', path: '.'},
+                  $b:       {raw: '$b', ref: 'b', path: '.'},
+                },
+                mappings: {a: 'a', b: 'b'},
+              }
+            ]
+          },
+          edges: [
+            ['foo', ''],
+            ['a', 'foo'],
+            ['b', 'foo']
+          ]
+        }
+      ]
+    ]
+
+    cases.forEach(([input, output]) =>
+      // {
+      //   console.log('1>', JSON.stringify(parse(input)))
+      //   console.log('2>', JSON.stringify(output))
+      // })
+      assert.deepEqual(parse(input), output))
+  })
+})
+

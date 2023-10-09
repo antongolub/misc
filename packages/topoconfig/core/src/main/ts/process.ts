@@ -1,10 +1,10 @@
-import {TCmds, TDirective, TOperator, TPipeline, TProcessContext} from './interface'
+import {TCmds, TDirective, TInjects, TOperator, TPipeline, TProcessContext} from './interface'
 import {DATA, DROP, VARARG} from './constants'
 import {expand, get, getPromise} from './util.ts'
 
 export const process = <T = any>(ctx: TProcessContext, vertex = ''): Promise<T> => {
-  const {vertexes, edges, values} = ctx
-  const pipeline = vertexes[vertex]
+  const {pipelines, edges, values} = ctx
+  const pipeline = pipelines[vertex]
 
   if (!pipeline) {
     throw new Error(`Unknown vertex: ${vertex}`)
@@ -35,19 +35,20 @@ export const processPipeline = async <T>(pipeline: TPipeline, ctx: TProcessConte
       continue
     }
 
-    const {cmd, refs, mappings, args} = pipe
+    const {cmd, injects, mappings, args} = pipe
     const _cmd = cmds[cmd]
     if (!_cmd) {
       throw new Error(`cmd not found: ${String(cmd)}`)
     }
 
+    const _injects = await processInjects(injects, mappings, ctx)
     const _refs = await processRefs(refs, mappings, ctx)
     const _args = injectRefs(args, _refs, result)
 
-    // console.log(cmd, _cmd)
-    // console.log('args', args)
-    // console.log('_args=', _args)
-    // console.log('_refs=', _refs)
+    console.log(cmd, _cmd)
+    console.log('args', args)
+    console.log('_args=', _args)
+    console.log('_injects=', _injects)
 
     result = await _cmd(..._args) as T
     // console.log(cmd, 'result=', result)
@@ -78,7 +79,7 @@ export const injectRefs = (args: any[], refs: Record<string, any>, result: any):
   ...(result === DROP ? [] : [result]),
   ...args.flatMap(chunk =>
     typeof chunk === 'string'
-      ? chunk.split(/(\$\w+(?:.\w+)*(?:\.(?=\.))?)/g).map((m, i) => {
+      ? chunk.split(/(\$\w+(?:\.\w+)*(?:\.(?=\.))?)/g).map((m, i) => {
         if (i % 2 === 0) return m || undefined
 
         const d = m.indexOf('.')
@@ -94,3 +95,8 @@ export const injectRefs = (args: any[], refs: Record<string, any>, result: any):
 export const processRefs = async (refs: string[], mappings: Record<string, string>, ctx: TProcessContext) =>
   (await Promise.all(refs.map(async v => ({[v]: await process(ctx, mappings[v])}))))
     .reduce((m, mixin) => Object.assign(m, mixin), {})
+
+export const processInjects = async (injects: TInjects, mappings: Record<string, string>, ctx: TProcessContext) =>
+  Object.fromEntries(
+    await Promise.all(Object.values(injects).map(async ({raw, ref, path}) =>
+      ([raw, get(await process(ctx, mappings[ref]), path)]))))

@@ -1,20 +1,38 @@
-import { TConfigDeclaration, TConfigGraph, TData, TPipeline } from './interface'
+import {TConfigDeclaration, TConfigGraph, TData, TInjects, TPipeline, TParseContext} from './interface'
 import { DATA, VARARG } from './constants'
-import { flatten, reverseMap } from './util.ts'
+import {flatten, reverseMap} from './util.ts'
 
-export type TParseContext = {
-  prefix: string
-  vertexes: Record<string, TPipeline>
-  edges: [string, string][]
-  refs: string[]
-  parent?: TParseContext
-}
+export const parseInjects = (chunk: string): TInjects =>
+  chunk
+    .split(/(\$\w+(?:\.\w+)*(?:\.(?=\.))?)/g)
+    .reduce<TInjects>((o, raw, i) => {
+      if (i % 2 === 0) return o
 
-export const parseRefs = (chunk: string) => {
-  const refPattern = /\$\w+/g
-  const refs = chunk.match(refPattern) || []
+      const d = raw.indexOf('.')
+      const [ref, path] = d === -1 ? [raw.slice(1), '.'] : [raw.slice(1, d), raw.slice(d + 1)]
 
-  return refs.map(r => r.slice(1))
+      o[raw] = {raw, ref, path}
+      return o
+    }, {})
+
+export const parseDataInjects = (data: TData, injects: TInjects = {}) => {
+  const type = data === null ? 'null' : typeof(data)
+
+  switch (type) {
+    case 'string':
+      Object.assign(injects, parseInjects(data as string))
+      break
+    case 'null':
+    case 'number':
+      break
+    case 'object':
+      Object.values(data).forEach(v => parseDataInjects(v, injects))
+      break
+    default:
+      throw new Error(`unsupported data type: ${type}`)
+  }
+
+  return injects
 }
 
 const ops = {
@@ -67,8 +85,8 @@ export const parseDirectives = (value: string): TPipeline => {
     return [{
       cmd: 'echo',
       args: [value.slice(1)],
-      refs: [],
-      mappings: {}
+      mappings: {},
+      injects: {}
     }]
   }
 
@@ -78,7 +96,7 @@ export const parseDirectives = (value: string): TPipeline => {
     args.length > 0 && directives.push({
       cmd: args.shift() as string,
       args,
-      refs: args.flatMap(parseRefs),
+      injects: Object.assign({}, ...args.map(parseInjects)),
       mappings: {}
     })
     args = []
@@ -114,7 +132,7 @@ export const resolveRefKey = (key: string, ctx: TParseContext): string => {
   let ref
 
   while (scope) {
-    if (!ref && scope.refs.includes(key)) {
+    if (!ref && scope.nodes.includes(key)) {
       ref = key
     }
     if (ref && scope.prefix) {
@@ -126,40 +144,21 @@ export const resolveRefKey = (key: string, ctx: TParseContext): string => {
   return ref || key
 }
 
-export const parseDataRefs = (data: TData, refs: string[] = []) => {
-  const type = data === null ? 'null' : typeof(data)
-
-  switch (type) {
-    case 'string':
-      refs.push(...parseRefs(data as string))
-      break
-    case 'null':
-    case 'number':
-      break
-    case 'object':
-      Object.values(data).forEach(v => parseDataRefs(v, refs))
-      break
-    default:
-      throw new Error(`unsupported data type: ${type}`)
-  }
-
-  return refs
-}
-
 export const parseDataArgs = (data: any) => typeof data === 'string'
   ? [data]
   : Object.entries(flatten(data)).map(entry => [VARARG, ...entry]).flat()
 
 export const populateMappings = (ctx: TParseContext, directives: TPipeline, key = ctx.prefix) => {
-  ctx.vertexes[key] = directives
+  ctx.pipelines[key] = directives
   directives.forEach(directive => {
     if (directive.op !== undefined) {
       return
     }
-    const {refs, mappings} = directive
-    refs.forEach(ref => {
-      const from = resolveRefKey(ref, ctx)
-      mappings[ref] = from
+    const {injects, mappings} = directive
+    const nodes = Object.values(injects).map(({ref}) => ref)
+    nodes.forEach(node => {
+      const from = resolveRefKey(node, ctx)
+      mappings[node] = from
       ctx.edges.push([from, key])
     })
   })
@@ -167,17 +166,16 @@ export const populateMappings = (ctx: TParseContext, directives: TPipeline, key 
 
 export const parse = ({data, sources = {}}: TConfigDeclaration, parent: TParseContext = {
   prefix: '',
-  vertexes: {},
+  pipelines: {},
   edges: [],
-  refs: []
+  nodes: []
 }, prefix = ''): TConfigGraph => {
-  const {vertexes, edges} = parent
-  const refs = Object.keys(sources)
-  const dataRefs = parseDataRefs(data)
+  const {pipelines, edges} = parent
+  const nodes = Object.keys(sources)
   const ctx = {
-    vertexes,
+    pipelines,
     edges,
-    refs,
+    nodes,
     parent,
     prefix,
   }
@@ -185,11 +183,11 @@ export const parse = ({data, sources = {}}: TConfigDeclaration, parent: TParseCo
   populateMappings(ctx, [{
     cmd: DATA,
     args: parseDataArgs(data),
-    refs: dataRefs,
+    injects: parseDataInjects(data),
     mappings: {}
   }])
 
-  refs.forEach(k => {
+  nodes.forEach(k => {
     const key = resolveRefKey(k, ctx)
     const value = sources[k]
 
@@ -208,7 +206,7 @@ export const parse = ({data, sources = {}}: TConfigDeclaration, parent: TParseCo
   // )
 
   return {
-    vertexes,
+    pipelines,
     edges
   }
 }

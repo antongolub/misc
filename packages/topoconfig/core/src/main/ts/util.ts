@@ -1,5 +1,5 @@
 // https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_get
-export const get = <T = any>(obj: any, path: string, defaultValue?: any): T => {
+export const get = <T = any>(obj: any, path?: string, defaultValue?: any): T => {
   if (!path) return obj
   if (path.startsWith('.')) return get(obj, path.slice(1), defaultValue)
 
