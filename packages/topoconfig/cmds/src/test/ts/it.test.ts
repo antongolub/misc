@@ -23,7 +23,9 @@ describe('integration', () => {
             somefilecontents: '$somefilecontents',
             argvfoo: '$argv.foo',
             fromjson: '$validjson.a',
-            ip: '$ip'
+            ip: '$ip',
+            pwdfromenv: '$realenv.PWD'
+            // g: '$g' // Conf does not process circular refs
           }
         },
         kubeconfigName: 'dot {{= "$env.ENVIRONMENT_PROFILE_NAME" || "kube" }}.json',
@@ -65,7 +67,9 @@ describe('integration', () => {
         argv:     'argv --foo bar',
         somejson: 'json {"a":"b"}',
         validjson: 'ajv $somejson $someschema',
-        ip: 'ip'
+        ip: 'ip',
+        realenv: 'env'
+        // g: 'g'
       }
     })
 
@@ -78,7 +82,9 @@ describe('integration', () => {
     assert.equal(config.get('kubeconfigName'), 'prod.json')
     assert.equal(config.get('argvfoo'), 'bar')
     assert.equal(config.get('fromjson'), 'b')
+    assert.equal(config.get('pwdfromenv'), process.env.PWD)
     assert.match(config.get('ip'), /^\d+\.\d+\.\d+\.\d+$/)
+    // assert.equal(config.get('g.fetch'), fetch)
     assert.ok(config.get('somefilecontents').startsWith('import * as assert'))
   })
 })

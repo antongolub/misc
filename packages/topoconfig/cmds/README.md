@@ -157,9 +157,7 @@ import {dot} from 'topoconfig/cmds'
 
 const config = await topoconfig({
   cmds: {dot},
-  data: {
-    filename: '$filename'
-  },
+  data: '$filename',
   sources: {
     filename: 'dot {{= "$env.ENVIRONMENT_PROFILE_NAME" || "kube" }}.json',
     env: {
@@ -179,9 +177,7 @@ import {ip} from 'topoconfig/cmds'
 
 const config = await topoconfig({
   cmds: {ip},
-  data: {
-    ip: '$ip'
-  },
+  data: '$ip',
   sources: {
     ip: 'ip'
   }
@@ -198,9 +194,7 @@ import {ajv} from 'topoconfig/cmds'
 
 const config = await topoconfig({
   cmds: {ajs},
-  data: {
-    output: '$output'
-  },
+  data: '$output',
   sources: {
     object: {foo: 'bar'},
     schema: {type: 'object', properties: {foo: {type: 'string'}}},
@@ -225,9 +219,44 @@ const config = await topoconfig({
   sources: {
     argv: 'argv'
   }
-}) // 'bar'
+}) // {param: 'bar'}
 
 // node app.js --foo=bar
+```
+
+### `env`
+Refers to `process.env`.
+
+```ts
+// app.js
+import {topoconfig} from 'topoconfig'
+import {env} from 'topoconfig/cmds'
+
+const config = await topoconfig({
+  cmds: {env},
+  data: '$env.DEBUG',
+  sources: {
+    env: 'env'
+  }
+}) // 'true'
+// DEBUG=true node app.js
+```
+
+### `g`
+Returns a ref to global object.
+
+```ts
+import {topoconfig} from 'topoconfig'
+import {g} from 'topoconfig/cmds'
+
+const config = await topoconfig({
+  cmds: {g},
+  data: '$global.foo',
+  sources: {
+    global: 'g'
+  }
+})
+// refers to this.globalThis.foo
 ```
 
 ## License
