@@ -23,6 +23,7 @@ describe('integration', () => {
             somefilecontents: '$somefilecontents',
             argvfoo: '$argv.foo',
             fromjson: '$validjson.a',
+            fromyaml: '$someyaml.foo',
             ip: '$ip',
             pwdfromenv: '$realenv.PWD'
             // g: '$g' // Conf does not process circular refs
@@ -66,9 +67,11 @@ describe('integration', () => {
         somefilecontents: 'file $dirname/it.test.$ext $encoding',
         argv:     'argv --foo bar',
         somejson: 'json {"a":"b"}',
+        rawyaml: {data: 'foo: bar'},
+        someyaml: 'yaml $rawyaml',
         validjson: 'ajv $somejson $someschema',
         ip: 'ip',
-        realenv: 'env'
+        realenv: 'env',
         // g: 'g'
       }
     })
@@ -82,6 +85,7 @@ describe('integration', () => {
     assert.equal(config.get('kubeconfigName'), 'prod.json')
     assert.equal(config.get('argvfoo'), 'bar')
     assert.equal(config.get('fromjson'), 'b')
+    assert.equal(config.get('fromyaml'), 'bar')
     assert.equal(config.get('pwdfromenv'), process.env.PWD)
     assert.match(config.get('ip'), /^\d+\.\d+\.\d+\.\d+$/)
     // assert.equal(config.get('g.fetch'), fetch)

@@ -70,7 +70,6 @@ import {json} from 'topoconfig/cmds'
 
 const config = await topoconfig({
   cmds: {
-    file,
     json
   },
   data: {
@@ -78,6 +77,26 @@ const config = await topoconfig({
   },
   sources: {
     contents: 'json {"foo":"bar"}'
+  }
+})
+```
+
+### `yaml`
+Parses value as YAML.
+
+```ts
+import {topoconfig} from 'topoconfig'
+import {yaml} from 'topoconfig/cmds'
+
+const config = await topoconfig({
+  cmds: {
+    yaml
+  },
+  data: {
+    contents: '$contents'
+  },
+  sources: {
+    contents: 'yaml "foo: bar"'
   }
 })
 ```
