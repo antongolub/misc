@@ -170,6 +170,26 @@ const config = await topoconfig({
 // prod.json
 ```
 
+### `ip`
+Resolves current [ip](https://github.com/indutny/node-ip).
+
+```ts
+import {topoconfig} from 'topoconfig'
+import {ip} from 'topoconfig/cmds'
+
+const config = await topoconfig({
+  cmds: {ip},
+  data: {
+    ip: '$ip'
+  },
+  sources: {
+    ip: 'ip'
+  }
+})
+
+// 10.10.0.12
+```
+
 ### `ajv`
 Validates values by json-schema via [ajv](https://github.com/ajv-validator/ajv). Extra [ajv-formats](https://github.com/ajv-validator/ajv-formats) included.
 ```ts

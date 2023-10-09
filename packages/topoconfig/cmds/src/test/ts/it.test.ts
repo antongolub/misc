@@ -22,7 +22,8 @@ describe('integration', () => {
             kubeconfigName: '$kubeconfigName',
             somefilecontents: '$somefilecontents',
             argvfoo: '$argv.foo',
-            fromjson: '$validjson.a'
+            fromjson: '$validjson.a',
+            ip: '$ip'
           }
         },
         kubeconfigName: 'dot {{= "$env.ENVIRONMENT_PROFILE_NAME" || "kube" }}.json',
@@ -63,7 +64,8 @@ describe('integration', () => {
         somefilecontents: 'file $dirname/it.test.$ext $encoding',
         argv:     'argv --foo bar',
         somejson: 'json {"a":"b"}',
-        validjson: 'ajv $somejson $someschema'
+        validjson: 'ajv $somejson $someschema',
+        ip: 'ip'
       }
     })
 
@@ -76,6 +78,7 @@ describe('integration', () => {
     assert.equal(config.get('kubeconfigName'), 'prod.json')
     assert.equal(config.get('argvfoo'), 'bar')
     assert.equal(config.get('fromjson'), 'b')
+    assert.match(config.get('ip'), /^\d+\.\d+\.\d+\.\d+$/)
     assert.ok(config.get('somefilecontents').startsWith('import * as assert'))
   })
 })

@@ -51,7 +51,7 @@
     "conf": "^11.0.2",
     "dot": "^2.0.0-beta.1",
     "dotenv": "^16.3.1",
-    "ip": "^1.1.8",
+    "ip": "^2.0.0",
     "js-yaml": "^4.1.0",
     "minimist": "^1.2.8",
     "topoconfig": "workspace:*"

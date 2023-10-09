@@ -467,7 +467,7 @@ __metadata:
     conf: "npm:^11.0.2"
     dot: "npm:^2.0.0-beta.1"
     dotenv: "npm:^16.3.1"
-    ip: "npm:^1.1.8"
+    ip: "npm:^2.0.0"
     js-yaml: "npm:^4.1.0"
     minimist: "npm:^1.2.8"
     topoconfig: "workspace:*"
@@ -2421,6 +2421,13 @@ __metadata:
   version: 1.1.8
   resolution: "ip@npm:1.1.8"
   checksum: bb1850e7b6573a53b7fd8becad4c81e0026b94d2a3322bb8540ab67fa3987c7401d1f2986fe6119f1578464ac465dad2c8b243c08c748f1f88c350c64cc9d134
+  languageName: node
+  linkType: hard
+
+"ip@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "ip@npm:2.0.0"
+  checksum: 42a7cf251b844d98a4c3373d06997b991cd1a7f8a5d43bcf2b4f610517d39c5504f6eb3e73e77f5c1453ac766690e82dab28a8a05a49a6fd7d4a40fad93640e9
   languageName: node
   linkType: hard
 
