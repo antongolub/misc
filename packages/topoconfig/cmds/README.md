@@ -170,6 +170,25 @@ const config = await topoconfig({
 // prod.json
 ```
 
+### `ajv`
+Validates values by json-schema via [ajv](https://github.com/ajv-validator/ajv). Extra [ajv-formats](https://github.com/ajv-validator/ajv-formats) included.
+```ts
+import {topoconfig} from 'topoconfig'
+import {ajv} from 'topoconfig/cmds'
+
+const config = await topoconfig({
+  cmds: {ajs},
+  data: {
+    output: '$output'
+  },
+  sources: {
+    object: {foo: 'bar'},
+    schema: {type: 'object', properties: {foo: {type: 'string'}}},
+    output: 'ajv $object $schema'
+  }
+}) // returns {foo: 'bar'} if it mathes the schema
+```
+
 ### `argv`
 Returns [minimist](https://github.com/minimistjs/minimist)-parsed argv.
 

@@ -461,7 +461,7 @@ const config = await topoconfig<ReturnType<typeof cmds.conf>>({
 ```
 
 
-## Notes
+## Implementation Notes
 ```ts
 export type TData = number | string | { [key: string]: TData } | { [key: number]: TData }
 export type TCmd = (...opts: any[]) => any

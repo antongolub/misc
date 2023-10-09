@@ -22,7 +22,7 @@ describe('integration', () => {
             kubeconfigName: '$kubeconfigName',
             somefilecontents: '$somefilecontents',
             argvfoo: '$argv.foo',
-            fromjson: '$somejson.a'
+            fromjson: '$validjson.a'
           }
         },
         kubeconfigName: 'dot {{= "$env.ENVIRONMENT_PROFILE_NAME" || "kube" }}.json',
@@ -59,9 +59,11 @@ describe('integration', () => {
         dirname:  {data: __dirname},
         ext:      {data: 'ts'},
         encoding: {data: 'utf8'},
+        someschema: {data: {type: 'object', properties: {a: {type: 'string'}}}},
         somefilecontents: 'file $dirname/it.test.$ext $encoding',
         argv:     'argv --foo bar',
-        somejson: 'json {"a":"b"}'
+        somejson: 'json {"a":"b"}',
+        validjson: 'ajv $somejson $someschema'
       }
     })
 
