@@ -20,7 +20,9 @@ describe('integration', () => {
             remote: '$remote',
             filename: '$cwd/$filename..json',
             kubeconfigName: '$kubeconfigName',
-            somefilecontents: '$somefilecontents'
+            somefilecontents: '$somefilecontents',
+            argvfoo: '$argv.foo',
+            fromjson: '$somejson.a'
           }
         },
         kubeconfigName: 'dot {{= "$env.ENVIRONMENT_PROFILE_NAME" || "kube" }}.json',
@@ -57,7 +59,9 @@ describe('integration', () => {
         dirname:  {data: __dirname},
         ext:      {data: 'ts'},
         encoding: {data: 'utf8'},
-        somefilecontents: 'file $dirname/it.test.$ext $encoding'
+        somefilecontents: 'file $dirname/it.test.$ext $encoding',
+        argv:     'argv --foo bar',
+        somejson: 'json {"a":"b"}'
       }
     })
 
@@ -68,6 +72,8 @@ describe('integration', () => {
     assert.equal(config.get('remote.formatted'), 'iPhone 9 - 549')
     assert.equal(config.get('filename'), 'cwd/config.json')
     assert.equal(config.get('kubeconfigName'), 'prod.json')
+    assert.equal(config.get('argvfoo'), 'bar')
+    assert.equal(config.get('fromjson'), 'b')
     assert.ok(config.get('somefilecontents').startsWith('import * as assert'))
   })
 })

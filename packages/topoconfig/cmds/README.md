@@ -40,6 +40,48 @@ const config = await topconfig({
 })
 ```
 
+### `file`
+Reads file.
+
+```ts
+import {topoconfig} from 'topoconfig'
+import {file, json} from 'topoconfig/cmds'
+
+const config = await topoconfig({
+  cmds: {
+    file,
+    json
+  },
+  data: {
+    contents: '$contents'
+  },
+  sources: {
+    contents: 'file file.json > json'
+  }
+})
+```
+
+### `json`
+Parses value as JSON.
+
+```ts
+import {topoconfig} from 'topoconfig'
+import {json} from 'topoconfig/cmds'
+
+const config = await topoconfig({
+  cmds: {
+    file,
+    json
+  },
+  data: {
+    contents: '$contents'
+  },
+  sources: {
+    contents: 'json {"foo":"bar"}'
+  }
+})
+```
+
 ### `http`
 Invokes [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/fetch) to get data from remotes.
 
@@ -106,7 +148,7 @@ config.get('foo.bar')     // 'baz'
 config.set('foo.bar', 1)  // Error: Config schema violation: `foo/bar` must be string
 ```
 
-## `dot`
+### `dot`
 Applies [doT](https://github.com/olado/doT) to value resolution. Follow [the v2 API guides](https://github.com/olado/doT/tree/v2) for details.
 
 ```ts
@@ -126,6 +168,27 @@ const config = await topoconfig({
   }
 })
 // prod.json
+```
+
+### `argv`
+Returns [minimist](https://github.com/minimistjs/minimist)-parsed argv.
+
+```ts
+//  app.js
+import {topoconfig} from 'topoconfig'
+import {argv} from 'topoconfig/cmds'
+
+const config = await topoconfig({
+  cmds: {argv},
+  data: {
+    param: '$argv.foo'
+  },
+  sources: {
+    argv: 'argv'
+  }
+}) // 'bar'
+
+// node app.js --foo=bar
 ```
 
 ## License

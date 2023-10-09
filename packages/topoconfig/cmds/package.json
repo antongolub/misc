@@ -28,7 +28,8 @@
     "build:docs": "typedoc --options src/main/typedoc",
     "test": "concurrently 'npm:test:*'",
     "test:lint": "eslint -c src/test/lint/.eslintrc.json src",
-    "test:unit": "c8 -r lcov -r text -o target/coverage -x src/test node --loader ts-node/esm --experimental-specifier-resolution=node ../../infra/scripts/test.mjs"
+    "test:unit": "c8 -r lcov -r text -o target/coverage -x src/test node --loader ts-node/esm --experimental-specifier-resolution=node ../../infra/scripts/test.mjs",
+    "publish:draft": "npm publish --no-git-tag-version --tag draft"
   },
   "publishConfig": {
     "access": "public"
