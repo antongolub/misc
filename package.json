@@ -14,5 +14,5 @@
   },
   "author": "Anton Golub <antongolub@antongolub.com>",
   "license": "MIT",
-  "packageManager": "yarn@4.0.0-rc.44"
+  "packageManager": "yarn@4.0.2"
 }

@@ -17,18 +17,18 @@ describe('integration', () => {
             foo: {
               bar: 'baz'
             },
-            remote: '$remote',
-            filename: '$cwd/$filename..json',
-            kubeconfigName: '$kubeconfigName',
+            remote:           '$remote',
+            filename:         '$cwd/$filename..json',
+            kubeconfigName:   '$kubeconfigName',
             somefilecontents: '$somefilecontents',
-            argvfoo: '$argv.foo',
-            fromjson: '$validjson.a',
-            fromyaml: '$someyaml.foo',
-            ip: '$ip',
-            pwdfromenv: '$realenv.PWD',
-            pkg: '$pkg',
-            cwd: '$realcwd'
-            // g: '$g' // Conf does not process circular refs
+            argvfoo:          '$argv.foo',
+            fromjson:         '$validjson.a',
+            fromyaml:         '$someyaml.foo',
+            ip:               '$ip',
+            pwdfromenv:       '$realenv.PWD',
+            pkg:              '$pkg',
+            cwd:              '$realcwd'
+            // g:             '$g' // Conf does not process circular refs
           }
         },
         kubeconfigName: 'dot {{= "$env.ENVIRONMENT_PROFILE_NAME" || "kube" }}.json',
@@ -59,24 +59,24 @@ describe('integration', () => {
             }
           }
         },
-        filename: {data: 'config'},
-        cwd:      {data: 'cwd'},
-        env:      {data: { ENVIRONMENT_PROFILE_NAME: 'prod' }},
-        dirname:  {data: __dirname},
-        ext:      {data: 'ts'},
-        encoding: {data: 'utf8'},
+        filename:   {data: 'config'},
+        cwd:        {data: 'cwd'},
+        env:        {data: { ENVIRONMENT_PROFILE_NAME: 'prod' }},
+        dirname:    {data: __dirname},
+        ext:        {data: 'ts'},
+        encoding:   {data: 'utf8'},
         someschema: {data: {type: 'object', properties: {a: {type: 'string'}}}},
         somefilecontents: 'file $dirname/it.test.$ext $encoding',
-        argv:     'argv --foo bar',
-        somejson: 'json {"a":"b"}',
-        rawyaml: {data: 'foo: bar'},
-        someyaml: 'yaml $rawyaml',
-        validjson: 'ajv $somejson $someschema',
-        ip: 'ip',
-        pkg: 'pkg',
-        realenv: 'env',
-        realcwd: 'cwd'
-        // g: 'g'
+        argv:       'argv --foo bar',
+        somejson:   'json {"a":"b"}',
+        rawyaml:    {data: 'foo: bar'},
+        someyaml:   'yaml $rawyaml',
+        validjson:  'ajv $somejson $someschema',
+        ip:         'ip',
+        pkg:        'pkg',
+        realenv:    'env',
+        realcwd:    'cwd'
+        // g:       'g'
       }
     })
 
