@@ -119,7 +119,7 @@ https://manpages.debian.org/stretch/lcov/geninfo.1.en.html#FILES
 
 
 ## Caveats
-1. If the original input has dubs, they will be squashed.
+1. If the original input has duplicates, they will be squashed.
 ```ts
 TN:
 SF:src/test/js/test.mjs
@@ -128,11 +128,12 @@ FN:77,assert.throws.message
 FNF:2
 FNH:2
 FNDA:1,assert.throws.message
-FNDA:1,assert.throws.message
+FNDA:1,assert.throws.message // -> FNDA:2,assert.throws.message
 DA:1,1
 DA:2,1
 DA:3,1
 ```
+
 2. Transpilers may bring their own artifacts (wrapper fragments, polyfills, etc) to lcov:
 ```ts
 FN:1,topoconfig
@@ -147,6 +148,7 @@ FNDA:1,B
 FNDA:0,d
 ```
 3. If a function is marked with `FNDA` in multiple lcov reports (unit, it, e2e), we cannot determine with certainty whether these hits should be summed (module caching), so we just use the known max.
+4. The lib follows an optimistic approach: no validation built-in, it will try to parse anything until failure.
 
 ## Refs
 #### Parsers
