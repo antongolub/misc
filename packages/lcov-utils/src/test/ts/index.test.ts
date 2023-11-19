@@ -1,7 +1,12 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
+import * as fs from 'node:fs/promises'
+import * as path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { parse, format, merge } from '../../main/ts'
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const fixtures = path.resolve(__dirname, '../fixtures')
 const input = `
 TN:
 SF:src/main/ts/constants.ts
@@ -85,8 +90,20 @@ describe('format()', () => {
 })
 
 describe('merge()', () => {
-  it('joins several lcovs', () => {
-    assert.equal(merge(), undefined)
+  it('joins several lcovs', async () => {
+    const input1 = await fs.readFile(path.resolve(fixtures, 'a.info'), 'utf8')
+    const input2 = await fs.readFile(path.resolve(fixtures, 'b.info'), 'utf8')
+    const input3 = await fs.readFile(path.resolve(fixtures, 'c.info'), 'utf8')
+    const lcov1 = parse(input1)
+    const lcov2 = parse(input2)
+    const lcov3 = parse(input3)
+    const merged = merge(lcov1, lcov2)
+
+    // await fs.writeFile('1.txt', JSON.stringify(lcov1, null, 2))
+    // await fs.writeFile('2.txt', JSON.stringify(lcov2, null, 2))
+    // await fs.writeFile('3.txt', JSON.stringify(lcov3, null, 2))
+    // await fs.writeFile('new.txt', JSON.stringify(merge(lcov1, lcov2), null, 2))
+
+    assert.deepEqual(merged['src/main/js/cli.mjs'], lcov3['src/main/js/cli.mjs'])
   })
 })
-

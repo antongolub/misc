@@ -63,7 +63,7 @@ const parseEntry = (block: string): LcovEntry => {
         entry.lh = +value
         break
       case 'BRDA':
-        entry.brda.push([+chunks[0], +chunks[1], +chunks[2], +chunks[3]])
+        entry.brda.push([+chunks[0], +chunks[1], +chunks[2], chunks[3] === '-' ? 0 : +chunks[3]])
         break
       case 'BRF':
         entry.brf = +value
@@ -104,7 +104,7 @@ const formatEntry = (entry: LcovEntry): string => {
     da.map(([c0, c1]) => `DA:${c0},${c1}`),
     `LF:${lf}`,
     `LH:${lh}`,
-    brda.map(([c0, c1, c2, c3]) => `BRDA:${c0},${c1},${c2},${c3}`),
+    brda.map(([c0, c1, c2, c3]) => `BRDA:${c0},${c1},${c2},${c3 === 0 ? '-' : c3}`),
     `BRF:${brf}`,
     `BRH:${brh}`,
     EOR
@@ -116,4 +116,107 @@ const formatEntry = (entry: LcovEntry): string => {
 }
 
 export const format = (lcov: Lcov): string => Object.values(lcov).map(formatEntry).join('\n')
-export const merge = (): undefined => undefined
+
+export const merge = (...lcovs: Lcov[]): Lcov => {
+  const sources = lcovs.reduce<Record<string, LcovEntry[]>>((m, lcov) => {
+    const entries = Object.values(lcov)
+
+    for (const entry of entries) {
+      const {sf} = entry
+      if (!m[sf]) {
+        m[sf] = []
+      }
+      m[sf].push(entry)
+    }
+    return m
+  }, {})
+
+  return Object.values(sources).reduce<Lcov>((m, v) => {
+    const hits: Record<string, number> = {}
+    const first = v[0]
+
+    for (const entry of v) {
+      for (const [line, name] of entry.fn) {
+        hits[`fn,${line},${name}`] = 1
+      }
+      for (const [line, count] of entry.da) {
+        hits[`da,${line}`] = Math.max(hits[`da,${line}`] || 0, count)
+      }
+      for (const [count, name] of entry.fnda) {
+        hits[`fnda,${name}`] = Math.max(hits[`fnda,${name}`] || 0, count)
+      }
+      for (const [line, blnum, brnum, count] of entry.brda) {
+        const key = `brda,${line},${blnum},${brnum}`
+        hits[key] = Math.max(hits[key] || 0, count)
+      }
+    }
+
+    let brf = 0
+    let brh = 0
+    let fnf = 0
+    let fnh = 0
+    let lf = 0
+    let lh = 0
+    const da: LcovEntry['da'] = []
+    const brda: LcovEntry['brda'] = []
+    const fnda: LcovEntry['fnda'] = []
+    const fn: LcovEntry['fn'] = []
+
+    for (const [key, count] of Object.entries(hits)) {
+      const [name, ...rest] = key.split(',')
+
+      if (name === 'fn') {
+        fn.push([+rest[0], rest[1]])
+      } else if (name === 'fnda') {
+        fnda.push([count, rest[0]])
+        fnf++
+        if (count) {
+          fnh++
+        }
+
+      } else if (name === 'brda') {
+        brda.push([+rest[0], +rest[1], +rest[2], count])
+
+        brf++
+        if (count) {
+          brh++
+        }
+      } else if (name === 'da') {
+        da.push([+rest[0], count])
+
+        lf++
+        if (count) {
+          lh++
+        }
+      }
+    }
+
+    const fncount = fn.reduce<Record<string, number>>((m, [count, name]) => {
+      m[name] = count
+      return m
+    }, {})
+
+    // FNDA follows FN order
+    fn.sort(([, a], [, b]) => fncount[a] - fncount[b])
+    fnda.sort(([, a], [, b]) => fncount[a] - fncount[b])
+
+    da.sort(([a], [b]) => a - b)
+    brda.sort(([a], [b]) => a - b)
+
+    m[first.sf] = {
+      ...first,
+      fn,
+      fnda,
+      fnf,
+      fnh,
+      brda,
+      brf,
+      brh,
+      da,
+      lf,
+      lh,
+    }
+
+    return m
+  }, {})
+}
