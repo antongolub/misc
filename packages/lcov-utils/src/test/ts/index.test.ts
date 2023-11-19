@@ -3,7 +3,7 @@ import { describe, it } from 'node:test'
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { parse, format, merge } from '../../main/ts'
+import { parse, format, merge, LCOV } from '../../main/ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const fixtures = path.resolve(__dirname, '../fixtures')
@@ -105,5 +105,12 @@ describe('merge()', () => {
     // await fs.writeFile('new.txt', JSON.stringify(merge(lcov1, lcov2), null, 2))
 
     assert.deepEqual(merged['src/main/js/cli.mjs'], lcov3['src/main/js/cli.mjs'])
+  })
+})
+
+describe('LCOV', () => {
+  it('reexports parse and format', () => {
+    assert.equal(LCOV.parse, parse)
+    assert.equal(LCOV.stringify, format)
   })
 })

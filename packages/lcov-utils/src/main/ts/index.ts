@@ -1,7 +1,8 @@
 export {
   parse,
   format,
-  merge
+  merge,
+  LCOV,
 } from './lcov.ts'
 
 export type { LcovEntry, Lcov } from './interface.js'

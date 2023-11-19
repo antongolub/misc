@@ -225,3 +225,9 @@ export const merge = (...lcovs: Lcov[]): Lcov => {
     return m
   }, {})
 }
+
+export const LCOV = {
+  parse,
+  stringify: format,
+  format
+}
