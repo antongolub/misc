@@ -30,6 +30,25 @@ LCOV.strigify === format // true
 LCOV.parse === parse // true
 ```
 
+```ts
+export type LcovEntry = {
+  tn:     boolean
+  sf:     string
+  fn:     [number, string][]
+  fnf:    number
+  fnh:    number
+  fnda:   [number, string][]
+  da:     [number, number][]
+  lf:     number
+  lh:     number
+  brda:   [number, number, number, number][]
+  brf:    number
+  brh:    number
+}
+
+export type Lcov = Record<string, LcovEntry>
+```
+
 ## Refs
 #### Parsers
 * [davglass/lcov-parse](https://github.com/davglass/lcov-parse)
