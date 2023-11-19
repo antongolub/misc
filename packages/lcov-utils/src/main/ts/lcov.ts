@@ -2,12 +2,13 @@ import {Lcov, LcovEntry} from './interface.js'
 
 const EOR = 'end_of_record'
 
-export const parse = (input: string): Lcov => {
+export const parse = (input: string, {prefix = ''}: {prefix?: string} = {}): Lcov => {
   const lcov: Lcov = {}
   const blocks = input.split(EOR).slice(0, -1)
 
   for (const block of blocks) {
     const entry = parseEntry(block)
+    entry.sf = `${prefix}${entry.sf}`
     lcov[entry.sf] = entry
   }
 

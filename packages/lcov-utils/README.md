@@ -26,10 +26,11 @@ const lcov3 = merge(lcov, lcov2)
 await fs.writeFile('lcov-merged.info', format(lcov3))
 
 // A bit of sugar
-LCOV.strigify === format // true
+LCOV.stringify === format // true
 LCOV.parse === parse // true
 ```
 
+### Data structures
 ```ts
 export type LcovEntry = {
   tn:     string               // test name
@@ -41,13 +42,15 @@ export type LcovEntry = {
   da:     [number, number][]   // line and exec count
   lf:     number               // lines found
   lh:     number               // lines hit
-  brda:   [number, number, number, number][]  // branch data: line, exec count, block number, branch number
+  brda:   [number, number, number, number][]  // branch data: line, block number, branch number, taken
   brf:    number               // branches found
   brh:    number               // branches hit
 }
 
 export type Lcov = Record<string, LcovEntry>
 ```
+https://manpages.debian.org/stretch/lcov/geninfo.1.en.html#FILES
+
 
 ## Caveats
 1. If the original input has dubs, they will be squashed.
