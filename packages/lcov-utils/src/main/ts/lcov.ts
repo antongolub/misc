@@ -117,6 +117,28 @@ const formatEntry = (entry: LcovEntry): string => {
 
 export const format = (lcov: Lcov): string => Object.values(lcov).map(formatEntry).join('\n')
 
+const mergeHits = (entries: LcovEntry[]) => {
+  const hits: Record<string, number> = {}
+
+  for (const entry of entries) {
+    for (const [line, name] of entry.fn) {
+      hits[`fn,${line},${name}`] = 1
+    }
+    for (const [line, count] of entry.da) {
+      hits[`da,${line}`] = Math.max(hits[`da,${line}`] || 0, count)
+    }
+    for (const [count, name] of entry.fnda) {
+      hits[`fnda,${name}`] = Math.max(hits[`fnda,${name}`] || 0, count)
+    }
+    for (const [line, blnum, brnum, count] of entry.brda) {
+      const key = `brda,${line},${blnum},${brnum}`
+      hits[key] = Math.max(hits[key] || 0, count)
+    }
+  }
+
+  return hits
+}
+
 export const merge = (...lcovs: Lcov[]): Lcov => {
   const sources = lcovs.reduce<Record<string, LcovEntry[]>>((m, lcov) => {
     const entries = Object.values(lcov)
@@ -128,28 +150,13 @@ export const merge = (...lcovs: Lcov[]): Lcov => {
       }
       m[sf].push(entry)
     }
+
     return m
   }, {})
 
-  return Object.values(sources).reduce<Lcov>((m, v) => {
-    const hits: Record<string, number> = {}
-    const first = v[0]
-
-    for (const entry of v) {
-      for (const [line, name] of entry.fn) {
-        hits[`fn,${line},${name}`] = 1
-      }
-      for (const [line, count] of entry.da) {
-        hits[`da,${line}`] = Math.max(hits[`da,${line}`] || 0, count)
-      }
-      for (const [count, name] of entry.fnda) {
-        hits[`fnda,${name}`] = Math.max(hits[`fnda,${name}`] || 0, count)
-      }
-      for (const [line, blnum, brnum, count] of entry.brda) {
-        const key = `brda,${line},${blnum},${brnum}`
-        hits[key] = Math.max(hits[key] || 0, count)
-      }
-    }
+  return Object.values(sources).reduce<Lcov>((m, entries) => {
+    const hits = mergeHits(entries)
+    const first = entries[0]
 
     let brf = 0
     let brh = 0
@@ -165,29 +172,28 @@ export const merge = (...lcovs: Lcov[]): Lcov => {
     for (const [key, count] of Object.entries(hits)) {
       const [name, ...rest] = key.split(',')
 
-      if (name === 'fn') {
-        fn.push([+rest[0], rest[1]])
-      } else if (name === 'fnda') {
-        fnda.push([count, rest[0]])
-        fnf++
-        if (count) {
-          fnh++
-        }
+      switch(name) {
+        case 'fn':
+          fn.push([+rest[0], rest[1]])
+          break
 
-      } else if (name === 'brda') {
-        brda.push([+rest[0], +rest[1], +rest[2], count])
+        case 'fnda':
+          fnda.push([count, rest[0]])
+          fnf++
+          count && fnh++
+          break
 
-        brf++
-        if (count) {
-          brh++
-        }
-      } else if (name === 'da') {
-        da.push([+rest[0], count])
+        case 'brda':
+          brda.push([+rest[0], +rest[1], +rest[2], count])
+          brf++
+          count && brh++
+          break
 
-        lf++
-        if (count) {
-          lh++
-        }
+        case 'da':
+          da.push([+rest[0], count])
+          lf++
+          count && lh++
+          break
       }
     }
 
@@ -199,7 +205,6 @@ export const merge = (...lcovs: Lcov[]): Lcov => {
     // FNDA follows FN order
     fn.sort(([, a], [, b]) => fncount[a] - fncount[b])
     fnda.sort(([, a], [, b]) => fncount[a] - fncount[b])
-
     da.sort(([a], [b]) => a - b)
     brda.sort(([a], [b]) => a - b)
 
