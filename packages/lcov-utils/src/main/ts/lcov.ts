@@ -116,7 +116,9 @@ const formatEntry = (entry: LcovEntry): string => {
   return chunks.join('\n')
 }
 
-export const format = (lcov: Lcov): string => Object.values(lcov).map(formatEntry).join('\n')
+export const format = (lcov: Lcov): string => Object.values(lcov)
+  .sort(({sf: a}, {sf: b}) => a.localeCompare(b))
+  .map(formatEntry).join('\n')
 
 const mergeHits = (entries: LcovEntry[]) => {
   const hits: Record<string, number> = {}

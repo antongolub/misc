@@ -1,6 +1,6 @@
 {
   "name": "lcov-utils",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "LCOV utils: parse, format, merge",
   "keywords": [
     "lcov",
