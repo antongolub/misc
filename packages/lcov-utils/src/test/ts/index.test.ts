@@ -54,7 +54,7 @@ describe('parse()', () => {
         lf: 3,
         lh: 3,
         sf: 'src/main/ts/constants.ts',
-        tn: true
+        tn: ''
       },
       'src/main/ts/index.ts': {
         brda: [
@@ -76,7 +76,7 @@ describe('parse()', () => {
         lf: 1,
         lh: 1,
         sf: 'src/main/ts/index.ts',
-        tn: true
+        tn: ''
       }
     })
   })

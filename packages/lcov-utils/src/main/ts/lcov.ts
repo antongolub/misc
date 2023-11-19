@@ -17,7 +17,7 @@ export const parse = (input: string): Lcov => {
 const parseEntry = (block: string): LcovEntry => {
   const lines = block.trim().split('\n')
   const entry: LcovEntry = {
-    tn:     false,
+    tn:     '',
     sf:     '',
     fn:     [],
     fnf:    0,
@@ -36,7 +36,7 @@ const parseEntry = (block: string): LcovEntry => {
 
     switch (key) {
       case 'TN':
-        entry.tn = true
+        entry.tn = value
         break
       case 'SF':
         entry.sf = value
@@ -95,7 +95,7 @@ const formatEntry = (entry: LcovEntry): string => {
     brf
   } = entry
   const chunks = [
-    tn && 'TN:',
+    `TN:${tn}`,
     `SF:${sf}`,
     fn.map(([c0, c1]) => `FN:${c0},${c1}`),
     `FNF:${fnf}`,

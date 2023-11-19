@@ -1,8 +1,8 @@
 # lcov-utils
-> parse, format, merge in one place
+> parse, format and merge in one place
 
 ## Status
-blueprint
+Working draft
 
 ## Install
 ```shell
@@ -12,7 +12,7 @@ yarn add lcov-utils
 ## Usage
 ```ts
 import fs from 'node:fs/promises'
-import {parse, format, merge, LCOV} from 'lcov-utils'
+import { parse, format, merge, LCOV } from 'lcov-utils'
 
 const contents = await fs.readFile('lcov.info', 'utf8')
 const lcov = parse(contents)
@@ -32,18 +32,18 @@ LCOV.parse === parse // true
 
 ```ts
 export type LcovEntry = {
-  tn:     boolean
-  sf:     string
-  fn:     [number, string][]
-  fnf:    number
-  fnh:    number
-  fnda:   [number, string][]
-  da:     [number, number][]
-  lf:     number
-  lh:     number
-  brda:   [number, number, number, number | '-'][]
-  brf:    number
-  brh:    number
+  tn:     string               // test name
+  sf:     string               // source file
+  fn:     [number, string][]   // function line and name
+  fnf:    number               // functions found
+  fnh:    number               // functions hit
+  fnda:   [number, string][]   // function exec count and name
+  da:     [number, number][]   // line and exec count
+  lf:     number               // lines found
+  lh:     number               // lines hit
+  brda:   [number, number, number, number][]  // branch data: line, exec count, block number, branch number
+  brf:    number               // branches found
+  brh:    number               // branches hit
 }
 
 export type Lcov = Record<string, LcovEntry>
@@ -64,7 +64,7 @@ DA:1,1
 DA:2,1
 DA:3,1
 ```
-2. Transpilers may bring some artifacts (wrapper fragments, polyfills, etc) to lcov:
+2. Transpilers may bring their own artifacts (wrapper fragments, polyfills, etc) to lcov:
 ```ts
 FN:1,topoconfig
 FNF:8
@@ -77,7 +77,7 @@ FNDA:1,get
 FNDA:1,B
 FNDA:0,d
 ```
-3. If some fn marked is `FNDA` in multiple lcovs, we cannot determine with certainty whether these values should be summed (module caching), so we just use the known max.
+3. If a function is marked as `FNDA` in multiple lcov reports (unit, it, e2e), we cannot determine with certainty whether these values should be summed (module caching), so we just use the known max.
 
 ## Refs
 #### Parsers

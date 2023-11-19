@@ -21,7 +21,7 @@
  * end_of_record
  */
 export type LcovEntry = {
-  tn:     boolean
+  tn:     string
   sf:     string
   fn:     [number, string][]
   fnf:    number
