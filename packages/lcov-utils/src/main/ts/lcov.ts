@@ -1,4 +1,4 @@
-import {Lcov, LcovEntry} from './interface.js'
+import {Lcov, LcovDigest, LcovEntry} from './interface.js'
 
 const EOR = 'end_of_record'
 
@@ -225,6 +225,45 @@ export const merge = (...lcovs: Lcov[]): Lcov => {
 
     return m
   }, {})
+}
+
+export const sum = (lcov: Lcov): LcovDigest => {
+  let brf = 0
+  let brh = 0
+  let fnf = 0
+  let fnh = 0
+  let lf = 0
+  let lh = 0
+
+  for (const entry of Object.values(lcov)) {
+    brf += entry.brf
+    brh += entry.brh
+    fnf += entry.fnf
+    fnh += entry.fnh
+    lf += entry.lf
+    lh += entry.lh
+  }
+
+  const round = (n: number) => Math.round(n * 100) / 100
+  const branches = round(100 * brh / brf)
+  const functions = round(100 * fnh / fnf)
+  const lines = round(100 * lh / lf)
+  const max = Math.max(branches, functions, lines)
+  const avg = round((branches + functions + lines) / 3)
+
+  return {
+    brf,
+    brh,
+    fnf,
+    fnh,
+    lf,
+    lh,
+    branches,
+    functions,
+    lines,
+    avg,
+    max
+  }
 }
 
 export const LCOV = {

@@ -17,6 +17,20 @@ export type LcovEntry = {
 
 export type Lcov = Record<string, LcovEntry>
 
+export type LcovDigest = {
+  lines: number
+  branches: number
+  functions: number
+  max: number
+  avg: number
+  fnf: number
+  fnh: number
+  lf: number
+  lh: number
+  brf: number
+  brh: number
+}
+
 /** Real world example
 
 TN:

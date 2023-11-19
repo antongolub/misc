@@ -3,7 +3,7 @@ import { describe, it } from 'node:test'
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { parse, format, merge, LCOV } from '../../main/ts'
+import { parse, format, merge, sum, LCOV } from '../../main/ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const fixtures = path.resolve(__dirname, '../fixtures')
@@ -105,6 +105,27 @@ describe('merge()', () => {
     // await fs.writeFile('new.txt', JSON.stringify(merge(lcov1, lcov2), null, 2))
 
     assert.deepEqual(merged['src/main/js/cli.mjs'], lcov3['src/main/js/cli.mjs'])
+  })
+})
+
+describe('sum()', () => {
+  it('returns lcov summary', () => {
+    const digest = sum(parse(input))
+
+    console.log(sum(parse(input)))
+    assert.deepEqual(digest, {
+      brf: 1,
+      brh: 1,
+      fnf: 1,
+      fnh: 1,
+      lf: 4,
+      lh: 4,
+      branches: 100,
+      functions: 100,
+      lines: 100,
+      avg: 100,
+      max: 100
+    })
   })
 })
 

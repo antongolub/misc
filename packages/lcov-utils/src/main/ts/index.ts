@@ -2,6 +2,7 @@ export {
   parse,
   format,
   merge,
+  sum,
   LCOV,
 } from './lcov.ts'
 

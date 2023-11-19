@@ -12,7 +12,7 @@ yarn add lcov-utils
 ## Usage
 ```ts
 import fs from 'node:fs/promises'
-import { parse, format, merge, LCOV } from 'lcov-utils'
+import { parse, format, merge, sum, LCOV } from 'lcov-utils'
 
 const contents = await fs.readFile('lcov.info', 'utf8')
 const lcov = parse(contents)
@@ -24,6 +24,26 @@ const lcov2 = parse(await fs.readFile('lcov2.info', 'utf8'))
 const lcov3 = merge(lcov, lcov2)
 
 await fs.writeFile('lcov-merged.info', format(lcov3))
+
+console.log(sum(lcov3))
+/**
+{
+  // abs values
+  brf: 194,
+  brh: 161,
+  fnf: 68,
+  fnh: 58,
+  lf: 804,
+  lh: 714,
+  
+  // percents
+  branches: 82.99,
+  functions: 85.29,
+  lines: 88.81,
+  avg: 85.7,
+  max: 88.81
+}
+*/
 
 // A bit of sugar
 LCOV.stringify === format // true
