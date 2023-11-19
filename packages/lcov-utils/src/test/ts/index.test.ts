@@ -2,9 +2,7 @@ import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
 import { parse, format, merge } from '../../main/ts'
 
-describe('parse()', () => {
-  it('parses lcov input', () => {
-    const input = `
+const input = `
 TN:
 SF:src/main/ts/constants.ts
 FNF:0
@@ -31,6 +29,9 @@ BRF:1
 BRH:1
 end_of_record
 `
+
+describe('parse()', () => {
+  it('parses lcov input', () => {
     assert.deepEqual(parse(input), {
       'src/main/ts/constants.ts': {
         brda: [],
@@ -76,9 +77,10 @@ end_of_record
   })
 })
 
-describe('parse()', () => {
+describe('format()', () => {
   it('formats lcov output', () => {
-    assert.equal(format(), undefined)
+    const lcov = parse(input)
+    assert.equal(format(lcov).trim(), input.trim())
   })
 })
 

@@ -79,5 +79,41 @@ const parseEntry = (block: string): LcovEntry => {
   return entry
 }
 
-export const format = (): undefined => undefined
+const formatEntry = (entry: LcovEntry): string => {
+  const {
+    tn,
+    sf,
+    fn,
+    fnh,
+    fnf,
+    fnda,
+    da,
+    lh,
+    lf,
+    brda,
+    brh,
+    brf
+  } = entry
+  const chunks = [
+    tn && 'TN:',
+    `SF:${sf}`,
+    fn.map(([c0, c1]) => `FN:${c0},${c1}`),
+    `FNF:${fnf}`,
+    `FNH:${fnh}`,
+    fnda.map(([c0, c1]) => `FNDA:${c0},${c1}`),
+    da.map(([c0, c1]) => `DA:${c0},${c1}`),
+    `LF:${lf}`,
+    `LH:${lh}`,
+    brda.map(([c0, c1, c2, c3]) => `BRDA:${c0},${c1},${c2},${c3}`),
+    `BRF:${brf}`,
+    `BRH:${brh}`,
+    EOR
+  ]
+    .filter(Boolean)
+    .flat()
+
+  return chunks.join('\n')
+}
+
+export const format = (lcov: Lcov): string => Object.values(lcov).map(formatEntry).join('\n')
 export const merge = (): undefined => undefined
