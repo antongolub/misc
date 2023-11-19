@@ -114,12 +114,13 @@ export type LcovEntry = {
 
 export type Lcov = Record<string, LcovEntry>
 ```
+
 https://manpages.debian.org/stretch/lcov/geninfo.1.en.html#FILES
 
 
 ## Caveats
 1. If the original input has dubs, they will be squashed.
-```lcov
+```ts
 TN:
 SF:src/test/js/test.mjs
 FN:76,assert.throws.message
@@ -145,7 +146,7 @@ FNDA:1,get
 FNDA:1,B
 FNDA:0,d
 ```
-3. If a function is marked as `FNDA` in multiple lcov reports (unit, it, e2e), we cannot determine with certainty whether these values should be summed (module caching), so we just use the known max.
+3. If a function is marked with `FNDA` in multiple lcov reports (unit, it, e2e), we cannot determine with certainty whether these hits should be summed (module caching), so we just use the known max.
 
 ## Refs
 #### Parsers

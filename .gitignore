@@ -22,6 +22,7 @@ coverage
 coverage.*
 .nyc_output
 *.lcov
+lcov.info
 
 # CI/CD
 artifact.tar

@@ -1,6 +1,6 @@
 {
   "name": "lcov-utils",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "LCOV utils: parse, format, merge",
   "keywords": [
     "lcov",
@@ -36,7 +36,8 @@
     "test": "concurrently 'npm:test:*'",
     "test:lint": "eslint -c src/test/lint/.eslintrc.json src",
     "test:unit": "c8 -r lcov -r text -o target/coverage -x src/test node --loader ts-node/esm --experimental-specifier-resolution=node ../infra/scripts/test.mjs",
-    "publish:draft": "yarn build && npm publish --no-git-tag-version --tag draft"
+    "publish:draft": "yarn build && npm publish --no-git-tag-version --tag draft",
+    "publish:latest": "yarn build && npm publish --no-git-tag-version"
   },
   "publishConfig": {
     "access": "public"

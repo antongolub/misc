@@ -10,6 +10,7 @@
   "scripts": {
     "build": "yarn bulk:topobuild",
     "readme:toc": "node ./packages/infra/scripts/readme-toc.mjs",
+    "cov:merge": "node ./packages/infra/scripts/merge-cov.mjs",
     "test": "yarn bulk:topobuild --no-build --no-publish"
   },
   "author": "Anton Golub <antongolub@antongolub.com>",
