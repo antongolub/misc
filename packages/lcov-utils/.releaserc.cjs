@@ -1,5 +1,5 @@
 module.exports = {
-  ...require('../../.releaserc.js'),
+  ...require('../../.releaserc.cjs'),
   ghPages: {
     branch: 'gh-pages',
     from: 'target/docs',
