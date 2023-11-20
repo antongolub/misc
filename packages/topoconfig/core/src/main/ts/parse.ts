@@ -1,5 +1,5 @@
-import {TConfigDeclaration, TConfigGraph, TData, TInjects, TPipeline, TParseContext} from './interface'
-import { DATA, VARARG } from './constants'
+import {TConfigDeclaration, TConfigGraph, TData, TInjects, TPipeline, TParseContext} from './interface.ts'
+import { DATA, VARARG } from './constants.ts'
 import {flatten, reverseMap} from './util.ts'
 
 export const parseInjects = (chunk: string): TInjects =>

@@ -1,1 +1,1 @@
-export * from './topoconfig'
+export * from './topoconfig.ts'

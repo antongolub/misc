@@ -1,5 +1,5 @@
-import {TCmds, TDirective, TInjects, TOperator, TPipeline, TProcessContext} from './interface'
-import {DATA, DROP, VARARG} from './constants'
+import {TCmds, TDirective, TInjects, TOperator, TPipeline, TProcessContext} from './interface.ts'
+import {DATA, DROP, VARARG} from './constants.ts'
 import {expand, get, getPromise} from './util.ts'
 
 export const process = <T = any>(ctx: TProcessContext, vertex = ''): Promise<T> => {

@@ -1,8 +1,8 @@
-import {parse} from './parse'
-import {process} from './process'
-import {TConfigDeclaration, TProcessContext} from './interface'
+import {parse} from './parse.ts'
+import {process} from './process.ts'
+import {TConfigDeclaration, TProcessContext} from './interface.ts'
 
-export type {TConfigDeclaration} from './interface'
+export type {TConfigDeclaration} from './interface.ts'
 
 /**
  * Processes config declaration to resolve the output data value.
