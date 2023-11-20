@@ -66,7 +66,7 @@ export const processData = (...chunks: any[]) =>
       if (v === VARARG) {
         const key = chunks[k + 1]
         const rest = chunks.slice(k + 2)
-        const next = rest.findIndex(c => c === VARARG)
+        const next = rest.indexOf(VARARG)
         const values = next === -1 ? rest : rest.slice(0, next)
         m[key] = values.length === 1 ? values[0] : values.join('')
       }

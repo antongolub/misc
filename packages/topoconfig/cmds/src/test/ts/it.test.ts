@@ -93,7 +93,7 @@ describe('integration', () => {
     assert.equal(config.get('pkg.name'), '@topoconfig/cmds')
     assert.equal(config.get('pwdfromenv'), process.env.PWD)
     assert.equal(config.get('cwd'), process.cwd())
-    assert.match(config.get('ip'), /^\d+\.\d+\.\d+\.\d+$/)
+    assert.match(config.get('ip'), /^(?:\d+\.){3}\d+$/)
     // assert.equal(config.get('g.fetch'), fetch)
     assert.ok(config.get('somefilecontents').startsWith('import * as assert'))
   })
