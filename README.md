@@ -9,6 +9,7 @@
 | [@antongolub/blank](./packages/blank) | Blank TS project |  |
 | [@antongolub/infra](./packages/infra) | Repo infra assets |  |
 | [@topoconfig/cmds](./packages/topoconfig/cmds) | Topoconfig basic cmds preset | [![npm (scoped)](https://img.shields.io/npm/v/@topoconfig/cmds/latest.svg?label=&color=09e)](https://www.npmjs.com/package/@topoconfig/cmds) |
+| [lcov-utils](./packages/lcov-utils) | LCOV utils: parse, format, merge | [![npm (scoped)](https://img.shields.io/npm/v/lcov-utils/latest.svg?label=&color=09e)](https://www.npmjs.com/package/lcov-utils) |
 | [topoconfig](./packages/topoconfig/core) | Toposource-enhanced uniconfig | [![npm (scoped)](https://img.shields.io/npm/v/topoconfig/latest.svg?label=&color=09e)](https://www.npmjs.com/package/topoconfig) |
 
 ## License
