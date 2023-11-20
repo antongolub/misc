@@ -1,5 +1,5 @@
 import Ajv from 'ajv'
-import { createRequire } from 'module'
+import { createRequire } from 'node:module'
 
 const DEFAULT_OPTS = {}
 const ajvStack: Record<string, any> = {}

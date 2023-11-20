@@ -146,7 +146,7 @@ export const resolveRefKey = (key: string, ctx: TParseContext): string => {
 
 export const parseDataArgs = (data: any) => typeof data === 'string'
   ? [data]
-  : Object.entries(flatten(data)).map(entry => [VARARG, ...entry]).flat()
+  : Object.entries(flatten(data)).flatMap(entry => [VARARG, ...entry])
 
 export const populateMappings = (ctx: TParseContext, directives: TPipeline, key = ctx.prefix) => {
   ctx.pipelines[key] = directives

@@ -4,6 +4,6 @@ import { ip } from '../../main/ts'
 
 describe('ip()', () => {
   it('returns current ip', () => {
-    assert.match(ip(), /^\d+\.\d+\.\d+\.\d+$/)
+    assert.match(ip(), /^(?:\d+\.){3}\d+$/)
   })
 })
