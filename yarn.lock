@@ -37,14 +37,14 @@ __metadata:
     c8: "npm:^8.0.1"
     concurrently: "npm:^8.2.2"
     esbuild: "npm:^0.19.6"
-    esbuild-node-externals: "npm:^1.9.0"
+    esbuild-node-externals: "npm:^1.11.0"
     eslint: "npm:^8.54.0"
     eslint-config-qiwi: "npm:^2.1.3"
     fast-glob: "npm:^3.3.2"
     ts-node: "npm:^10.9.1"
     typedoc: "npm:^0.25.3"
     typescript: "npm:^5.2.2"
-    zx-bulk-release: "npm:^2.12.1"
+    zx-bulk-release: "npm:^2.12.2"
   languageName: unknown
   linkType: soft
 
@@ -1603,15 +1603,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-node-externals@npm:^1.9.0":
-  version: 1.9.0
-  resolution: "esbuild-node-externals@npm:1.9.0"
+"esbuild-node-externals@npm:^1.11.0":
+  version: 1.11.0
+  resolution: "esbuild-node-externals@npm:1.11.0"
   dependencies:
     find-up: "npm:^5.0.0"
     tslib: "npm:^2.4.1"
   peerDependencies:
     esbuild: 0.12 - 0.19
-  checksum: 78126940aec51bd8cd0aad845a29342478ca485378e85991b7faddb4968141c4507ce40179d8a7e92c05ad23dcc2e66b3da0c8913d99a297b7863a949e248cf7
+  checksum: 48bad17787b6663ada1dcdb278945e2f13304502c52ceca6f7c506c07a707de5ab41bac8dbc14b858f6b51ad9e583ac55ee200cb1540665934f3a49c040a5c06
   languageName: node
   linkType: hard
 
@@ -4805,21 +4805,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zx-bulk-release@npm:^2.12.1":
-  version: 2.12.1
-  resolution: "zx-bulk-release@npm:2.12.1"
+"zx-bulk-release@npm:^2.12.2":
+  version: 2.12.2
+  resolution: "zx-bulk-release@npm:2.12.2"
   dependencies:
     "@semrel-extra/topo": "npm:^1.14.0"
     cosmiconfig: "npm:^8.3.6"
     queuefy: "npm:^1.2.1"
-    zx-extra: "npm:^2.5.5"
+    zx-extra: "npm:^2.6.4"
   bin:
     zx-bulk-release: src/main/js/cli.js
-  checksum: 519e02337fb633e57777642ebd56ddfca64bdfd6e2ff6a457e359b507e0be74ea4a62eaaf06873d2cf3e5acbe3f0007725885b96adc0685af612d8df155e4d2c
+  checksum: 8b1f4dd776a6d2ea9287778921e6e820510ab44a578307c4871998a75ab91cb80ebecea2415d670e093a6c292182f1f762b26a3a4af813f782bb8c7c7ada2211
   languageName: node
   linkType: hard
 
-"zx-extra@npm:^2.5.5":
+"zx-extra@npm:^2.6.4":
   version: 2.6.4
   resolution: "zx-extra@npm:2.6.4"
   dependencies:
