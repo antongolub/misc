@@ -161,10 +161,11 @@ FNDA:0,d
 * [mweibel/lcov-result-merger](https://github.com/mweibel/lcov-result-merger)
 * [jacob-meacham/grunt-lcov-merge](https://github.com/jacob-meacham/grunt-lcov-merge)
 
-#### Notes
+#### Etc
 * [lcov/geninfo](https://manpages.debian.org/stretch/lcov/geninfo.1.en.html#FILES)
 * [linux-test-project/lcov/issues/113](https://github.com/linux-test-project/lcov/issues/113)
 * [dart-lang/coverage/issues/453](https://github.com/dart-lang/coverage/issues/453)
+* [stevenhair/lcov-badge2](https://github.com/stevenhair/lcov-badge2)
 
 ## License
 [MIT](./LICENSE)
