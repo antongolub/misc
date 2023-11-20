@@ -51,7 +51,7 @@
   "bugs": {
     "url": "https://github.com/antongolub/misc/issues"
   },
-  "homepage": "https://github.com/antongolub/misc#readme",
+  "homepage": "https://github.com/antongolub/misc/tree/master/packages/lcov-utils",
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
     "@types/node": "^20.9.2"

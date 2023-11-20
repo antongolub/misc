@@ -42,7 +42,7 @@
   "bugs": {
     "url": "https://github.com/antongolub/misc/issues"
   },
-  "homepage": "https://github.com/antongolub/misc/blob/master/packages/topoconfig/cmds/README.md",
+  "homepage": "https://github.com/antongolub/misc/tree/master/packages/topoconfig/cmds",
   "dependencies": {
     "ajv": "^8.12.0",
     "ajv-formats": "^3.0.0-rc.0",
