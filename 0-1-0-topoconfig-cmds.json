@@ -1,0 +1,9 @@
+{
+  "META_VERSION": "1",
+  "name": "@topoconfig/cmds",
+  "hash": "501b4ed50a4ef796a4f6409c5434d0789fb7db58",
+  "version": "0.1.0",
+  "dependencies": {
+    "topoconfig": "0.0.1"
+  }
+}
