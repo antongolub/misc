@@ -3,6 +3,6 @@ module.exports = {
   ghPages: {
     branch: 'gh-pages',
     from: 'target/docs',
-    fo: 'lcov-utils'
+    to: 'lcov-utils'
   }
 }
