@@ -14,43 +14,104 @@ yarn add lcov-utils
 ## Usage
 ```ts
 import fs from 'node:fs/promises'
-import { parse, format, merge, sum, LCOV } from 'lcov-utils'
+import { parse, format, merge, sum, badge, LCOV } from 'lcov-utils'
 
 const contents = await fs.readFile('lcov.info', 'utf8')
-const lcov = parse(contents)
-const str = format(lcov)
-
-str === contents // true
+const lcov = parse(contents)    // transforms to JSON
+const str = format(lcov)        // equals to contents
 
 const lcov2 = parse(await fs.readFile('lcov2.info', 'utf8'))
 const lcov3 = merge(lcov, lcov2)
 
-await fs.writeFile('lcov-merged.info', format(lcov3))
+const output = format(lcov3)    // converts back to LCOV-string
+await fs.writeFile('lcov-merged.info', output)
 
-console.log(sum(lcov3))
-/**
-{
-  // abs values
-  brf: 194,
-  brh: 161,
-  fnf: 68,
-  fnh: 58,
-  lf: 804,
-  lh: 714,
-  
-  // percents
-  branches: 82.99,
-  functions: 85.29,
-  lines: 88.81,
-  avg: 85.7,
-  max: 88.81
-}
-*/
+const digest = sum(lcov3)       // {lines: 88.81, branches: 88.81, functions: 88.81, ...}
+const covbadge = badge(lcov3)   // [![coverage](https://img.shields.io/badge/coverage-88.81-brightgreen)]()
 
 // A bit of sugar
-LCOV.stringify === format // true
-LCOV.parse === parse // true
+LCOV.stringify === format       // true
+LCOV.parse === parse            // true
 ```
+
+### parse
+Converts LCOV-string input to JSON.
+```ts
+import { parse } from 'lcov-utils'
+
+const cov = parse(lcov, {
+  // default options:
+  prefix: '', // prefix to inject to SF: entries
+})
+```
+
+### format
+Converts JSON back to LCOV-string.
+```ts
+import { format } from 'lcov-utils'
+
+const lcov = format(cov)
+```
+
+### merge
+Assembles several lcov reports into one.
+```ts
+import { merge } from 'lcov-utils'
+
+const lcov1 = parse(await fs.readFile('lcov1.info', 'utf8'))
+const lcov2 = parse(await fs.readFile('lcov2.info', 'utf8'))
+const lcov3 = merge(lcov1, lcov2)
+```
+
+### sum
+Calculates coverage metrics.
+
+```ts
+import {sum} from 'lcov-utils'
+
+const digest = sum(lcov)
+/**
+{
+// abs values
+   brf: 194,
+   brh: 161,
+   fnf: 68,
+   fnh: 58,
+   lf: 804,
+   lh: 714,
+
+// percents
+   branches: 82.99,
+   functions: 85.29,
+   lines: 88.81,
+   avg: 85.7,
+   max: 88.81
+}
+ */
+```
+
+### badge
+Returns a string that creates a custom shields.io-based badge.
+```ts
+import { badge } from 'lcov-utils'
+
+const covbadge = badge(lcov, {
+  // default options:
+  color: 'auto',     // any shield color (https://shields.io/badges). If `auto`, then gaps strategy is used
+  title: 'coverage', // badge title
+  pick: 'max',       // which metric to use for color. One of `avg`, `max`, `lines`, `branches`, `functions`
+  url: '',           // url to link, for example https://github.com/org/repo/blob/main/coverage/lcov.info
+  gaps: [
+    [95, 'brightgreen'],
+    [90, 'green'],
+    [80, 'yellowgreen'],
+    [70, 'yellow'],
+    [60, 'orange'],
+    [0, 'red']
+  ]
+})
+```
+See also: [stevenhair/lcov-badge2](https://github.com/stevenhair/lcov-badge2)
 
 <details>
 <summary><b>Monorepo snippet</b></summary>
