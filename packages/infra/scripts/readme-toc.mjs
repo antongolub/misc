@@ -16,7 +16,7 @@ const digest = Object.values(packages)
   .reduce((m, {relPath, manifest: {name, description, private: _private}}) => {
     const badge = _private
       ? ''
-      : `[![npm (scoped)](https://img.shields.io/npm/v/${name}/latest.svg?label=&color=09e)](https://www.npmjs.com/package/${name})`
+      : `[![npm (scoped)](https://img.shields.io/npm/v/${name}/latest.svg?label=&color=white)](https://www.npmjs.com/package/${name})` // 09e
 
     return m + `\n| [${name}](./${relPath}) | ${description} | ${badge} |`
   }, '| Package | Description | Latest |\n|---------|-------------|--------|')
