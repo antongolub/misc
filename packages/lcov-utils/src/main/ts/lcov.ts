@@ -282,6 +282,7 @@ const defaultBadgeOptions: LcovBadgeOptions = {
   title: 'coverage',
   pick: 'max',
   url: '',
+  style: 'flat',
   gaps: [
     [95, 'brightgreen'],
     [90, 'green'],
@@ -294,7 +295,7 @@ const defaultBadgeOptions: LcovBadgeOptions = {
 
 export const badge = (lcov: Lcov | LcovDigest | string, opts: Partial<LcovBadgeOptions> = {}): string => {
   const _opts = {...defaultBadgeOptions, ...opts}
-  const {color, url, title, pick, gaps} = _opts
+  const {color, style, url, title, pick, gaps} = _opts
   const digest: LcovDigest =
     typeof lcov === 'object' && 'max' in lcov
       ? lcov as LcovDigest
@@ -305,5 +306,5 @@ export const badge = (lcov: Lcov | LcovDigest | string, opts: Partial<LcovBadgeO
     ? gaps.find(([gap]) => value >= gap)?.[1] || 'red'
     : color
 
-  return `[![${title}](https://img.shields.io/badge/${title}-${value}-${_color})](${url})`
+  return `[![${title}](https://img.shields.io/badge/${title}-${value}-${_color}?style=${style})](${url})`
 }

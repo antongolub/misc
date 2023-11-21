@@ -32,6 +32,7 @@ export type LcovDigest = {
 }
 
 export type LcovBadgeOptions = {
+  style: string
   color: string
   url: string
   title: string

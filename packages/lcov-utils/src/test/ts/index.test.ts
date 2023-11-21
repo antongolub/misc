@@ -143,17 +143,18 @@ describe('LCOV', () => {
 
 describe('badge', () => {
   it('generates default badge', () => {
-    assert.equal(badge(input), '[![coverage](https://img.shields.io/badge/coverage-100-brightgreen)]()')
+    assert.equal(badge(input), '[![coverage](https://img.shields.io/badge/coverage-100-brightgreen?style=flat)]()')
   })
 
   it('generates a badge by custom opts', () => {
     const opts: LcovBadgeOptions = {
       color: 'cyan',
+      style: 'flat-square',
       pick: 'avg',
       title: 'cov',
       url: 'https://example.com',
       gaps: []
     }
-    assert.equal(badge(input, opts), '[![cov](https://img.shields.io/badge/cov-100-cyan)](https://example.com)')
+    assert.equal(badge(input, opts), '[![cov](https://img.shields.io/badge/cov-100-cyan?style=flat-square)](https://example.com)')
   })
 })

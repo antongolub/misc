@@ -98,6 +98,7 @@ import { badge } from 'lcov-utils'
 const covbadge = badge(lcov, {
   // default options:
   color: 'auto',     // any shield color (https://shields.io/badges). If `auto`, then gaps strategy is used
+  style: 'flat',     // badge style: `flat`, `flat-square`, `plastic`, `for-the-badge`, `social`
   title: 'coverage', // badge title
   pick: 'max',       // which metric to use for color. One of `avg`, `max`, `lines`, `branches`, `functions`
   url: '',           // url to link, for example https://github.com/org/repo/blob/main/coverage/lcov.info
