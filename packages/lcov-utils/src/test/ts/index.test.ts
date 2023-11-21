@@ -3,7 +3,7 @@ import { describe, it } from 'node:test'
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { parse, format, merge, sum, LCOV } from '../../main/ts'
+import {parse, format, merge, sum, badge, LCOV, LcovBadgeOptions} from '../../main/ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const fixtures = path.resolve(__dirname, '../fixtures')
@@ -109,23 +109,28 @@ describe('merge()', () => {
 })
 
 describe('sum()', () => {
-  it('returns lcov summary', () => {
-    const digest = sum(parse(input))
+  const expected = {
+    brf: 1,
+    brh: 1,
+    fnf: 1,
+    fnh: 1,
+    lf: 4,
+    lh: 4,
+    branches: 100,
+    functions: 100,
+    lines: 100,
+    avg: 100,
+    max: 100
+  }
 
-    console.log(sum(parse(input)))
-    assert.deepEqual(digest, {
-      brf: 1,
-      brh: 1,
-      fnf: 1,
-      fnh: 1,
-      lf: 4,
-      lh: 4,
-      branches: 100,
-      functions: 100,
-      lines: 100,
-      avg: 100,
-      max: 100
-    })
+  it('returns summary for string input', () => {
+    const digest = sum(parse(input))
+    assert.deepEqual(digest, expected)
+  })
+
+  it('returns summary for Lcov input', () => {
+    const digest = sum(input)
+    assert.deepEqual(digest, expected)
   })
 })
 
@@ -133,5 +138,22 @@ describe('LCOV', () => {
   it('reexports parse and format', () => {
     assert.equal(LCOV.parse, parse)
     assert.equal(LCOV.stringify, format)
+  })
+})
+
+describe('badge', () => {
+  it('generates default badge', () => {
+    assert.equal(badge(input), '[![coverage](https://img.shields.io/badge/coverage-100-brightgreen)]()')
+  })
+
+  it('generates a badge by custom opts', () => {
+    const opts: LcovBadgeOptions = {
+      color: 'cyan',
+      pick: 'avg',
+      title: 'cov',
+      url: 'https://example.com',
+      gaps: []
+    }
+    assert.equal(badge(input, opts), '[![cov](https://img.shields.io/badge/cov-100-cyan)](https://example.com)')
   })
 })

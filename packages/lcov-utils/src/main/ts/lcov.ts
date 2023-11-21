@@ -1,4 +1,4 @@
-import {Lcov, LcovDigest, LcovEntry} from './interface.js'
+import {Lcov, LcovDigest, LcovEntry, LcovBadgeOptions} from './interface.js'
 
 const EOR = 'end_of_record'
 
@@ -229,7 +229,10 @@ export const merge = (...lcovs: Lcov[]): Lcov => {
   }, {})
 }
 
-export const sum = (lcov: Lcov): LcovDigest => {
+export const sum = (lcov: Lcov | string): LcovDigest => {
+  if (typeof lcov === 'string') {
+    return sum(parse(lcov))
+  }
   let brf = 0
   let brh = 0
   let fnf = 0
@@ -272,4 +275,35 @@ export const LCOV = {
   parse,
   stringify: format,
   format
+}
+
+const defaultBadgeOptions: LcovBadgeOptions = {
+  color: 'auto',
+  title: 'coverage',
+  pick: 'max',
+  url: '',
+  gaps: [
+    [95, 'brightgreen'],
+    [90, 'green'],
+    [80, 'yellowgreen'],
+    [70, 'yellow'],
+    [60, 'orange'],
+    [0, 'red']
+  ]
+}
+
+export const badge = (lcov: Lcov | LcovDigest | string, opts: Partial<LcovBadgeOptions> = {}): string => {
+  const _opts = {...defaultBadgeOptions, ...opts}
+  const {color, url, title, pick, gaps} = _opts
+  const digest: LcovDigest =
+    typeof lcov === 'object' && 'max' in lcov
+      ? lcov as LcovDigest
+      : sum(lcov as Lcov | string)
+
+  const value = digest[pick]
+  const _color = color === 'auto'
+    ? gaps.find(([gap]) => value >= gap)?.[1] || 'red'
+    : color
+
+  return `[![${title}](https://img.shields.io/badge/${title}-${value}-${_color})](${url})`
 }

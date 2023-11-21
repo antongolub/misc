@@ -31,6 +31,14 @@ export type LcovDigest = {
   brh: number
 }
 
+export type LcovBadgeOptions = {
+  color: string
+  url: string
+  title: string
+  pick: keyof LcovDigest
+  gaps: [number, string][]
+}
+
 /** Real world example
 
 TN:
