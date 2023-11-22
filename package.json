@@ -8,7 +8,7 @@
   ],
   "description": "A monorepo for everything",
   "scripts": {
-    "build": "yarn bulk:topobuild",
+    "build": "yarn bulk:topobuild && yarn cov:merge",
     "readme:toc": "node ./packages/infra/scripts/readme-toc.mjs",
     "cov:merge": "node ./packages/infra/scripts/merge-cov.mjs",
     "test": "yarn bulk:topobuild --no-build --no-publish"
