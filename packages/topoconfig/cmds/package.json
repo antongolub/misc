@@ -17,12 +17,12 @@
   "files": [
     "target/cjs",
     "target/esm",
-    "target/dts"
+    "target/dts",
+    "target/coverage/lcov.info"
   ],
   "scripts": {
     "build": "concurrently 'npm:build:*'",
-    "build:esm": "node ../../infra/scripts/build.cjs",
-    "build:cjs": "node ../../infra/scripts/build.cjs --cjs",
+    "build:index": "node ../../infra/scripts/build.mjs",
     "build:dts": "tsc --emitDeclarationOnly --skipLibCheck --outDir target/dts",
     "build:docs": "typedoc --options src/main/typedoc",
     "test": "concurrently 'npm:test:*'",
