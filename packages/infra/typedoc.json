@@ -4,7 +4,7 @@
   "excludeExternals": true,
   "excludePrivate": true,
   "excludeProtected": true,
-  "includeVersion": true,
+  "includeVersion": false,
   "hideGenerator": true,
   "tsconfig": "./tsconfig.json",
   "theme": "default"

@@ -2,9 +2,7 @@
   "extends": "../../infra/tsconfig.json",
   "compilerOptions": {
     "rootDir": "./src/main/ts/",
-    "baseUrl": "./src/main/ts/",
-    "module": "nodenext",
-    "moduleResolution": "nodenext"
+    "baseUrl": "./src/main/ts/"
   },
   "include": [
     "src/main/ts/"

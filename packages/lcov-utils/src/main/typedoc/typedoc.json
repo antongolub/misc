@@ -1,9 +1,8 @@
 {
   "name": "lcov-utils",
   "extends": ["../../../../infra/typedoc.json"],
-  "entryPoints": ["../../../src/main/ts/"],
+  "entryPoints": ["../../../src/main/ts/index.ts"],
   "exclude": ["../../../src/test", "**/node_modules/**"],
-  "externalPattern": ["**/node_modules/**"],
   "out": "../../../target/docs",
   "readme": "../../../README.md",
   "tsconfig": "../../../tsconfig.json"
