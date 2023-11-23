@@ -34,7 +34,8 @@ try {
   const prevLcovStr = (await fetch('https://github.com/antongolub/misc/releases/download/lcov/lcov.info')).text()
   const prevLcov = parse(prevLcovStr)
   lcov = collide(prevLcov, ...lcovs)
-} catch {
+} catch (e) {
+  console.error(e)
   lcov = merge(...lcovs.map(([l]) => l))
 }
 
