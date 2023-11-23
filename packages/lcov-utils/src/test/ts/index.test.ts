@@ -3,7 +3,7 @@ import { describe, it } from 'node:test'
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import {parse, format, merge, sum, badge, LCOV, LcovBadgeOptions} from '../../main/ts'
+import {parse, format, merge, collide, sum, badge, LCOV, LcovBadgeOptions} from '../../main/ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const fixtures = path.resolve(__dirname, '../fixtures')
@@ -131,6 +131,67 @@ describe('sum()', () => {
   it('returns summary for Lcov input', () => {
     const digest = sum(input)
     assert.deepEqual(digest, expected)
+  })
+})
+
+describe('collide', () => {
+  it('aggregates reports by scope (prefixed) blocks', () => {
+    const lcov1 = parse(`
+TN:
+SF:foo/constants.ts
+FNF:0
+FNH:0
+DA:1,3
+DA:2,3
+DA:3,3
+LF:3
+LH:3
+BRF:0
+BRH:0
+end_of_record
+TN:
+SF:foo/index.ts
+FNF:1
+FNH:1
+DA:1,3
+DA:2,3
+LF:3
+LH:3
+BRF:1
+BRH:1
+end_of_record
+`)
+    const lcov2 = parse(`
+TN:
+SF:foo/index.ts
+FNF:3
+FNH:3
+DA:1,3
+DA:2,3
+LF:5
+LH:5
+BRF:4
+BRH:4
+end_of_record
+`)
+    const lcov3 = parse(`
+TN:
+SF:bar/index.ts
+FNF:0
+FNH:0
+DA:1,3
+DA:2,3
+LF:2
+LH:2
+BRF:1
+BRH:1
+end_of_record
+`)
+    const lcov4 = collide(lcov1, [lcov2, 'foo/'], lcov3)
+
+    assert.equal(lcov4['foo/index.ts'], lcov2['foo/index.ts'])
+    assert.equal(lcov4['foo/constants.ts'], undefined)
+    assert.equal(lcov4['bar/index.ts'], lcov3['bar/index.ts'])
   })
 })
 

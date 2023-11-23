@@ -2,6 +2,7 @@ export {
   parse,
   format,
   merge,
+  collide,
   sum,
   badge,
   LCOV,

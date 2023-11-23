@@ -63,6 +63,19 @@ const lcov2 = parse(await fs.readFile('lcov2.info', 'utf8'))
 const lcov3 = merge(lcov1, lcov2)
 ```
 
+### collide
+Joins lcov reports, but operates with entire (prefixed) scope blocks.
+Makes sense when you are updating a previous monorepo report with coverage changes for certain packages.
+
+```ts
+import { collide } from 'lcov-utils'
+
+const prev = parse(await fs.readFile('lcov.info', 'utf8'))
+const prefix = 'packages/foo'
+const delta = parse(await fs.readFile('packages/foo/lcov.info', 'utf8'), {prefix})
+const lcov = collide(prev, [delta, prefix])
+```
+
 ### sum
 Calculates coverage metrics.
 

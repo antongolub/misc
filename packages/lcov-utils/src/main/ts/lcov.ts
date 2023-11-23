@@ -142,6 +142,25 @@ const mergeHits = (entries: LcovEntry[]) => {
   return hits
 }
 
+export const collide = (lcov: Lcov, ...patches: (Lcov | [Lcov, string])[]): Lcov => {
+  const result: Lcov = {}
+  const prefixes = []
+  for (const patch of patches) {
+    const [_lcov, prefix] = Array.isArray(patch) ? patch : [patch]
+    if (prefix) {
+      prefixes.push(prefix)
+    }
+    Object.assign(result, _lcov)
+  }
+  for (const [k, v] of Object.entries(lcov)) {
+    if (prefixes.some(prefix => k.startsWith(prefix))) {
+      continue
+    }
+    result[k] = v
+  }
+  return result
+}
+
 export const merge = (...lcovs: Lcov[]): Lcov => {
   const sources = lcovs.reduce<Record<string, LcovEntry[]>>((m, lcov) => {
     const entries = Object.values(lcov)
