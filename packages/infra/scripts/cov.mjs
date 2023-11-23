@@ -11,14 +11,11 @@ const {_: patterns, cwd = process.cwd(), output = 'lcov.info'} = minimist(proces
 const paths = patterns.length > 0
   ? patterns
   : await getWsCoveragePaths(cwd)
-
-const outFile = path.resolve(cwd, output)
-const files = (await glob(paths, {
+const files = await glob(paths, {
   cwd,
   absolute: true,
   onlyFiles: true
-}))
-
+})
 const lcovs = await Promise.all(
   files.map(async f => {
     const contents = await fs.readFile(f, 'utf8')
@@ -39,13 +36,14 @@ try {
 }
 
 const lcovStr = format(lcov)
+const outFile = path.resolve(cwd, output)
 
 await fs.writeFile(outFile, lcovStr, 'utf8')
 
-console.log(sum(lcov))
+console.log('Coverage:', sum(lcov))
 
 if (files.length === 0) {
-  console.log('No coverage update')
+  console.log('No coverage update required')
   process.exit(0)
 }
 
@@ -58,15 +56,16 @@ if (GH_TOKEN) {
   const release = await (await fetch('https://api.github.com/repos/antongolub/misc/releases/tags/lcov')).json()
   const uploadUrl = release.upload_url.slice(0, release.upload_url.indexOf('{')) + '?name=lcov.info'
   const found = release.assets.find(a => a.name === 'lcov.info')
+  const headers = {
+    Accept: 'application/vnd.github.v3+json',
+    Authorization: `Bearer ${GH_TOKEN}`,
+    'X-GitHub-Api-Version': '2022-11-28'
+  }
 
   if (found) {
     await fetch(found.url, {
       method: 'DELETE',
-      headers: {
-        Accept: 'application/vnd.github.v3+json',
-        Authorization: `Bearer ${GH_TOKEN}`,
-        'X-GitHub-Api-Version': '2022-11-28'
-      },
+      headers,
     })
   }
 
@@ -74,9 +73,7 @@ if (GH_TOKEN) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/octet-stream',
-      Accept: 'application/vnd.github+json',
-      Authorization: `Bearer ${GH_TOKEN}`,
-      'X-GitHub-Api-Version': '2022-11-28'
+      ...headers
     },
     body: lcovStr
   })
