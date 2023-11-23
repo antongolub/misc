@@ -19,11 +19,6 @@ const files = (await glob(paths, {
   onlyFiles: true
 }))
 
-if (files.length === 0) {
-  console.log('No coverage update')
-  process.exit(0)
-}
-
 const lcovs = await Promise.all(
   files.map(async f => {
     const contents = await fs.readFile(f, 'utf8')
@@ -46,6 +41,13 @@ try {
 const lcovStr = format(lcov)
 
 await fs.writeFile(outFile, lcovStr, 'utf8')
+
+console.log(sum(lcov))
+
+if (files.length === 0) {
+  console.log('No coverage update')
+  process.exit(0)
+}
 
 async function getWsCoveragePaths(cwd) {
   const workspaces = JSON.parse(await fs.readFile(path.resolve(cwd, 'package.json'), 'utf8'))?.workspaces || []
@@ -79,5 +81,3 @@ if (GH_TOKEN) {
     body: lcovStr
   })
 }
-
-console.log(sum(lcov))
