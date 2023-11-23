@@ -7,7 +7,7 @@ import { nodeExternalsPlugin } from 'esbuild-node-externals'
 import minimist from 'minimist'
 import glob from 'fast-glob'
 
-const { entry, external, bundle, minify, sourcemap, license, format, map, cwd } = minimist(process.argv.slice(2), {
+const { entry, external, bundle, minify, sourcemap, license, format, map, cwd: _cwd } = minimist(process.argv.slice(2), {
   default: {
     entry: './src/main/ts/index.ts',
     external: 'node:*',
@@ -22,12 +22,11 @@ const { entry, external, bundle, minify, sourcemap, license, format, map, cwd } 
   string: ['entry', 'external', 'bundle', 'license', 'format', 'map', 'cwd']
 })
 
+const cwd = Array.isArray(_cwd) ? _cwd[_cwd.length - 1] : _cwd
 const mappings = map ? Object.fromEntries(map.split(',').map(v => v.split(':'))) : {}
-
 const entryPoints = entry.includes('*')
   ? await glob(entry.split(':'), { absolute: false, onlyFiles: true, cwd })
   : entry.split(':')
-
 const plugins = bundle === 'all'
   ? []
   : [nodeExternalsPlugin()] // https://github.com/evanw/esbuild/issues/619

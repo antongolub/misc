@@ -8,10 +8,10 @@
   ],
   "description": "A monorepo for everything",
   "scripts": {
-    "build": "yarn bulk:topobuild && yarn cov",
     "readme:toc": "node ./packages/infra/scripts/readme-toc.mjs",
-    "cov": "node ./packages/infra/scripts/merge-cov.mjs",
-    "test": "yarn bulk:topobuild --no-build --no-publish"
+    "build": "yarn bulk:topobuild && yarn cov",
+    "test": "yarn bulk:topobuild --no-build --no-publish",
+    "cov": "yarn build:esbuild --cwd $PWD/packages/lcov-utils && node ./packages/infra/scripts/cov.mjs"
   },
   "author": "Anton Golub <antongolub@antongolub.com>",
   "license": "MIT",
