@@ -104,7 +104,8 @@ const digest = sum(lcov)
 ```
 
 ### badge
-Returns a string that creates a custom [shields.io](https://shields.io/) badge.
+Returns a string that creates a custom [shields.io](https://shields.io/) badge.  
+> [![lcov](https://img.shields.io/badge/lcov-98.91-brightgreen?style=flat)]()
 ```ts
 import { badge } from 'lcov-utils'
 
