@@ -2,13 +2,14 @@ import {Lcov, LcovDigest, LcovEntry, LcovBadgeOptions} from './interface.js'
 
 const EOR = 'end_of_record'
 
-export const parse = (input: string, {prefix = ''}: {prefix?: string} = {}): Lcov => {
+export const parse = (input: string, {prefix = ''}: {prefix?: string | ((v: string) => string)} = {}): Lcov => {
   const lcov: Lcov = {}
   const blocks = input.split(EOR).slice(0, -1)
+  const _prefix = typeof prefix === 'function' ? prefix : (v: string) => prefix + v
 
   for (const block of blocks) {
     const entry = parseEntry(block)
-    entry.sf = `${prefix}${entry.sf}`
+    entry.sf = _prefix(entry.sf)
     lcov[entry.sf] = entry
   }
 
