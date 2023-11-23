@@ -75,6 +75,8 @@ const prefix = 'packages/foo'
 const delta = parse(await fs.readFile('packages/foo/lcov.info', 'utf8'), {prefix})
 const lcov = collide(prev, [delta, prefix])
 ```
+💡 use `merge` to assemble reports for the same scope obtained from different tasks (unit, it, e2e).
+And invoke `collide` to build or update the entire monorepo coverage report.
 
 ### sum
 Calculates coverage metrics.
