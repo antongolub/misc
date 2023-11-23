@@ -31,11 +31,10 @@ const lcovs = await Promise.all(
 let lcov
 
 try {
-  const prevLcovStr = (await fetch('https://github.com/antongolub/misc/releases/download/lcov/lcov.info')).text()
+  const prevLcovStr = await (await fetch('https://github.com/antongolub/misc/releases/download/lcov/lcov.info')).text()
   const prevLcov = parse(prevLcovStr)
   lcov = collide(prevLcov, ...lcovs)
 } catch (e) {
-  console.error(e)
   lcov = merge(...lcovs.map(([l]) => l))
 }
 
