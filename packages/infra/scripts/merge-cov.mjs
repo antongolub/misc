@@ -21,7 +21,7 @@ const files = (await glob(paths, {
 const lcovs = await Promise.all(
   files.map(async f => {
     const contents = await fs.readFile(f, 'utf8')
-    const prefix = path.relative(cwd, path.resolve(path.dirname(f), '../..')) + '/'
+    const prefix = (sf) => path.relative(cwd, path.join(cwd, 'packages/infra', sf))
     return parse(contents, {prefix})
   })
 )

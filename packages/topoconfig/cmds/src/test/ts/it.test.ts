@@ -73,7 +73,7 @@ describe('integration', () => {
         someyaml:   'yaml $rawyaml',
         validjson:  'ajv $somejson $someschema',
         ip:         'ip',
-        pkg:        'pkg',
+        pkg:        `pkg ${__dirname}`,
         realenv:    'env',
         realcwd:    'cwd'
         // g:       'g'
