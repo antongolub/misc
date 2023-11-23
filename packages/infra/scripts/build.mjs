@@ -7,7 +7,7 @@ import { nodeExternalsPlugin } from 'esbuild-node-externals'
 import minimist from 'minimist'
 import glob from 'fast-glob'
 
-const { entry, external, bundle, minify, sourcemap, license, format, map } = minimist(process.argv.slice(2), {
+const { entry, external, bundle, minify, sourcemap, license, format, map, cwd } = minimist(process.argv.slice(2), {
   default: {
     entry: './src/main/ts/index.ts',
     external: 'node:*',
@@ -15,16 +15,17 @@ const { entry, external, bundle, minify, sourcemap, license, format, map } = min
     license: 'eof',
     minify: false,
     sourcemap: false,
-    format: 'cjs,esm'
+    format: 'cjs,esm',
+    cwd: process.cwd()
   },
   boolean: ['minify', 'sourcemap'],
-  string: ['entry', 'external', 'bundle', 'license', 'format', 'map']
+  string: ['entry', 'external', 'bundle', 'license', 'format', 'map', 'cwd']
 })
 
 const mappings = map ? Object.fromEntries(map.split(',').map(v => v.split(':'))) : {}
 
 const entryPoints = entry.includes('*')
-  ? await glob(entry.split(':'), { absolute: false, onlyFiles: true })
+  ? await glob(entry.split(':'), { absolute: false, onlyFiles: true, cwd })
   : entry.split(':')
 
 const plugins = bundle === 'all'
@@ -38,6 +39,7 @@ const _external = _bundle
 const formats = format.split(',')
 
 const esmConfig = {
+  absWorkingDir: cwd,
   entryPoints,
   outdir: './target/esm',
   bundle: _bundle,
@@ -78,7 +80,7 @@ for (const format of formats) {
 async function patchOutputs (config) {
   for (const entry of config.entryPoints) {
     const ext = config.outExtension['.js']
-    const filename = path.resolve(config.outdir, path.basename(entry).replace('.ts', ext))
+    const filename = path.resolve(cwd, config.outdir, path.basename(entry).replace('.ts', ext))
     const contents = await fs.readFile(filename, 'utf-8')
     const _contents = fixModuleReferences(contents, ext)
     await fs.writeFile(filename, _contents)
