@@ -15,7 +15,7 @@
     "build:typedoc": "cd $INIT_CWD && typedoc --options src/main/typedoc",
     "test:all": "cd $INIT_CWD && concurrently 'npm:test:*'",
     "test:eslint": "cd $INIT_CWD && eslint -c src/test/lint/.eslintrc.json src",
-    "test:c8": "c8 -r lcov -r text --src=$INIT_CWD -x $INIT_CWD/target -x $INIT_CWD/src/test -x '**/infra' --allowExternal -o $INIT_CWD/target/coverage node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/test.mjs --cwd=$INIT_CWD",
+    "test:c8": "c8 -r lcov -r text --src=$INIT_CWD -x '**/target' -x '**/src/test' -x '**/infra' --allowExternal -o $INIT_CWD/target/coverage node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/test.mjs --cwd=$INIT_CWD",
     "bulk:topobuild": "cd $INIT_CWD && zx-bulk-release --dry-run --include-private --ignore=@antongolub/infra"
   },
   "devDependencies": {
