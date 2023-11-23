@@ -43,6 +43,11 @@ const cov = parse(lcov, {
   // default options:
   prefix: '', // prefix to inject to SF: entries
 })
+
+const cov1 = parse(lcov, {
+  // or provide a custom function
+  prefix: (sf) => sf.replace('packages/foo', 'packages/bar')
+})
 ```
 
 ### format
