@@ -4,8 +4,11 @@
   "description": "LCOV utils: parse, format, merge",
   "keywords": [
     "lcov",
+    "LCOV",
+    "cov",
     "coverage",
     "test",
+    "report",
     "parse",
     "format",
     "merge"
@@ -44,7 +47,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/antongolub/misc.git"
+    "url": "git+https://github.com/antongolub/misc.git",
+    "directory": "packages/lcov-utils"
   },
   "author": "Anton Golub <antongolub@antongolub.com>",
   "license": "MIT",

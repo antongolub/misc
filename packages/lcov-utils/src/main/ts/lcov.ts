@@ -321,7 +321,7 @@ export const badge = (lcov: Lcov | LcovDigest | string, opts: Partial<LcovBadgeO
       : sum(lcov as Lcov | string)
 
   const value = digest[pick]
-  const _color = color === 'auto'
+  const _color = !color || color === 'auto'
     ? gaps.find(([gap]) => value >= gap)?.[1] || 'red'
     : color
 
