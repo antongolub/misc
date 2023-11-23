@@ -242,6 +242,8 @@ FNDA:0,d
 
 #### Etc
 * [lcov/geninfo](https://manpages.debian.org/stretch/lcov/geninfo.1.en.html#FILES)
+* [gifnksm/lcov](https://github.com/gifnksm/lcov) `Rust` 
+* [linux-test-project/lcov](https://github.com/linux-test-project/lcov) `Perl` 
 * [linux-test-project/lcov/issues/113](https://github.com/linux-test-project/lcov/issues/113)
 * [dart-lang/coverage/issues/453](https://github.com/dart-lang/coverage/issues/453)
 * [stevenhair/lcov-badge2](https://github.com/stevenhair/lcov-badge2)
