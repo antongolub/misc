@@ -44,7 +44,7 @@ __metadata:
     ts-node: "npm:^10.9.1"
     typedoc: "npm:^0.25.3"
     typescript: "npm:^5.2.2"
-    zx-bulk-release: "npm:^2.12.2"
+    zx-bulk-release: "npm:^2.13.0-beta.1"
   languageName: unknown
   linkType: soft
 
@@ -1023,6 +1023,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"b4a@npm:^1.6.4":
+  version: 1.6.4
+  resolution: "b4a@npm:1.6.4"
+  checksum: 223158e626a7e024a8d945ce85e7d8871c0689c0375c5b0df5880eedcb5683a12eeb3557591ff5ccd515f3ee8d1664e370c6ff7917fa257405571b81b946604a
+  languageName: node
+  linkType: hard
+
 "balanced-match@npm:^1.0.0":
   version: 1.0.2
   resolution: "balanced-match@npm:1.0.2"
@@ -1944,6 +1951,13 @@ __metadata:
   version: 3.1.3
   resolution: "fast-deep-equal@npm:3.1.3"
   checksum: e21a9d8d84f53493b6aa15efc9cfd53dd5b714a1f23f67fb5dc8f574af80df889b3bce25dc081887c6d25457cce704e636395333abad896ccdec03abaf1f3f9d
+  languageName: node
+  linkType: hard
+
+"fast-fifo@npm:^1.1.0, fast-fifo@npm:^1.2.0":
+  version: 1.3.2
+  resolution: "fast-fifo@npm:1.3.2"
+  checksum: 6bfcba3e4df5af7be3332703b69a7898a8ed7020837ec4395bb341bd96cc3a6d86c3f6071dd98da289618cf2234c70d84b2a6f09a33dd6f988b1ff60d8e54275
   languageName: node
   linkType: hard
 
@@ -3629,6 +3643,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"queue-tick@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "queue-tick@npm:1.0.1"
+  checksum: f447926c513b64a857906f017a3b350f7d11277e3c8d2a21a42b7998fa1a613d7a829091e12d142bb668905c8f68d8103416c7197856efb0c72fa835b8e254b5
+  languageName: node
+  linkType: hard
+
 "queuefy@npm:^1.2.1":
   version: 1.2.1
   resolution: "queuefy@npm:1.2.1"
@@ -4108,6 +4129,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"streamx@npm:^2.15.0":
+  version: 2.15.5
+  resolution: "streamx@npm:2.15.5"
+  dependencies:
+    fast-fifo: "npm:^1.1.0"
+    queue-tick: "npm:^1.0.1"
+  checksum: c0401b0a6c13e92a4bf61f2e6ae8564bb3723d782c0286902cd44223c086c4909dab6f70ac082d89d07be8bcb0ffb25160d82c83f5667199bc70761626c18561
+  languageName: node
+  linkType: hard
+
 "string-width@npm:^4.1.0, string-width@npm:^4.2.0, string-width@npm:^4.2.3":
   version: 4.2.3
   resolution: "string-width@npm:4.2.3"
@@ -4232,6 +4263,17 @@ __metadata:
   version: 1.0.0
   resolution: "supports-preserve-symlinks-flag@npm:1.0.0"
   checksum: a9dc19ae2220c952bd2231d08ddeecb1b0328b61e72071ff4000c8384e145cc07c1c0bdb3b5a1cb06e186a7b2790f1dee793418b332f6ddf320de25d9125be7e
+  languageName: node
+  linkType: hard
+
+"tar-stream@npm:^3.1.6":
+  version: 3.1.6
+  resolution: "tar-stream@npm:3.1.6"
+  dependencies:
+    b4a: "npm:^1.6.4"
+    fast-fifo: "npm:^1.2.0"
+    streamx: "npm:^2.15.0"
+  checksum: 2c32e0d57de778ae415357bfb126a512a384e9bfb8e234920455ad65282181a3765515bbd80392ab8e7e630158376ec7de46b18ab86a33d256a7dcc43b0648b7
   languageName: node
   linkType: hard
 
@@ -4805,17 +4847,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zx-bulk-release@npm:^2.12.2":
-  version: 2.12.2
-  resolution: "zx-bulk-release@npm:2.12.2"
+"zx-bulk-release@npm:^2.13.0-beta.1":
+  version: 2.13.0-beta.1
+  resolution: "zx-bulk-release@npm:2.13.0-beta.1"
   dependencies:
     "@semrel-extra/topo": "npm:^1.14.0"
     cosmiconfig: "npm:^8.3.6"
     queuefy: "npm:^1.2.1"
+    tar-stream: "npm:^3.1.6"
     zx-extra: "npm:^2.6.4"
   bin:
     zx-bulk-release: src/main/js/cli.js
-  checksum: 8b1f4dd776a6d2ea9287778921e6e820510ab44a578307c4871998a75ab91cb80ebecea2415d670e093a6c292182f1f762b26a3a4af813f782bb8c7c7ada2211
+  checksum: 9b5e38f7d6f18ca98e6df9c47c7b83ed9c38a0afca1ccc05a64b168441f605ecf7f55388c619212a3af28684d8b66b9dc16010f425db2a1a1802cbfe947a8789
   languageName: node
   linkType: hard
 

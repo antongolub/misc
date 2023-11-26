@@ -2,5 +2,9 @@ module.exports = {
   buildCmd: 'yarn build',
   testCmd: 'yarn test',
   npmFetch: true,
-  tagFormat: 'pure'
+  tagFormat: 'pure',
+  meta: 'asset',
+  ghAssets: [
+    {name: 'lcov.info', source: 'target/lcov.info'},
+  ]
 }
