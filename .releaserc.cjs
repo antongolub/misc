@@ -5,6 +5,6 @@ module.exports = {
   tagFormat: 'pure',
   meta: 'asset',
   ghAssets: [
-    {name: 'lcov.info', source: 'target/lcov.info'},
+    {name: 'lcov.info', source: 'target/coverage/lcov.info'},
   ]
 }

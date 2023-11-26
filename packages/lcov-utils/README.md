@@ -251,6 +251,7 @@ FNDA:0,d
 #### Etc
 * [lcov/geninfo](https://manpages.debian.org/stretch/lcov/geninfo.1.en.html#FILES)
 * [gifnksm/lcov](https://github.com/gifnksm/lcov) `Rust` 
+* [bazelbuild/bazel](https://github.com/bazelbuild/bazel/blob/master/tools/test/CoverageOutputGenerator/java/com/google/devtools/coverageoutputgenerator/LcovParser.java) `Java`
 * [linux-test-project/lcov](https://github.com/linux-test-project/lcov) `Perl` 
 * [linux-test-project/lcov/issues/113](https://github.com/linux-test-project/lcov/issues/113)
 * [dart-lang/coverage/issues/453](https://github.com/dart-lang/coverage/issues/453)
