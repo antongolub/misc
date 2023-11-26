@@ -4,7 +4,7 @@
 [![docs](https://img.shields.io/badge/type-doc-violet)](https://antongolub.github.io/misc/lcov-utils/)
 
 ## Status
-Working draft
+Public beta
 
 ## Install
 ```shell
