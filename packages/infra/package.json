@@ -31,6 +31,6 @@
     "ts-node": "^10.9.1",
     "typedoc": "^0.25.3",
     "typescript": "^5.2.2",
-    "zx-bulk-release": "^2.13.0-beta.1"
+    "zx-bulk-release": "^2.13.0-beta.2"
   }
 }

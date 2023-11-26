@@ -2,6 +2,7 @@
 > parse, format and merge in one place
 
 [![docs](https://img.shields.io/badge/type-doc-violet)](https://antongolub.github.io/misc/lcov-utils/)
+[![npm](https://img.shields.io/npm/v/lcov-utils.svg?&color=white)](https://www.npmjs.com/package/lcov-utils)
 
 ## Status
 Public beta
