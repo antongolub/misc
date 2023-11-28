@@ -147,6 +147,15 @@ import {badgeJson} from 'lcov-utils'
 const json = badgeJson(lcov, {
   // same options as above
 })
+/**
+{
+  "schemaVersion": 1,
+  "label": "coverage",
+  "message": "88.11",
+  "color": "yellowgreen",
+  "style": "flat",
+}
+*/
 ```
 
 See also: [stevenhair/lcov-badge2](https://github.com/stevenhair/lcov-badge2)

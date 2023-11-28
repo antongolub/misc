@@ -42,12 +42,12 @@ lcovSum.scopes = {...lcov.scopes, ...lcovs.reduce((acc, [lcov, scope]) => {
 }, {})}
 
 const lcovStr = format(lcov)
-const lcoSumStr = JSON.stringify(lcovSum, null, 2)
+const lcovSumStr = JSON.stringify(lcovSum, null, 2)
 const lcovFile = path.resolve(cwd, output)
 const lcovSumFile = path.resolve(cwd, outputSum)
 
 await fs.writeFile(lcovFile, lcovStr, 'utf8')
-await fs.writeFile(lcovSumFile, lcoSumStr, 'utf8')
+await fs.writeFile(lcovSumFile, lcovSumStr, 'utf8')
 
 console.log('Coverage:', sum(lcov))
 
@@ -56,15 +56,26 @@ if (files.length === 0) {
   process.exit(0)
 }
 
+if (GH_TOKEN) {
+  const release = await (await fetch('https://api.github.com/repos/antongolub/misc/releases/tags/lcov')).json()
+  const assets = [
+    [output, lcovStr],
+    [outputSum, lcovSumStr]
+  ]
+
+  for (const [name, contents] of assets) {
+    await uploadAsset(release, name, contents)
+  }
+}
+
 async function getWsCoveragePaths(cwd) {
   const workspaces = JSON.parse(await fs.readFile(path.resolve(cwd, 'package.json'), 'utf8'))?.workspaces || []
   return workspaces.map(w => [`${w}/coverage/lcov.info`, `${w}/target/coverage/lcov.info`]).flat()
 }
 
-if (GH_TOKEN) {
-  const release = await (await fetch('https://api.github.com/repos/antongolub/misc/releases/tags/lcov')).json()
-  const uploadUrl = release.upload_url.slice(0, release.upload_url.indexOf('{')) + '?name=lcov.info'
-  const found = release.assets.find(a => a.name === 'lcov.info')
+async function uploadAsset(release, name, contents) {
+  const uploadUrl = release.upload_url.slice(0, release.upload_url.indexOf('{')) + `?name=${name}`
+  const found = release.assets.find(a => a.name === name)
   const headers = {
     Accept: 'application/vnd.github.v3+json',
     Authorization: `Bearer ${GH_TOKEN}`,
@@ -84,6 +95,8 @@ if (GH_TOKEN) {
       'Content-Type': 'application/octet-stream',
       ...headers
     },
-    body: lcovStr
+    body: contents
   })
+
+  console.log(`uploaded: ${uploadUrl}`)
 }
