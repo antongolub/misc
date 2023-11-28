@@ -298,7 +298,7 @@ export const LCOV = {
   format
 }
 
-const defaultBadgeOptions: LcovBadgeOptions = {
+export const defaultBadgeOptions: LcovBadgeOptions = {
   color: 'auto',
   title: 'coverage',
   pick: 'max',

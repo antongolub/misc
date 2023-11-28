@@ -31,6 +31,11 @@ jobs:
       - name: Build
         run: yarn build
 
+      - name: Coverage
+        run: yarn cov
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Codeclimate
         if: github.ref == 'refs/heads/master'
         uses: paambaati/codeclimate-action@v4.0.0

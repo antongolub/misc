@@ -6,6 +6,7 @@ export {
   sum,
   badge,
   badgeJson,
+  defaultBadgeOptions,
   LCOV,
 } from './lcov.ts'
 
