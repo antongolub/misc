@@ -5,6 +5,7 @@ export {
   collide,
   sum,
   badge,
+  badgeJson,
   LCOV,
 } from './lcov.ts'
 

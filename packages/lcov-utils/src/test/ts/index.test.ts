@@ -3,7 +3,7 @@ import { describe, it } from 'node:test'
 import * as fs from 'node:fs/promises'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import {parse, format, merge, collide, sum, badge, LCOV, LcovBadgeOptions} from '../../main/ts'
+import {parse, format, merge, collide, sum, badge, badgeJson, LCOV, LcovBadgeOptions} from '../../main/ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const fixtures = path.resolve(__dirname, '../fixtures')
@@ -234,5 +234,19 @@ describe('badge', () => {
       gaps: []
     }
     assert.equal(badge(input, opts), '[![cov](https://img.shields.io/badge/cov-100-cyan?style=flat-square)](https://example.com)')
+  })
+})
+
+describe('badgeJson', () => {
+  it('returns a json to generate a badge', () => {
+    const json = badgeJson(input)
+    assert.deepEqual(json, {
+      color: 'brightgreen',
+      label: 'coverage',
+      message: '100',
+      schemaVersion: 1,
+      style: 'flat',
+      url: ''
+    })
   })
 })

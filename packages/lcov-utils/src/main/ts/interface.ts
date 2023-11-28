@@ -40,6 +40,15 @@ export type LcovBadgeOptions = {
   gaps: [number, string][]
 }
 
+export type Badge = {
+  schemaVersion: 1
+  label: string
+  message: string
+  color: string
+  style: string
+  url?: string
+}
+
 /** Real world example
 
 TN:

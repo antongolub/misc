@@ -139,6 +139,15 @@ const covbadge = badge(lcov, {
 })
 // [![coverage](https://img.shields.io/badge/coverage-88.11-yellowgreen?style=flat)]()
 ```
+Or you can just render a json to use [endpoint-badge](https://shields.io/badges/endpoint-badge) API.
+
+```ts
+import {badgeJson} from 'lcov-utils'
+
+const json = badgeJson(lcov, {
+  // same options as above
+})
+```
 
 See also: [stevenhair/lcov-badge2](https://github.com/stevenhair/lcov-badge2)
 

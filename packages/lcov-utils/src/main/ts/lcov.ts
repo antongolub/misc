@@ -1,4 +1,4 @@
-import {Lcov, LcovDigest, LcovEntry, LcovBadgeOptions} from './interface.js'
+import {Lcov, LcovDigest, LcovEntry, LcovBadgeOptions, Badge} from './interface.js'
 
 const EOR = 'end_of_record'
 
@@ -314,7 +314,8 @@ const defaultBadgeOptions: LcovBadgeOptions = {
   ]
 }
 
-export const badge = (lcov: Lcov | LcovDigest | string, opts: Partial<LcovBadgeOptions> = {}): string => {
+// https://shields.io/badges/endpoint-badge
+export const badgeJson = (lcov: Lcov | LcovDigest | string, opts: Partial<LcovBadgeOptions> = {}): Badge => {
   const _opts = {...defaultBadgeOptions, ...opts}
   const {color, style, url, title, pick, gaps} = _opts
   const digest: LcovDigest =
@@ -327,5 +328,18 @@ export const badge = (lcov: Lcov | LcovDigest | string, opts: Partial<LcovBadgeO
     ? gaps.find(([gap]) => value >= gap)?.[1] || 'red'
     : color
 
-  return `[![${title}](https://img.shields.io/badge/${title}-${value}-${_color}?style=${style})](${url})`
+  return {
+    schemaVersion: 1,
+    color: _color,
+    label: title,
+    message: value + '',
+    style,
+    url,
+  }
+}
+
+export const badge = (lcov: Lcov | LcovDigest | string, opts: Partial<LcovBadgeOptions> = {}): string => {
+  const {label, message, color, style, url} = badgeJson(lcov, opts)
+
+  return `[![${label}](https://img.shields.io/badge/${label}-${message}-${color}?style=${style})](${url})`
 }
