@@ -36,7 +36,9 @@ try {
 }
 const lcovSum = sum(lcov)
 lcovSum.scopes = {...lcov.scopes, ...lcovs.reduce((acc, [lcov, scope]) => {
-  const key = scope.replaceAll('/', '_')
+  const key = scope
+    .replaceAll('/', '_')
+    .replaceAll('-', '_')
   acc[key] = sum(lcov)
   return acc
 }, {})}
