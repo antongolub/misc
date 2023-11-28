@@ -249,9 +249,9 @@ export const merge = (...lcovs: Lcov[]): Lcov => {
   }, {})
 }
 
-export const sum = (lcov: Lcov | string): LcovDigest => {
+export const sum = (lcov: Lcov | string, prefix?: string): LcovDigest => {
   if (typeof lcov === 'string') {
-    return sum(parse(lcov))
+    return sum(parse(lcov), prefix)
   }
   let brf = 0
   let brh = 0
@@ -261,6 +261,7 @@ export const sum = (lcov: Lcov | string): LcovDigest => {
   let lh = 0
 
   for (const entry of Object.values(lcov)) {
+    if (prefix && !entry.sf.startsWith(prefix)) continue
     brf += entry.brf
     brh += entry.brh
     fnf += entry.fnf

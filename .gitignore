@@ -55,6 +55,7 @@ coverage
 coverage.*
 *.lcov
 lcov.info
+lcov-sum.json
 
 # nyc test coverage
 .nyc_output

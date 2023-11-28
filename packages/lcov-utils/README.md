@@ -110,6 +110,10 @@ const digest = sum(lcov)
 }
  */
 ```
+Pass `prefix` as the second argument to calculate coverage for a specific scope.
+```ts
+const digestFiltered = sum(lcov, prefix)
+```
 
 ### badge
 Returns a string that creates a custom [shields.io](https://shields.io/) badge.  
@@ -135,6 +139,7 @@ const covbadge = badge(lcov, {
 })
 // [![coverage](https://img.shields.io/badge/coverage-88.11-yellowgreen?style=flat)]()
 ```
+
 See also: [stevenhair/lcov-badge2](https://github.com/stevenhair/lcov-badge2)
 
 <details>

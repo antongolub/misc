@@ -132,6 +132,23 @@ describe('sum()', () => {
     const digest = sum(input)
     assert.deepEqual(digest, expected)
   })
+
+  it('applies prefix filter', () => {
+    const digest = sum(input, 'src/main/ts/index.ts')
+    assert.deepEqual(digest, {
+      avg: 100,
+      branches: 100,
+      brf: 1,
+      brh: 1,
+      fnf: 1,
+      fnh: 1,
+      functions: 100,
+      lf: 1,
+      lh: 1,
+      lines: 100,
+      max: 100
+    })
+  })
 })
 
 describe('collide', () => {

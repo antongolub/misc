@@ -5,8 +5,8 @@ import minimist from 'minimist'
 import { merge, parse, format, sum, collide } from 'lcov-utils'
 
 const {GITHUB_TOKEN, GH_TOKEN = GITHUB_TOKEN} = process.env
-const {_: patterns, cwd = process.cwd(), output = 'lcov.info'} = minimist(process.argv.slice(2), {
-  string: ['cwd', 'output']
+const {_: patterns, cwd = process.cwd(), output = 'lcov.info', outputSum = 'lcov-sum.json'} = minimist(process.argv.slice(2), {
+  string: ['cwd', 'output', 'output-sum']
 })
 const paths = patterns.length > 0
   ? patterns
@@ -34,11 +34,20 @@ try {
 } catch (e) {
   lcov = merge(...lcovs.map(([l]) => l))
 }
+const lcovSum = sum(lcov)
+lcovSum.scopes = {...lcov.scopes, ...lcovs.reduce((acc, [lcov, scope]) => {
+  const key = scope.replaceAll('/', '_')
+  acc[key] = sum(lcov)
+  return acc
+}, {})}
 
 const lcovStr = format(lcov)
-const outFile = path.resolve(cwd, output)
+const lcoSumStr = JSON.stringify(lcovSum, null, 2)
+const lcovFile = path.resolve(cwd, output)
+const lcovSumFile = path.resolve(cwd, outputSum)
 
-await fs.writeFile(outFile, lcovStr, 'utf8')
+await fs.writeFile(lcovFile, lcovStr, 'utf8')
+await fs.writeFile(lcovSumFile, lcoSumStr, 'utf8')
 
 console.log('Coverage:', sum(lcov))
 
