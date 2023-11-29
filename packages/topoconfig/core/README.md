@@ -2,6 +2,7 @@
 > [toposource](https://github.com/semrel-extra/toposource)-enhanced [uniconfig](https://github.com/qiwi/uniconfig) remastered
 
 [![lcov](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fantongolub%2Fmisc%2Freleases%2Fdownload%2Flcov%2Flcov-sum.json&query=%24.scopes.packages_topoconfig_core.max&label=lcov&color=brightgreen)](https://github.com/antongolub/misc/releases/download/lcov/lcov.info)
+[![npm (scoped)](https://img.shields.io/npm/v/topoconfig/latest.svg?label=npm&color=white)](https://www.npmjs.com/package/topoconfig)
 
 ## Motivation
 Configs can be complex. Let's try to make them a little more convenient.

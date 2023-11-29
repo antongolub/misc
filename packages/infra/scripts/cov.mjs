@@ -91,14 +91,14 @@ async function uploadAsset(release, name, contents) {
     })
   }
 
-  await fetch(uploadUrl, {
+  const res = await (await fetch(uploadUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/octet-stream',
       ...headers
     },
     body: contents
-  })
+  })).json()
 
-  console.log(`uploaded: ${uploadUrl}`)
+  console.log(`uploaded: ${res.browser_download_url} via ${uploadUrl}`)
 }
