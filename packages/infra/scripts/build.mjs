@@ -29,7 +29,9 @@ const entryPoints = entry.includes('*')
   : entry.split(':')
 const plugins = bundle === 'all'
   ? []
-  : [nodeExternalsPlugin()] // https://github.com/evanw/esbuild/issues/619
+  : [nodeExternalsPlugin({            // https://github.com/evanw/esbuild/issues/619
+    packagePath: path.resolve(cwd, 'package.json') // https://github.com/pradel/esbuild-node-externals/pull/52
+  })]
 const _bundle = bundle !== 'none' && !process.argv.includes('--no-bundle')
 const _external = _bundle
   ? external.split(',')

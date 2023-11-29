@@ -11,7 +11,7 @@
     "test": "exit 0",
     "build:all": "cd $INIT_CWD && concurrently 'npm:build:*'",
     "build:esbuild": "node ./scripts/build.mjs --cwd=$INIT_CWD",
-    "build:tsc": "cd $INIT_CWD && tsc --emitDeclarationOnly --skipLibCheck --outDir target/dts",
+    "build:tsc": "cd $INIT_CWD && tsc --emitDeclarationOnly --outDir target/dts",
     "build:typedoc": "cd $INIT_CWD && typedoc --options src/main/typedoc",
     "test:all": "cd $INIT_CWD && concurrently 'npm:test:*'",
     "test:eslint": "cd $INIT_CWD && eslint -c src/test/lint/.eslintrc.json src",
