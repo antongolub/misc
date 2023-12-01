@@ -4,7 +4,8 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "packages/topoconfig/*"
+    "packages/topoconfig/*",
+    "packages/esbuild/*"
   ],
   "description": "A monorepo for everything",
   "scripts": {
