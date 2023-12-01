@@ -20,6 +20,7 @@ describe('normalizeConfig()', () => {
 })
 
 describe('loadConfig()', () => {
+  // eslint-disable-next-line unicorn/consistent-function-scoping
   const mapPlugins = ({plugins}) => plugins.map((v, i) => (plugins[i] = v.name))
   const expectedConfig = {
     plugins: [nodeExternalsPlugin()]
