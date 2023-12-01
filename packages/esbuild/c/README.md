@@ -6,6 +6,10 @@
 * Let configs be mergeable via `extends`.
 * Load configs in any suitable formats.
 
+
+## Status
+Blueprint
+
 ## Install
 ```shell
 npm i -D esbuild-c
