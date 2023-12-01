@@ -20,9 +20,10 @@ esbuild-c --config esbuild.config.js
 ```
 If `--config` is not specified, `esbuild-c` will look for it via [cosmiconfig](https://github.com/cosmiconfig/cosmiconfig).
 
-
-
-
+## Refs
+* [esbuild/issues/884](https://github.com/evanw/esbuild/issues/884)
+* [esbuild-config](https://github.com/bpierre/esbuild-config) [`npm`](https://www.npmjs.com/package/esbuild-config)
+* [esbuild-resolve-config](https://github.com/yee94/utils/tree/main/packages/esbuild-resolve-config) [`npm`](https://www.npmjs.com/package/esbuild-resolve-config)
 
 ## License
 [MIT](./LICENSE)
