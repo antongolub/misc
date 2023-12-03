@@ -38,4 +38,53 @@ describe('extend', () => {
       }
     })
   })
+
+  it('`merge` joins array inputs', () => {
+    const sources = [
+      {a: [1]},
+      {a: ['a'], b: 'b'},
+      {a: [{foo: 'bar'}], c: 'c'},
+    ]
+    const result = extend({sources, rules: {
+        a: 'merge',
+      }})
+
+    assert.deepEqual(result, {
+      a: [1, 'a', {foo: 'bar'}],
+      b: 'b',
+      c: 'c'
+    })
+  })
+
+  it('`override` replaces array ref', () => {
+    const sources = [
+      {a: [1]},
+      {a: ['a'], b: 'b'},
+      {a: [{foo: 'bar'}, {baz: 'qux'}], c: 'c'},
+    ]
+    const result = extend({sources, rules: {
+      a: 'override',
+    }})
+
+    assert.deepEqual(result, {
+      a: [{foo: 'bar'}, {baz: 'qux'}],
+      b: 'b',
+      c: 'c'
+    })
+  })
+
+  it('`override` replaces array ref at root level too', () => {
+    const sources = [
+      [1],
+      ['a'],
+      [{foo: 'bar'}, {baz: 'qux'}],
+    ]
+    const result = extend({sources, rules: {
+      '*': 'override',
+    }})
+
+    assert.deepEqual(result, [
+      {foo: 'bar'}, {baz: 'qux'}
+    ])
+  })
 })
