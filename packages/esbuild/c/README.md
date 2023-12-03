@@ -6,7 +6,6 @@
 * Let configs be mergeable via `extends`.
 * Load configs in any suitable formats.
 
-
 ## Status
 Blueprint
 
@@ -28,6 +27,7 @@ If `--config` is not specified, `esbuild-c` will look for it via [cosmiconfig](h
 * [esbuild/issues/884](https://github.com/evanw/esbuild/issues/884)
 * [esbuild-config](https://github.com/bpierre/esbuild-config) [`npm`](https://www.npmjs.com/package/esbuild-config)
 * [esbuild-resolve-config](https://github.com/yee94/utils/tree/main/packages/esbuild-resolve-config) [`npm`](https://www.npmjs.com/package/esbuild-resolve-config)
+* [FlavioLionelRita/config-extends](https://github.com/FlavioLionelRita/config-extends)
 
 ## License
 [MIT](./LICENSE)
