@@ -7,7 +7,7 @@ type ExtendStrategy = 'override' | 'merge'
 
 const getRule = (p: string, rules: Record<string, string> = {}) => rules[p] || rules['*'] || 'override'
 
-type TExtendCtx = {
+export type TExtendCtx = {
   sources: Record<string, any>[]
   rules: Record<string, ExtendStrategy>
   prefix: string
@@ -15,7 +15,7 @@ type TExtendCtx = {
   result: any
 }
 
-type TExtendOpts = Partial<TExtendCtx>
+export type TExtendOpts = Partial<TExtendCtx>
 
 const extendArray = ({result, sources, prefix, rules}: TExtendCtx & {result: Array<any>}) => {
   if (getRule(prefix, rules) === 'merge') {

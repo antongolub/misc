@@ -3,88 +3,101 @@ import { describe, it } from 'node:test'
 import {extend} from '../../main/ts/util'
 
 describe('extend', () => {
-  it('applies default (override) strategy', () => {
-    const sources = [
-      {a: 'a'},
-      {b: 'b', a: 'A'}
-    ]
-    const result = extend({sources})
-
-    assert.deepEqual(result, {
-      a: 'A',
-      b: 'b'
-    })
-  })
-
-  it('applies `merge` strategy', () => {
-    const sources = [
-      {a: {b: {foo: 'foo'}}},
-      {a: {b: {bar: 'bar'}, c: 'c'}},
-      {a: {b: {baz: 'baz'}, c: 'C'}},
-    ]
-    const result = extend({sources, rules: {
-      a: 'merge',
-      'a.b': 'merge'
-    }})
-
-    assert.deepEqual(result, {
-      a: {
-        b: {
-          foo: 'foo',
-          bar: 'bar',
-          baz: 'baz'
-        },
-        c: 'C'
+  const cases: [string, Parameters<typeof extend>[0], any][] = [
+    [
+      'applies default (override) strategy',
+      {
+        sources: [
+          {a: 'a'},
+          {b: 'b', a: 'A'}
+        ]
+      },
+      {
+        a: 'A',
+        b: 'b'
       }
-    })
-  })
-
-  it('`merge` joins array inputs', () => {
-    const sources = [
-      {a: [1]},
-      {a: ['a'], b: 'b'},
-      {a: [{foo: 'bar'}], c: 'c'},
+    ],
+    [
+      'applies `merge` strategy to nested objects',
+      {
+        sources: [
+          {a: {b: {foo: 'foo'}}},
+          {a: {b: {bar: 'bar'}, c: 'c'}},
+          {a: {b: {baz: 'baz'}, c: 'C'}},
+        ],
+        rules: {
+          a: 'merge',
+          'a.b': 'merge'
+        }
+      },
+      {
+        a: {
+          b: {
+            foo: 'foo',
+            bar: 'bar',
+            baz: 'baz'
+          },
+          c: 'C'
+        }
+      }
+    ],
+    [
+      '`merge` joins array inputs',
+      {
+        sources: [
+          {a: [1]},
+          {a: ['a'], b: 'b'},
+          {a: [{foo: 'bar'}], c: 'c'},
+        ],
+        rules: {
+          a: 'merge',
+        }
+      },
+      {
+        a: [1, 'a', {foo: 'bar'}],
+        b: 'b',
+        c: 'c'
+      }
+    ],
+    [
+      '`override` replaces array refs',
+      {
+        sources: [
+          {a: [1]},
+          {a: ['a'], b: 'b'},
+          {a: [{foo: 'bar'}, {baz: 'qux'}], c: 'c'},
+        ],
+        rules: {
+          a: 'override',
+        }
+      },
+      {
+        a: [{foo: 'bar'}, {baz: 'qux'}],
+        b: 'b',
+        c: 'c'
+      }
+    ],
+    [
+      '`override` replaces array ref at root level too',
+      {
+        sources: [
+          [1],
+          ['a'],
+          [{foo: 'bar'}, {baz: 'qux'}],
+        ],
+        rules: {
+          '*': 'override',
+        }
+      },
+      [
+        {foo: 'bar'}, {baz: 'qux'}
+      ]
     ]
-    const result = extend({sources, rules: {
-        a: 'merge',
-      }})
+  ];
 
-    assert.deepEqual(result, {
-      a: [1, 'a', {foo: 'bar'}],
-      b: 'b',
-      c: 'c'
+  cases.forEach(([name, input, expected]) => {
+    it(name, () => {
+      assert.deepEqual(extend(input), expected)
     })
-  })
-
-  it('`override` replaces array ref', () => {
-    const sources = [
-      {a: [1]},
-      {a: ['a'], b: 'b'},
-      {a: [{foo: 'bar'}, {baz: 'qux'}], c: 'c'},
-    ]
-    const result = extend({sources, rules: {
-      a: 'override',
-    }})
-
-    assert.deepEqual(result, {
-      a: [{foo: 'bar'}, {baz: 'qux'}],
-      b: 'b',
-      c: 'c'
-    })
-  })
-
-  it('`override` replaces array ref at root level too', () => {
-    const sources = [
-      [1],
-      ['a'],
-      [{foo: 'bar'}, {baz: 'qux'}],
-    ]
-    const result = extend({sources, rules: {
-      '*': 'override',
-    }})
-
-    assert.deepEqual(result, [
-      {foo: 'bar'}, {baz: 'qux'}
-    ])
   })
 })
