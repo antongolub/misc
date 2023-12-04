@@ -13,7 +13,7 @@ npm i @topoconfig/extends
 ```
 
 ## Usage
-### processExtras
+### populate
 ```ts
 import { populate, extend }  from '@topoconfig/extends'
 
