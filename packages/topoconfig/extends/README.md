@@ -49,9 +49,21 @@ const opts = {
   }
 }
 ```
+The config's `extends` property may hold objects, strings or string[]. The last two types will be resolved via `load` function.
+```ts
+const config = {
+  extends: [
+    '../base.config.cjs',
+    {
+      // Btw, nested `extends` will be processed too
+      extends: ['../../other.config.mjs']
+    }
+  ]
+}
+```
 
 ### extend
-A configurable sources merger. Defines how exactly sources fields should be composed: `merge` or `override`. Default strategy is `override`.
+A configurable sources merger. Defines how exactly injected fields should be composed: `merge` or `override`. Default strategy is `override`.
 
 ```ts
 import { extend } from '@topoconfig/extends'
