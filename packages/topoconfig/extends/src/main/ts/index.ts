@@ -20,7 +20,7 @@ export type TExtendOpts = Partial<TExtendCtx>
 
 export const populate = async (config: any, {
   cwd = process.cwd(),
-  load,
+  load = async (id, cwd) => (await import(path.resolve(cwd, id)))?.default,
   merge,
   clone = v => JSON.parse(JSON.stringify(v)),
   extends: _extends
@@ -112,12 +112,12 @@ const loadExtra = async ({
   id,
   merge,
   clone,
-  load = async (id, cwd) => (await import(path.resolve(cwd, id)))?.default
+  load
 }: {
   cwd?: string
   id: any
   clone?: ExtraCloner
-  load?: ExtraLoader
+  load: ExtraLoader
   merge?: ExtraMerger
 }) => {
   if (typeof id !== 'string') {
