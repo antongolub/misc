@@ -102,9 +102,6 @@ export const extend = (opts: TExtendOpts) => {
     : extendObject(ctx)
 }
 
-const asArray = <T>(value: T): Array<T extends Array<any> ? T[number] : T> =>
-  (Array.isArray(value) ? value : [value]) as any
-
 const isObject = (value: any) => typeof value === 'object' && value !== null
 
 const loadExtra = async ({
