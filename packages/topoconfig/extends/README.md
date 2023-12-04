@@ -129,6 +129,7 @@ const config = await populate(raw, {
 ```
 
 ## Refs
+* [humanwhocodes/config-array](https://github.com/humanwhocodes/config-array)
 * [FlavioLionelRita/config-extends](https://github.com/FlavioLionelRita/config-extends)
 * [cosmiconfig/issues/40](https://github.com/cosmiconfig/cosmiconfig/issues/40)
 * [chrisblossom/ex-config](https://github.com/chrisblossom/ex-config)
