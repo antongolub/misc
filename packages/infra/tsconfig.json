@@ -13,6 +13,6 @@
   },
   "ts-node": {
     "transpileOnly": true,
-    "files": true,
+    "files": true
   }
 }
