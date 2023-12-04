@@ -455,6 +455,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@topoconfig/extends@workspace:packages/topoconfig/extends":
+  version: 0.0.0-use.local
+  resolution: "@topoconfig/extends@workspace:packages/topoconfig/extends"
+  dependencies:
+    "@antongolub/infra": "workspace:*"
+    "@types/node": "npm:^20.10.0"
+    cosmiconfig: "npm:^9.0.0"
+  languageName: unknown
+  linkType: soft
+
 "@tsconfig/node10@npm:^1.0.7":
   version: 1.0.9
   resolution: "@tsconfig/node10@npm:1.0.9"
