@@ -44,6 +44,49 @@ describe('populate', () => {
       }
     ],
     [
+      'resolves tsconfig.json',
+      [
+        {},
+        {
+          cwd: __dirname,
+          load: async (id: string, cwd: string) => (await cosmiconfig('foo', {
+            searchPlaces: [id]
+          }).search(cwd))?.config,
+          extends: ['../../../tsconfig.json'],
+          merge: {
+            compilerOptions: 'merge'
+          }
+        }
+      ],
+      {
+        'ts-node': {
+          files: true,
+          transpileOnly: true
+        },
+        compilerOptions: {
+          allowImportingTsExtensions: true,
+          allowJs: false,
+          baseUrl: './src/main/ts/',
+          declaration: true,
+          esModuleInterop: true,
+          forceConsistentCasingInFileNames: true,
+          module: 'nodenext',
+          moduleResolution: 'nodenext',
+          noImplicitAny: true,
+          rootDir: './src/main/ts/',
+          strict: true,
+          target: 'esnext'
+        },
+        exclude: [
+          'node_modules',
+          'src/test'
+        ],
+        include: [
+          'src/main/ts/'
+        ]
+      }
+    ],
+    [
       'applies rules shortcut',
       [
         {

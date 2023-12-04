@@ -25,8 +25,8 @@ export const populate = async (config: any, {
   clone = v => JSON.parse(JSON.stringify(v)),
   extends: _extends
 }: {
-  cwd?: string,
-  load?: ExtraLoader,
+  cwd?: string
+  load?: ExtraLoader
   merge?: ExtraMerger | Rules
   clone?: ExtraCloner
   extends?: string | Record<any, any> | Array<string | Record<any, any>>
@@ -43,7 +43,7 @@ export const populate = async (config: any, {
       rules: merge
     })
 
-  const _extras: any[] = await Promise.all(extras.map(id => loadExtra({cwd, id, load})))
+  const _extras: any[] = await Promise.all(extras.map(id => loadExtra({cwd, id, load, merge: _merge, clone})))
   const sources: any[] = [
     clone({...config, extends: undefined}),
     ..._extras
@@ -111,15 +111,17 @@ const loadExtra = async ({
   cwd = process.cwd(),
   id,
   merge,
+  clone,
   load = async (id, cwd) => (await import(path.resolve(cwd, id)))?.default
 }: {
-  cwd?: string,
-  id: any,
-  load?: ExtraLoader,
+  cwd?: string
+  id: any
+  clone?: ExtraCloner
+  load?: ExtraLoader
   merge?: ExtraMerger
 }) => {
   if (typeof id !== 'string') {
-    return populate(id, {cwd, load, merge})
+    return populate(id, {cwd, load, merge, clone})
   }
 
   const extra = (await load(id, cwd))

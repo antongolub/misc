@@ -2,7 +2,7 @@
 > Flexible config extender
 
 ## Motivation
-Many tools provide `extends` feature for their configs, but they _seem_ not flexible enough. Different scenarios require corresponding merging approaches. For example, `tsconfig` applies deep merge to `compilerOptions`, while `prettier` concatenates `overrides` array sections, etc. So we have to implement these nuances on site every time, and it's tiring and annoying a bit. I think we could make this a little simpler.
+Many tools provide `extends` feature for their configs, but they _seem_ not flexible enough. Different scenarios require corresponding approaches. For example, `tsconfig` applies deep merge to `compilerOptions`, while `prettier` concatenates `overrides` array sections, etc. So we have to implement these nuances on site every time, and it's tiring and annoying a bit. I think we could make this a little simpler.
 
 ## Status
 Working draft
