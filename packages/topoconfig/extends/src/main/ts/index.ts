@@ -28,7 +28,7 @@ export const populate = async (config: any, {
   load?: ExtraLoader,
   merge?: ExtraMerger | Rules
   clone?: ExtraCloner
-}) => {
+} = {}) => {
   const extras = config?.extends
   if (!extras) {
     return config

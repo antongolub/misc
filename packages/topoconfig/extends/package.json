@@ -36,14 +36,14 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/antongolub/misc.git",
-    "directory": "packages/esbuild/c"
+    "directory": "packages/topoconfig/extends"
   },
   "author": "Anton Golub <antongolub@antongolub.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/antongolub/misc/issues"
   },
-  "homepage": "https://github.com/antongolub/misc/tree/master/packages/esbuild/c",
+  "homepage": "https://github.com/antongolub/misc/tree/master/packages/topoconfig/extends",
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
     "@types/node": "^20.10.0",
