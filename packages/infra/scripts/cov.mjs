@@ -8,9 +8,10 @@ const {GITHUB_TOKEN, GH_TOKEN = GITHUB_TOKEN} = process.env
 const {_: patterns, cwd = process.cwd(), output = 'lcov.info', outputSum = 'lcov-sum.json'} = minimist(process.argv.slice(2), {
   string: ['cwd', 'output', 'output-sum']
 })
+const spaces = await getWs(cwd)
 const paths = patterns.length > 0
   ? patterns
-  : await getWsCoveragePaths(cwd)
+  : await getWsCoveragePaths(cwd, spaces)
 const files = await glob(paths, {
   cwd,
   absolute: true,
@@ -35,13 +36,19 @@ try {
   lcov = merge(...lcovs.map(([l]) => l))
 }
 const lcovSum = sum(lcov)
-lcovSum.scopes = {...lcov.scopes, ...lcovs.reduce((acc, [lcov, scope]) => {
-  const key = scope
+lcovSum.scopes = spaces.reduce((acc, scope) => {
+  const _scope = path.relative(cwd, scope)
+  const _lcov = Object.fromEntries(Object.entries(lcov).filter(([k, v]) => k.startsWith(_scope) && [k, v]))
+  const key = _scope
     .replaceAll('/', '_')
     .replaceAll('-', '_')
-  acc[key] = sum(lcov)
+
+  if (Object.keys(_lcov).length !== 0) {
+    acc[key] = sum(_lcov)
+  }
+
   return acc
-}, {})}
+}, {})
 
 const lcovStr = format(lcov)
 const lcovSumStr = JSON.stringify(lcovSum, null, 2)
@@ -70,8 +77,18 @@ if (GH_TOKEN) {
   }
 }
 
-async function getWsCoveragePaths(cwd) {
-  const workspaces = JSON.parse(await fs.readFile(path.resolve(cwd, 'package.json'), 'utf8'))?.workspaces || []
+async function getWs(cwd) {
+  const spaces = (JSON.parse(await fs.readFile(path.resolve(cwd, 'package.json'), 'utf8'))?.workspaces || [])
+    .map(p => `${p}/package.json`)
+
+  return (await glob(spaces, {
+    onlyFiles: true,
+    absolute: true
+  }))
+    .map(path.dirname)
+}
+async function getWsCoveragePaths(cwd, ws) {
+  const workspaces = ws || await getWs(cwd)
   return workspaces.map(w => [`${w}/coverage/lcov.info`, `${w}/target/coverage/lcov.info`]).flat()
 }
 
