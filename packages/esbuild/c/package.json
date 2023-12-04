@@ -54,8 +54,8 @@
   },
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
-    "@types/node": "^20.10.0",
-    "esbuild": "^0.19.8",
+    "@types/node": "^20.10.3",
+    "esbuild": ">=0.19.8",
     "esbuild-node-externals": "^1.11.0"
   }
 }
