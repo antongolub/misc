@@ -44,6 +44,24 @@ describe('populate', () => {
       }
     ],
     [
+      'works with cosmiconfic search API',
+      [
+        {
+          a: 'a',
+          extends: '../fixtures/extra1.json'
+        },
+        {
+          cwd: __dirname,
+          load: async (f: string, cwd: string) =>
+            (await cosmiconfig('foo').load(path.resolve(cwd, f)))?.config
+        },
+      ],
+      {
+        a: 'a',
+        baz: 'qux'
+      }
+    ],
+    [
       'resolves tsconfig.json',
       [
         {},

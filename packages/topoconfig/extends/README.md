@@ -127,6 +127,13 @@ const config = await populate(raw, {
   }).search(cwd))?.config
 })
 ```
+Or even like:
+```ts
+const {load} = cosmiconfig('foo')
+const config = await populate(raw, {
+  load: async (id: string, cwd: string) => (await load(path.resolve(cwd, id)))?.config
+})
+```
 
 ## Refs
 * [humanwhocodes/config-array](https://github.com/humanwhocodes/config-array)
