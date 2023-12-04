@@ -57,7 +57,10 @@ describe('populate', () => {
           merge: {
             a: 'merge',
             'a.b': 'merge'
-          }
+          },
+          extends: [
+            {a: {b: {qux: 'qux'}}},
+          ]
         }
       ],
       {
@@ -65,7 +68,8 @@ describe('populate', () => {
           b: {
             foo: 'foo',
             bar: 'bar',
-            baz: 'baz'
+            baz: 'baz',
+            qux: 'qux'
           },
           c: 'C'
         }
