@@ -1,4 +1,5 @@
 import { cosmiconfig } from 'cosmiconfig'
+import * as path from 'node:path'
 import { asArray } from './util.js'
 import type {
   EsbuildConfig,
@@ -44,5 +45,45 @@ export const loadPlugin = async (plugin: string | [string, PluginOptions?] | Plu
   }
 
   return plugin
+}
 
+type ExtraLoader = (id: string, cwd: string) => any
+type ExtraMerger = (...args: any[]) => any
+type ExtraCloner = <T = any>(any: T) => T
+
+export const loadExtra = async ({cwd = process.cwd(), id, merge, load = async (id, cwd) => (await import(path.resolve(cwd, id)))?.default}: {cwd?: string, id: string, load?: ExtraLoader, merge?: ExtraMerger}) => {
+  const extra = (await load(id, cwd))
+  const _cwd = path.dirname(path.resolve(cwd, id))
+
+  return populateExtras(extra, {
+    cwd: _cwd,
+    load,
+    merge
+  })
+}
+
+export const populateExtras = async (config: any, {
+  cwd = process.cwd(),
+  load,
+  merge = Object.assign,
+  clone = v => JSON.parse(JSON.stringify(v))
+}: {
+  cwd?: string,
+  load?: ExtraLoader,
+  merge?: ExtraMerger
+  clone?: ExtraCloner
+}) => {
+  const extras = config?.extends
+
+  if (!extras) {
+    return config
+  }
+
+  const _extras: any[] = await Promise.all(asArray(extras).map(id => loadExtra({cwd, id, load})))
+  const sources: any[] = [
+    clone({...config, extends: undefined}),
+    ..._extras
+  ]
+
+  return merge({}, ...sources)
 }

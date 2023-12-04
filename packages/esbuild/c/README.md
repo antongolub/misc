@@ -21,7 +21,7 @@ npm i -D esbuild-c
 esbuild-c [standard esbuild options]
 esbuild-c --config esbuild.config.js
 ```
-If `--config` is not specified, `esbuild-c` will look for it via [cosmiconfig](https://github.com/cosmiconfig/cosmiconfig).
+If `--config` ref is not specified, `esbuild-c` will look for it via [cosmiconfig](https://github.com/cosmiconfig/cosmiconfig).
 
 ## Refs
 * [esbuild/issues/884](https://github.com/evanw/esbuild/issues/884)
