@@ -18,7 +18,15 @@ npm i @topoconfig/extends
 ## Usage
 ### populate
 ```ts
-import { populate, extend }  from '@topoconfig/extends'
+import { populate }  from '@topoconfig/extends'
+
+/** Imagine ../base.config.cjs contents
+module.export = {
+  bar: {
+    b: 'b'
+  }
+}
+*/
 
 const config = {
   extends: '../base.config.cjs',
@@ -34,6 +42,15 @@ const opts = {
   }
 }
 const result = await populate(config, opts)
+/**
+ {
+   foo: 'foo',
+   bar: {
+     a: 'a',
+     b: 'b'
+   }
+ }
+ */
 ```
 
 | Option | Description                                                               | Default                                                             |
@@ -52,7 +69,7 @@ const opts = {
   }
 }
 ```
-The config's `extends` property may hold objects, strings or string[]. The last two types will be resolved via `load` function.
+The config's `extends` property may hold objects, strings or string[]. The last two types will be resolved via the `load` function.
 ```ts
 const config = {
   extends: [
@@ -112,7 +129,7 @@ const result = extend({sources, rules})
   c: 'c'
 }
 ```
-You can apply `override` as default via setting `rules: {'*': 'override'}`
+You can apply `override` as default by setting `rules: {'*': 'override'}`
 
 ### Cosmiconfig?
 Definitely yes! You can use it to load configs from various formats:
