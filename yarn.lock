@@ -44,7 +44,7 @@ __metadata:
     ts-node: "npm:^10.9.1"
     typedoc: "npm:^0.25.4"
     typescript: "npm:^5.3.2"
-    zx-bulk-release: "npm:^2.13.0-beta.4"
+    zx-bulk-release: "npm:^2.13.0-beta.5"
   languageName: unknown
   linkType: soft
 
@@ -1295,23 +1295,6 @@ __metadata:
   version: 2.0.0
   resolution: "convert-source-map@npm:2.0.0"
   checksum: c987be3ec061348cdb3c2bfb924bec86dea1eacad10550a85ca23edb0fe3556c3a61c7399114f3331ccb3499d7fd0285ab24566e5745929412983494c3926e15
-  languageName: node
-  linkType: hard
-
-"cosmiconfig@npm:^8.3.6":
-  version: 8.3.6
-  resolution: "cosmiconfig@npm:8.3.6"
-  dependencies:
-    import-fresh: "npm:^3.3.0"
-    js-yaml: "npm:^4.1.0"
-    parse-json: "npm:^5.2.0"
-    path-type: "npm:^4.0.0"
-  peerDependencies:
-    typescript: ">=4.9.5"
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: 91d082baca0f33b1c085bf010f9ded4af43cbedacba8821da0fb5667184d0a848addc52c31fadd080007f904a555319c238cf5f4c03e6d58ece2e4876b2e73d6
   languageName: node
   linkType: hard
 
@@ -4895,18 +4878,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zx-bulk-release@npm:^2.13.0-beta.4":
-  version: 2.13.0-beta.4
-  resolution: "zx-bulk-release@npm:2.13.0-beta.4"
+"zx-bulk-release@npm:^2.13.0-beta.5":
+  version: 2.13.0-beta.5
+  resolution: "zx-bulk-release@npm:2.13.0-beta.5"
   dependencies:
     "@semrel-extra/topo": "npm:^1.14.0"
-    cosmiconfig: "npm:^8.3.6"
+    cosmiconfig: "npm:^9.0.0"
     queuefy: "npm:^1.2.1"
     tar-stream: "npm:^3.1.6"
     zx-extra: "npm:^2.6.4"
   bin:
     zx-bulk-release: src/main/js/cli.js
-  checksum: 67189530bb85780b0b26d28c29585220bb4ce89c06f03efbd645751a3b4a40c547b4e5979c9c7ab4fdee7716c1e6abd9c5c5ef644e5a930eb49b527ca36d1f60
+  checksum: 4654f733da2c4ecbda9e01b7b6e46fcbc2cef324bb3f5ca57852a5e1d61ff70f3528d7dcbd67c07cd36b96cc5bd2bcf255f197021b88d758b83b2f0b371da368
   languageName: node
   linkType: hard
 
