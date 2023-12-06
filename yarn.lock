@@ -4632,6 +4632,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"upkeeper@workspace:packages/upkeeper":
+  version: 0.0.0-use.local
+  resolution: "upkeeper@workspace:packages/upkeeper"
+  dependencies:
+    "@antongolub/infra": "workspace:*"
+    "@types/node": "npm:^20.10.3"
+  languageName: unknown
+  linkType: soft
+
 "uri-js@npm:^4.2.2":
   version: 4.4.1
   resolution: "uri-js@npm:4.4.1"

@@ -1,0 +1,92 @@
+import cp from 'node:child_process'
+import fs from 'node:fs/promises'
+import path from 'node:path'
+
+const defaultScopes = ['dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies']
+export const upkeeper = async ({
+  cwd = process.cwd(),
+  target = 'package.json',
+  scope = defaultScopes,
+  match = [],
+  ignore = [],
+  commit = 'yarn install && git add . && git commit -m "chore(deps): update deps" && git push origin HEAD:refs/heads/up-deps',
+}: Record<string, any> = {}) => {
+  const pkgJson = JSON.parse(await fs.readFile(path.resolve(cwd, target), 'utf8'))
+  const deps = getDeps(pkgJson)
+  const _deps = filterDeps(deps, ignore, match, scope)
+  // const versions = await getVersions()
+}
+
+export type TDeps = [string, string, string][]
+export type TVersions = string[]
+export type TVersionsMap = Record<string, string[]>
+
+export const getDeps = (pkgJson: Record<string, any>): TDeps => {
+  const deps: TDeps = []
+  for (const scope of defaultScopes) {
+    for(const [name, version] of Object.entries(pkgJson[scope] || {})) {
+      deps.push([name, version as string, scope])
+    }
+  }
+
+  return deps
+}
+
+export const getVersionsMap = async (deps: TDeps): Promise<TVersionsMap> => {
+  const names = [...new Set(deps.map((e => e[0])))]
+  const entries = await Promise.all(names.map(async name => {
+    return [name, await getVersion(name)]
+  }))
+
+  return Object.fromEntries(entries)
+}
+
+export const filterDeps = (deps: TDeps, ignore: string | string[], match: string | string[], scopes: string[]): TDeps => {
+  const ignored = asArray(ignore)
+  const matched = asArray(match)
+
+  return deps.filter(([n, v, s]) => scopes.includes(s) && (matched.length === 0 || matched.includes(n)) && !ignored.includes(v))
+}
+export const asArray = (value: string | string[]) => [value].flat().flatMap(i => i.split(','))
+// export const getScopes = (pkgJson: Record<string, any>, scope: string): [string, string][] => {
+//   const names = scope === '*' ? ['dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies'] : [scope].flat()
+//
+// }
+// export const getDeps = (scopes: [string, string[]][], pick: string[], omit: string[]) => ([])
+export const getVersion = async (name: string): Promise<TVersions> => JSON.parse((await spawn('npm', ['view', name, 'versions', '--json'], {silent: true})).stdout)
+
+export const spawn = (
+  cmd: string,
+  args: ReadonlyArray<string> = [],
+  opts: Record<string, any> = {}
+): Promise<{stdout: string, stderr: string}> => new Promise((resolve, reject) => {
+  let status: number | null = 0
+  const now = Date.now()
+  const stderr: string[] = []
+  const stdout: string[] = []
+  const p = cp.spawn(cmd, args, opts)
+
+  p.stdout.on('data', (data) => stdout.push(data.toString()))
+  p.stderr.on('data', (data) => stderr.push(data.toString()))
+
+  p.on('error', (e) => stderr.push(e.toString()))
+  p.on('exit', (code) => {
+    status = code
+  })
+  p.on('close', () => {
+    const result = {
+      stderr: stderr.join(''),
+      stdout: stdout.join(''),
+      status: status,
+      signalCode: p.signalCode,
+      duration: Date.now() - now,
+    }
+
+    if (!opts.silent) {
+      result.stdout && console.log(result.stdout)
+      result.stderr && console.error(result.stderr)
+    }
+
+    (status ? reject : resolve)(result)
+  })
+})
