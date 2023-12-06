@@ -4641,6 +4641,8 @@ __metadata:
     fast-glob: "npm:^3.3.2"
     minimist: "npm:^1.2.8"
     semver: "npm:^7.5.4"
+  bin:
+    upkeeper: ./target/esm/cli.mjs
   languageName: unknown
   linkType: soft
 
