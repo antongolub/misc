@@ -12,15 +12,28 @@ export const upkeeper = async ({
   match = [],
   ignore = [],
   commit = 'yarn install && git add . && git commit -m "chore(deps): update deps" && git push origin HEAD:refs/heads/up-deps',
+  dryRun = false,
+  limit = Number.POSITIVE_INFINITY
 }: Record<string, any> = {}) => {
+  const _limit = parseInt(limit)
   const pkgJson = JSON.parse(await fs.readFile(path.resolve(cwd, target), 'utf8'))
   const deps = getDeps(pkgJson)
   const _deps = filterDeps(deps, ignore, match, scope)
   const versions = await getVersionsMap(_deps)
-  const __deps = updateDeps(_deps, versions)
-  const _pkgJson = updatePkgJson(pkgJson, __deps)
 
-  return _pkgJson
+  const chunks: any[] = []
+  for (let p = 0; p < _deps.length; p += _limit) {
+    const __deps = deps.slice(p, _limit)
+    const ___deps = updateDeps(__deps, versions)
+    const _pkgJson = updatePkgJson(pkgJson, ___deps)
+    const script = `
+echo ${quote(JSON.stringify(_pkgJson, null, 2))} > ${target}
+${commit}
+`
+    chunks.push(script)
+  }
+
+  return chunks
 }
 
 export type TPkgJson = Record<string, any>
@@ -77,7 +90,11 @@ export const updatePkgJson = (pkg: TPkgJson, deps: TDeps) => {
 
 export const asArray = (value: string | string[]) => [value].flat().flatMap(i => i.split(','))
 
-export const getVersion = async (name: string): Promise<TVersions> => JSON.parse((await spawn('npm', ['view', name, 'versions', '--json'], {silent: true})).stdout).sort(semver.rcompare)
+export const getVersion = async (name: string): Promise<TVersions> => {
+  const versions = JSON.parse((await spawn('npm', ['view', name, 'versions', '--json'], {silent: true, nothrow: true})).stdout.trim())
+
+  return Array.isArray(versions) ? versions.sort(semver.rcompare) : []
+}
 
 export const spawn = (
   cmd: string,
@@ -88,6 +105,7 @@ export const spawn = (
   const now = Date.now()
   const stderr: string[] = []
   const stdout: string[] = []
+  const {nothrow} = opts
   const p = cp.spawn(cmd, args, opts)
 
   p.stdout.on('data', (data) => stdout.push(data.toString()))
@@ -111,6 +129,25 @@ export const spawn = (
       result.stderr && console.error(result.stderr)
     }
 
-    (status ? reject : resolve)(result)
+    (status && !nothrow ? reject : resolve)(result)
   })
 })
+
+export function quote(arg: string) {
+  if (/^[a-z0-9/_.\-@:=]+$/i.test(arg) || arg === '') {
+    return arg
+  }
+  return (
+    `$'` +
+    arg
+      .replace(/\\/g, '\\\\')
+      .replace(/'/g, "\\'")
+      .replace(/\f/g, '\\f')
+      .replace(/\n/g, '\\n')
+      .replace(/\r/g, '\\r')
+      .replace(/\t/g, '\\t')
+      .replace(/\v/g, '\\v')
+      .replace(/\0/g, '\\0') +
+    `'`
+  )
+}
