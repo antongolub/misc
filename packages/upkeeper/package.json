@@ -50,6 +50,7 @@
     "@types/node": "^20.10.3"
   },
   "dependencies": {
+    "fast-glob": "^3.3.2",
     "minimist": "^1.2.8",
     "semver": "^7.5.4"
   }

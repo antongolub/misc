@@ -4638,6 +4638,7 @@ __metadata:
   dependencies:
     "@antongolub/infra": "workspace:*"
     "@types/node": "npm:^20.10.3"
+    fast-glob: "npm:^3.3.2"
     minimist: "npm:^1.2.8"
     semver: "npm:^7.5.4"
   languageName: unknown

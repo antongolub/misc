@@ -2,6 +2,7 @@ import cp from 'node:child_process'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import semver from 'semver'
+import glob from 'fast-glob'
 
 const defaultScopes = ['dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies']
 
@@ -15,23 +16,37 @@ export const upkeeper = async ({
   dryRun = false,
   limit = Number.POSITIVE_INFINITY
 }: Record<string, any> = {}) => {
-  const _limit = Number.parseInt(limit)
-  const pkgJson = JSON.parse(await fs.readFile(path.resolve(cwd, target), 'utf8'))
-  const deps = getDeps(pkgJson)
-  const _deps = filterDeps(deps, ignore, match, scope)
-  const versions = await getVersionsMap(_deps)
-
+  const targets = await glob(asArray(target), {cwd})
+  const opts = {cwd, target, scope, match, ignore, commit, dryRun, limit}
   const chunks: any[] = []
-  for (let p = 0; p < _deps.length; p += _limit) {
-    const __deps = deps.slice(p, _limit)
-    const ___deps = updateDeps(__deps, versions)
-    const _pkgJson = updatePkgJson(pkgJson, ___deps)
-    const script = `
-echo ${quote(JSON.stringify(_pkgJson, null, 2))} > ${target}
+  for (const t of targets) {
+    const _limit = Number.parseInt(limit)
+    const pkgJson = JSON.parse(await fs.readFile(path.resolve(cwd, t), 'utf8'))
+    const {workspaces = []} = pkgJson
+    chunks.push(...await upkeeper({
+      ...opts,
+      target: workspaces.map((ws: string) => `${ws}/package.json`)
+    }))
+
+    const deps = getDeps(pkgJson)
+    const _deps = filterDeps(deps, ignore, match, scope)
+    const versions = await getVersionsMap(_deps)
+
+    for (let p = 0; p < _deps.length; p += _limit) {
+      const __deps = deps.slice(p, _limit)
+      const ___deps = updateDeps(__deps, versions)
+      if (___deps.length === 0) {
+        continue
+      }
+      const _pkgJson = updatePkgJson(pkgJson, ___deps)
+      const script = `
+echo ${quote(JSON.stringify(_pkgJson, null, 2))} > ${t}
 ${commit}
 `
-    chunks.push(script)
+      chunks.push(script)
+    }
   }
+
 
   return chunks
 }
@@ -70,9 +85,11 @@ export const filterDeps = (deps: TDeps, ignore: string | string[], match: string
 
 export const updateDeps = (deps: TDeps, versions: TVersionsMap): TDeps =>
   deps.map(([name, version, scope]) => {
-    const _version = getLatestCompatibleVersion(version, versions[name]) || version
-    return [name, _version, scope]
-  })
+    const _version = getLatestCompatibleVersion(version, versions[name])
+    if (_version) {
+      return [name, _version, scope]
+    }
+  }).filter(Boolean) as TDeps
 
 export const getLatestCompatibleVersion = (v: string, versions: string[]): string | undefined => {
   const caret = v.startsWith('^') || v.startsWith('~') ? v[0] : ''

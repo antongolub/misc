@@ -15,9 +15,9 @@ import {upkeeper} from 'upkeeper'
 
 await upkeeper({
   cwd: process.cwd(),
-  target: 'package.json',
-  scope: '*',
-  match: '*',
+  target: 'package.json', // package.json,packages/*/package.json
+  scope: ['dependencies', 'devDependencies'],
+  match: [],
   ignore: 'react',
   commit: 'yarn install && git add . && git commit -m "chore(deps): update deps" && git push origin HEAD:refs/heads/up-deps'
 })
