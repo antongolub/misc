@@ -47,5 +47,8 @@
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
     "@types/node": "^20.10.3"
+  },
+  "dependencies": {
+    "semver": "^7.5.4"
   }
 }
