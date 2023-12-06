@@ -1,6 +1,6 @@
 {
   "name": "upkeeper",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Tiny script to update deps",
   "type": "module",
   "main": "target/cjs/index.cjs",
@@ -36,14 +36,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/antongolub/misc.git"
+    "url": "git+https://github.com/antongolub/misc.git",
+    "directory": "packages/upkeeper"
   },
   "author": "Anton Golub <antongolub@antongolub.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/antongolub/misc/issues"
   },
-  "homepage": "https://github.com/antongolub/misc#readme",
+  "homepage": "https://github.com/antongolub/misc/tree/master/packages/upkeeper",
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
     "@types/node": "^20.10.3"

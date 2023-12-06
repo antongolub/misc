@@ -23,6 +23,11 @@ await upkeeper({
 })
 ```
 
+## CLI
+```shell
+npx upkeeper > update-pkg-json.sh
+```
+
 ## Refs
 * [renovatebot](https://github.com/renovatebot)
 * [dependabot](https://github.com/dependabot)
