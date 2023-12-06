@@ -1,6 +1,9 @@
 # upkeeper
 > Tiny script to update deps
 
+## Status 
+Blueprint
+
 ## Install
 ```shell
 npm i upkeeper

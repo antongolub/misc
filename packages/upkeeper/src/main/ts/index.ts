@@ -15,7 +15,7 @@ export const upkeeper = async ({
   dryRun = false,
   limit = Number.POSITIVE_INFINITY
 }: Record<string, any> = {}) => {
-  const _limit = parseInt(limit)
+  const _limit = Number.parseInt(limit)
   const pkgJson = JSON.parse(await fs.readFile(path.resolve(cwd, target), 'utf8'))
   const deps = getDeps(pkgJson)
   const _deps = filterDeps(deps, ignore, match, scope)
@@ -105,7 +105,7 @@ export const spawn = (
   const now = Date.now()
   const stderr: string[] = []
   const stdout: string[] = []
-  const {nothrow} = opts
+  const {nothrow, silent} = opts
   const p = cp.spawn(cmd, args, opts)
 
   p.stdout.on('data', (data) => stdout.push(data.toString()))
@@ -124,7 +124,7 @@ export const spawn = (
       duration: Date.now() - now,
     }
 
-    if (!opts.silent) {
+    if (!silent) {
       result.stdout && console.log(result.stdout)
       result.stderr && console.error(result.stderr)
     }
@@ -134,6 +134,7 @@ export const spawn = (
 })
 
 export function quote(arg: string) {
+  // eslint-disable-next-line unicorn/better-regex
   if (/^[a-z0-9/_.\-@:=]+$/i.test(arg) || arg === '') {
     return arg
   }
