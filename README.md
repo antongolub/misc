@@ -1,5 +1,5 @@
 ## &lt;misc&gt;
-> A monorepo for everything
+> An experiment on maintaining a multi-project monorepository
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/1e70108b3273470415c7/maintainability)](https://codeclimate.com/github/antongolub/misc/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/1e70108b3273470415c7/test_coverage)](https://codeclimate.com/github/antongolub/misc/test_coverage)
