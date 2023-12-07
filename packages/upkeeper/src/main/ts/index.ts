@@ -38,10 +38,12 @@ export const upkeeper = async ({
       if (___deps.length === 0) {
         continue
       }
+      const updated = ___deps.map(([name, version]) => `${name}@${version}`).join(', ')
+      const _commit = tpl(commit, {updated})
       const _pkgJson = updatePkgJson(pkgJson, ___deps)
       const script = `
 echo ${quote(JSON.stringify(_pkgJson, null, 2))} > ${t}
-${commit}
+${_commit}
 `
       chunks.push(script)
     }
@@ -168,4 +170,12 @@ export function quote(arg: string) {
       .replace(/\0/g, '\\0') +
     `'`
   )
+}
+
+export const tpl =(input: string, ctx: Record<string, any> = {}) => {
+  let result = input
+  for(const [k, v] of Object.entries(ctx)) {
+    result = result.replaceAll('${' + k + '}', v)
+  }
+  return result
 }
