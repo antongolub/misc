@@ -35,3 +35,6 @@ export const loadResources = async (ctx: TKeeperCtx, loader = (f: string) => fs.
 
   return {...ctx, resources: _resources}
 }
+
+export const getResource = (ctx: TKeeperCtx, name: string) =>
+  ctx.resources.find(r => r.name === name)

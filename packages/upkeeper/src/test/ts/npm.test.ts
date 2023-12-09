@@ -5,11 +5,13 @@ import {
   getPackages,
   getDeps,
   getLatestCompatibleVersion,
-  getVersion,
+  getVersions,
   getVersionsMap,
   TDeps,
   updateDeps,
   updatePkgJson,
+  propose,
+  perform
 } from '../../main/ts/keepers/npm'
 import {TKeeperCtx} from '../../main/ts/interface'
 import * as path from 'node:path'
@@ -33,10 +35,74 @@ describe('`getPackages`', () => {
       proposals: [],
       configs: []
     }
-    const pkgs = await getPackages(ctx)
+    const pkgs = (await getPackages(ctx)).sort(([a], [b]) => a.localeCompare(b))
 
     assert.deepEqual(pkgs[0], [ 'package.json', { json: {name: 'mr', workspaces: ['packages/*']}, deps: [] } ])
     assert.deepEqual(pkgs[1], [ 'packages/app/package.json', { json: {name: '@qiwi/pijma-app', version: '1.6.0', license: 'MIT'}, deps: [] } ])
+  })
+})
+
+describe('`propose`', () => {
+  it('generates deps update proposals', async () => {
+    const ctx: TKeeperCtx = {
+      cwd: path.resolve(__dirname, '../fixtures/mr'),
+      resources: [
+        {
+          name: 'package.json',
+          contents: JSON.stringify({
+            name: 'mr',
+            workspaces: ['packages/*']
+          })
+        }
+      ],
+      proposals: [],
+      configs: []
+    }
+    const {proposals} = await propose(ctx)
+    assert.deepEqual(proposals[0], {
+      keeper: 'npm',
+      action: 'update',
+      resource: 'packages/core/package.json',
+      data: {
+        name: '@emotion/css',
+        version: proposals[0].data.version,
+        scope: 'dependencies'
+      }
+    })
+  })
+})
+
+describe('`perform`', () => {
+  it('modifies resources according to proposals', async () => {
+    const ctx: TKeeperCtx = {
+      cwd: path.resolve(__dirname, '../fixtures/mr'),
+      resources: [
+        {
+          name: 'package.json',
+          contents: JSON.stringify({
+            name: 'mr',
+            dependencies: {
+              '@emotion/css': '^11.0.0'
+            }
+          })
+        }
+      ],
+      proposals: [{
+        keeper: 'npm',
+        action: 'update',
+        resource: 'package.json',
+        data: {
+          name: '@emotion/css',
+          version: '^11.2.0',
+          scope: 'dependencies'
+        }
+      }],
+      configs: []
+    }
+    await perform(ctx)
+
+    const pkgJson = JSON.parse(ctx.resources[0].contents)
+    assert.equal(pkgJson.dependencies['@emotion/css'], '^11.2.0')
   })
 })
 
@@ -75,7 +141,7 @@ describe('`filterDeps`', () => {
 
 describe('`getVersion`', () => {
   it('returns known pkg versions', async () => {
-    const versions = await getVersion('lcov-utils')
+    const versions = await getVersions('lcov-utils')
     assert.ok(versions.includes('0.0.1'))
     assert.ok(versions.includes('0.0.0'))
   })

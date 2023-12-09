@@ -29,7 +29,7 @@ export type TKeeper = {
 export type TProposal<D = any> = {
   keeper:   string
   action:   'add' | 'remove' | 'update'
-  resource: TResource
+  resource: string
   data:     D
 }
 
