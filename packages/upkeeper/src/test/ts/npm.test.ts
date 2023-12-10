@@ -1,17 +1,16 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
 import {
+  TDeps,
   filterDeps,
   getPackages,
   getDeps,
   getLatestCompatibleVersion,
   getVersions,
   getVersionsMap,
-  TDeps,
   updateDeps,
-  updatePkgJson,
   propose,
-  perform
+  script
 } from '../../main/ts/keepers/npm'
 import {TKeeperCtx} from '../../main/ts/interface'
 import * as path from 'node:path'
@@ -21,42 +20,53 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 describe('`getPackages`', () => {
   it('loads ws packages and returns them as json set', async () => {
+    const cwd = path.resolve(__dirname, '../fixtures/mr')
     const ctx: TKeeperCtx = {
-      cwd: path.resolve(__dirname, '../fixtures/mr'),
-      resources: [
-        {
-          name: 'package.json',
-          contents: JSON.stringify({
-            name: 'mr',
-            workspaces: ['packages/*']
-          })
-        }
-      ],
+      cwd,
+      keeper: 'npm',
+      resources: [],
       proposals: [],
-      configs: []
+      config: {
+        cwd,
+        resources: [],
+        include: [],
+        exclude: [],
+      }
     }
-    const pkgs = (await getPackages(ctx)).sort(([a], [b]) => a.localeCompare(b))
+    const pkgs = (await getPackages(ctx))
+      .sort(([a], [b]) => a.localeCompare(b))
 
-    assert.deepEqual(pkgs[0], [ 'package.json', { json: {name: 'mr', workspaces: ['packages/*']}, deps: [] } ])
-    assert.deepEqual(pkgs[1], [ 'packages/app/package.json', { json: {name: '@qiwi/pijma-app', version: '1.6.0', license: 'MIT'}, deps: [] } ])
+    assert.deepEqual(pkgs[0], [
+      'package.json',
+      {
+        json: {name: '@qiwi/pijma', private: true, workspaces: ['packages/*']},
+        deps: []
+      }
+    ])
+    assert.deepEqual(pkgs[1], [
+      'packages/app/package.json',
+      {
+        json: {name: '@qiwi/pijma-app', version: '1.6.0', license: 'MIT'},
+        deps: []
+      }
+    ])
   })
 })
 
 describe('`propose`', () => {
   it('generates deps update proposals', async () => {
+    const cwd = path.resolve(__dirname, '../fixtures/mr')
     const ctx: TKeeperCtx = {
-      cwd: path.resolve(__dirname, '../fixtures/mr'),
-      resources: [
-        {
-          name: 'package.json',
-          contents: JSON.stringify({
-            name: 'mr',
-            workspaces: ['packages/*']
-          })
-        }
-      ],
+      keeper: 'npm',
+      cwd,
+      resources: [],
       proposals: [],
-      configs: []
+      config: {
+        cwd,
+        resources: [],
+        include: [],
+        exclude: [],
+      }
     }
     const {proposals} = await propose(ctx)
     assert.deepEqual(proposals[0], {
@@ -72,10 +82,12 @@ describe('`propose`', () => {
   })
 })
 
-describe('`perform`', () => {
-  it('modifies resources according to proposals', async () => {
+describe('`script`', () => {
+  it('generates dep patch script', async () => {
+    const cwd = path.resolve(__dirname, '../fixtures/mr')
     const ctx: TKeeperCtx = {
-      cwd: path.resolve(__dirname, '../fixtures/mr'),
+      keeper: 'npm',
+      cwd,
       resources: [
         {
           name: 'package.json',
@@ -84,7 +96,7 @@ describe('`perform`', () => {
             dependencies: {
               '@emotion/css': '^11.0.0'
             }
-          })
+          }, null, 2)
         }
       ],
       proposals: [{
@@ -97,12 +109,16 @@ describe('`perform`', () => {
           scope: 'dependencies'
         }
       }],
-      configs: []
+      config: {
+        cwd,
+        resources: [],
+        include: [],
+        exclude: [],
+      }
     }
-    await perform(ctx)
-
-    const pkgJson = JSON.parse(ctx.resources[0].contents)
-    assert.equal(pkgJson.dependencies['@emotion/css'], '^11.2.0')
+    await script(ctx)
+    const expected = `echo $'diff --git a/package.json b/package.json\\n--- a/package.json\\n+++ b/package.json\\n@@ -1,6 +1,6 @@\\n {\\n   "name": "mr",\\n   "dependencies": {\\n-    "@emotion/css": "^11.0.0"\\n+    "@emotion/css": "^11.2.0"\\n   }\\n }\\n' | git apply --whitespace=fix --inaccurate-eof`
+    assert.equal(ctx.proposals[0].script, expected)
   })
 })
 
@@ -184,32 +200,5 @@ describe('`getLatestCompatibleVersion`', () => {
     const found = getLatestCompatibleVersion(range, versions)
 
     assert.equal(found, '^1.2.3')
-  })
-})
-
-describe('`updatePkgJson`', () => {
-  it('returns updated pkg json', () => {
-    const pkg = {
-      dependencies: {
-        foo: '^1.0.0'
-      },
-      devDependencies: {
-        bar: '^2.0.0'
-      }
-    }
-    const deps: TDeps = [
-      ['foo', '^1.2.3', 'dependencies'],
-      ['bar', '^2.5.0', 'devDependencies']
-    ]
-    const _pkg = updatePkgJson(pkg, deps)
-
-    assert.deepEqual(_pkg, {
-      dependencies: {
-        foo: '^1.2.3'
-      },
-      devDependencies: {
-        bar: '^2.5.0'
-      }
-    })
   })
 })

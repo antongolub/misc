@@ -28,3 +28,7 @@ const flags = minimist(process.argv.slice(2), {
     process.exit(1)
   }
 })()
+
+// if (typeof input === 'string') {
+//   return input[0] === '{' ? JSON.parse(input) : JSON.parse(input)
+// }

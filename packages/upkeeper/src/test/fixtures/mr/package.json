@@ -3,34 +3,5 @@
   "private": true,
   "workspaces": [
     "packages/*"
-  ],
-  "scripts": {
-    "clean": "yarn workspaces foreach -tp run clean",
-    "build": "yarn workspaces foreach -tp run build",
-    "watch": "yarn workspaces foreach -tp run watch",
-    "test": "yarn lint",
-    "test:report": "yarn test",
-    "test:unit": "yarn test",
-    "lint": "yarn workspaces foreach -p run lint",
-    "lint:fix": "yarn workspaces foreach -p run lint:fix",
-    "guide": "yarn workspaces foreach run guide",
-    "guide_ci": "yarn workspaces foreach run guide_ci",
-    "upgrade": "npx npm-upgrade-monorepo",
-    "audit:fix": "npm_config_yes=true npx yarn-audit-fix@9"
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "yarn lint"
-    }
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/qiwi/pijma.git"
-  },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/qiwi/pijma/issues"
-  },
-  "homepage": "https://github.com/qiwi/pijma/#readme",
-  "packageManager": "yarn@3.2.0"
+  ]
 }

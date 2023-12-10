@@ -1,15 +1,15 @@
 import path from 'node:path'
 import semver from 'semver'
-import {spawn} from '../util.js'
-import {TKeeperCtx, TResource} from '../interface.js'
-import {getResource, getScript, loadResources} from '../common.js'
+import {spawn} from '../util.ts'
+import {TKeeperCtx, TResource} from '../interface.ts'
+import {getResource, getScript, loadResources} from '../common.ts'
 
 const defaultScopes = ['dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies']
 
 export const propose = async (ctx: TKeeperCtx) => {
-  const {proposals} = ctx
+  const {proposals, config} = ctx
+  const {include, exclude, scope = defaultScopes} = config
   const pkgs = await getPackages(ctx)
-  const {include, exclude, scope} = getConfig(ctx)
 
   for (const [resource, {deps}] of pkgs) {
     const filteredDeps = filterDeps(deps, include, exclude, scope)
@@ -43,42 +43,27 @@ export const script = async (ctx: TKeeperCtx) => {
 
     proposal.script = await getScript(contents, _contents, resource)
   }
-}
 
-export const perform = async (ctx: TKeeperCtx) => {
-  for (const {keeper, resource, data} of ctx.proposals) {
-    if (keeper !== 'npm') {
-      continue
-    }
-    const resourceRef = getResource(ctx, resource) as TResource
-    const {scope, name, version} = data
-    const pkgJson = JSON.parse(resourceRef.contents)
-    pkgJson[scope][name] = version
-    resourceRef.contents = JSON.stringify(pkgJson, null, 2)
-  }
+  return ctx
 }
-
-const getConfig = (ctx: TKeeperCtx) => ({
-  include: [],
-  exclude: [],
-  scope: defaultScopes,
-  ...ctx.configs.find(c => c.keeper === 'npm')?.options
-})
 
 export const getPackages = async (ctx: TKeeperCtx) => {
   const pkgs: [string, {json: TPkgJson, deps: TDeps}][] = []
-  for (const {name, contents} of ctx.resources) {
+  const {config, cwd, resources} = ctx
+  const manifests = config.resources.length === 0 ? ['package.json'] : config.resources
+
+  resources.push(...(await loadResources(manifests, cwd)))
+
+  for (const {name, contents} of resources) {
     if (!name.endsWith('package.json')) {
       continue
     }
     const json = JSON.parse(contents)
     if (json.workspaces) {
-      const {resources: _extraResources} = await loadResources({
-        ...ctx,
-        cwd: path.resolve(ctx.cwd, path.dirname(name)),
-        resources: json.workspaces.map((ws: string) => ({name: `${ws}/package.json`}))
-      })
-      ctx.resources.push(..._extraResources)
+      resources.push(...await loadResources(
+        json.workspaces.map((ws: string) => `${ws}/package.json`),
+        path.resolve(cwd, path.dirname(name))
+      ))
     }
     pkgs.push([name, {json, deps: getDeps(json)}])
   }
@@ -128,15 +113,6 @@ export const updateDeps = (deps: TDeps, versions: TVersionsMap): TDeps =>
 export const getLatestCompatibleVersion = (v: string, versions: string[]): string | undefined => {
   const caret = v.startsWith('^') || v.startsWith('~') ? v[0] : ''
   return caret + versions.find(_v => semver.satisfies(_v, v))
-}
-
-export const updatePkgJson = (pkg: TPkgJson, deps: TDeps) => {
-  const _pkg: TPkgJson = JSON.parse(JSON.stringify(pkg))
-  for(const [name, version, scope] of deps) {
-    _pkg[scope][name] = version
-  }
-
-  return _pkg
 }
 
 export const getVersions = async (name: string): Promise<TVersions> => {
