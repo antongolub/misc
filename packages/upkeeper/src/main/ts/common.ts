@@ -2,7 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import glob from 'fast-glob'
 import {TKeeperCtx} from './interface.ts'
-import {asArray} from './util.js'
+import {asArray, quote, spawn} from './util.js'
 
 export const normalizeCtx = (flags: Record<string, any> = {}): TKeeperCtx => {
 const {cwd, include, exclude, limit, offset, batch, ignore, match, target, manifests} = flags
@@ -19,7 +19,6 @@ const {cwd, include, exclude, limit, offset, batch, ignore, match, target, manif
         batch:      (batch|0) || 0,
       }
     }],
-
     proposals:  []
   }
 }
@@ -38,3 +37,28 @@ export const loadResources = async (ctx: TKeeperCtx, loader = (f: string) => fs.
 
 export const getResource = (ctx: TKeeperCtx, name: string) =>
   ctx.resources.find(r => r.name === name)
+
+export const getPatch = async (a: string, b: string, target: string): Promise<string> => {
+  const patch = (await spawn('git', [
+    'diff',
+    `$(echo ${quote(a)} | git hash-object -w --stdin)`,
+    `$(echo ${quote(b)} | git hash-object -w --stdin)`
+  ], {shell: true, silent: true})).stdout
+  const prefix = `diff --git a/${target} b/${target}
+--- a/${target}
++++ b/${target}
+`
+  return prefix + patch.slice(patch.indexOf('@'))
+}
+
+export const getScript = async (a: string, b: string, target: string): Promise<string> => {
+  const patch = await getPatch(a, b, target)
+
+  return `echo ${quote(patch)} | git apply --whitespace=fix --inaccurate-eof`
+}
+
+export const applyScript = async (script: string, cwd: string) => {
+  await spawn('echo', [
+    `${quote(script)} | sh`
+  ], {shell: true, cwd})
+}

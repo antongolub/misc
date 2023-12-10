@@ -4,8 +4,14 @@
 ## Status 
 Blueprint
 
-## Motivation
-As a part of Hackathon We Make QIWI 2.0 2023.
+## Idea
+To implement deps updating in form of git patches. As a part of Hackathon We Make QIWI 2.0 2023.
+
+## Requirements
+* `git`
+* `echo`
+* `cat`
+* `nodejs` <sub>for generation phase only</sub>
 
 ## Install
 ```shell
@@ -14,21 +20,35 @@ npm i upkeeper
 
 ## Usage
 ```ts
-import {upkeeper} from 'upkeeper'
+import {propose, script} from 'upkeeper'
 
-await upkeeper({
+const ctx = {
   cwd: process.cwd(),
-  target: 'package.json', // package.json,packages/*/package.json
-  scope: ['dependencies', 'devDependencies'],
-  match: [],
-  ignore: 'react',
-  commit: 'yarn install && git add . && git commit -m "chore(deps): update deps" && git push origin HEAD:refs/heads/up-deps'
+  configs: [
+    {
+      keeper: 'npm',
+      options: {
+        resources: 'package.json', // package.json,packages/*/package.json
+        scopes: ['dependencies', 'devDependencies'],
+        exlude: 'react',
+      }
+    }
+  ]
+}
+
+await propose(ctx)
+// console.log(ctx.proposals)
+
+await script(ctx, {
+  pre: '',
+  post: 'yarn install && git add . && git commit -m "chore(deps): update deps" && git push origin HEAD:refs/heads/up-deps'
 })
 ```
 
 ## CLI
 ```shell
-npx upkeeper > update-pkg-json.sh
+npx upkeeper --config=config.json --output=script.sh
+sh script.sh
 ```
 
 ## Refs
