@@ -1,33 +1,91 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import {applyScript, getPatch, getScript} from '../../main/ts/common'
 import * as path from 'node:path'
-import {fileURLToPath} from 'node:url'
 import * as fs from 'node:fs/promises'
 import * as os from 'node:os'
-import {spawn} from "../../main/ts/util";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+import {applyScript, getPatch, getScript} from '../../main/ts/common'
+import {spawn} from '../../main/ts/util'
 
-// describe('`getPatch`', () => {
-//   it('generates a diff patch', async () => {
-//     const patch = await getPatch('my first string', 'my second string', 'myfile.txt')
-//     assert.equal(`diff --git a/myfile.txt b/myfile.txt
-// --- a/myfile.txt
-// +++ b/myfile.txt
-// @@ -1 +1 @@
-// -my first string
-// +my second string
-// `, patch)
-//   })
-// })
+
+// describe('`normalizeCtx`', () => {
+//   it('normalizes ctx', () => {
+//     const raw = {
+//       cwd: 'foo',
+//       resources: ['bar'],
+//       configs: [
+//         {
+//           keeper: 'baz',
+//           options: {
+//             include: 'qux',
+//             exclude: ['quux'],
+//             resources: 'a,b,c'
+//           }
+//         }
+//       ]
+//     }
 //
-// describe('`getScript`', () => {
-//   it('generates a patch script', async () => {
-//     const script = await getScript('my first string', 'my second string', 'myfile.txt')
-//     assert.equal(script, "echo $'diff --git a/myfile.txt b/myfile.txt\\n--- a/myfile.txt\\n+++ b/myfile.txt\\n@@ -1 +1 @@\\n-my first string\\n+my second string\\n' | git apply")
+//     const normalized = normalizeCtx(raw)
+//
+//     assert.deepEqual(normalized, {
+//       configs: [
+//         {
+//           keeper: 'baz',
+//           options: {
+//             exclude: [
+//               'quux'
+//             ],
+//             include: [
+//               'qux'
+//             ],
+//             resources: [
+//               {
+//                 contents: null,
+//                 name: 'a'
+//               },
+//               {
+//                 contents: null,
+//                 name: 'b'
+//               },
+//               {
+//                 contents: null,
+//                 name: 'c'
+//               }
+//             ]
+//           }
+//         }
+//       ],
+//       cwd: 'foo',
+//       proposals: [],
+//       resources: [
+//         {
+//           contents: null,
+//           name: 'bar'
+//         }
+//       ]
+//     })
 //   })
 // })
+
+describe('`getPatch`', () => {
+  it('generates a diff patch', async () => {
+    const patch = await getPatch('my first string', 'my second string', 'myfile.txt')
+    assert.equal(`diff --git a/myfile.txt b/myfile.txt
+--- a/myfile.txt
++++ b/myfile.txt
+@@ -1 +1 @@
+-my first string
++my second string
+`, patch)
+  })
+})
+
+describe('`getScript`', () => {
+  it('generates a patch script', async () => {
+    const script = await getScript('my first string', 'my second string', 'myfile.txt')
+    assert.equal(script, "echo $'diff --git a/myfile.txt b/myfile.txt\\n--- a/myfile.txt\\n+++ b/myfile.txt\\n@@ -1 +1 @@\\n-my first string\\n+my second string\\n' | git apply --whitespace=fix --inaccurate-eof")
+  })
+})
 
 describe('`applyScript`', () => {
   it('applies a patch script', async () => {

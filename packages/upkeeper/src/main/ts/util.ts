@@ -65,4 +65,8 @@ export const tpl =(input: string, ctx: Record<string, any> = {}) => {
   return result
 }
 
-export const asArray = (input: string | string[]): string[] => [input].flat().map(s => s.split(',')).flat()
+export const asArray = (input: string | string[]): string[] => [input]
+  .flat()
+  .filter(Boolean)
+  .map(s => s.split(','))
+  .flat()
