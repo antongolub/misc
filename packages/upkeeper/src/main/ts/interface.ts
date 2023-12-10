@@ -1,8 +1,8 @@
 export type TKeeperCtx = {
   cwd:        string
   resources:  TResource[]  // resources to process: package.json, requirements.txt, etc.
-  proposals:  TProposal[]
   configs:    TConfig[]
+  proposals:  TProposal[]
   // include:    string[]  // dep list to pick. Common logic if empty: pick all
   // exclude:    string[]  // dep list to ignore
   // limit:      number    // max number of deps to update in one run
@@ -23,7 +23,7 @@ export type TConfig = {
 
 export type TKeeper = {
   propose:  (ctx: TKeeperCtx) => Promise<TKeeperCtx>  // proposes a list of updates
-  perform:  (ctx: TKeeperCtx) => Promise<void>        // updates the target resources
+  script:   (ctx: TKeeperCtx) => Promise<TKeeperCtx>  // prepares scripts for updates and attaches them to proposals
 }
 
 export type TProposal<D = any> = {
@@ -31,6 +31,7 @@ export type TProposal<D = any> = {
   action:   'add' | 'remove' | 'update'
   resource: string
   data:     D
+  script?:  string
 }
 
 export type TDepPatch = TProposal<{

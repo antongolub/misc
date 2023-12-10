@@ -2,7 +2,7 @@ import path from 'node:path'
 import semver from 'semver'
 import {spawn} from '../util.js'
 import {TKeeperCtx, TResource} from '../interface.js'
-import {getResource, loadResources} from "../common.js";
+import {getResource, getScript, loadResources} from '../common.js'
 
 const defaultScopes = ['dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies']
 
@@ -29,12 +29,21 @@ export const propose = async (ctx: TKeeperCtx) => {
   return ctx
 }
 
-const getConfig = (ctx: TKeeperCtx) => ({
-  include: [],
-  exclude: [],
-  scope: defaultScopes,
-  ...ctx.configs.find(c => c.keeper === 'npm')?.options
-})
+export const script = async (ctx: TKeeperCtx) => {
+  for (const proposal of ctx.proposals) {
+    const {keeper, resource, data} = proposal
+    if (keeper !== 'npm') {
+      continue
+    }
+    const {contents} = getResource(ctx, resource) as TResource
+    const {scope, name, version} = data
+    const pkgJson = JSON.parse(contents)
+    pkgJson[scope][name] = version
+    const _contents = JSON.stringify(pkgJson, null, 2)
+
+    proposal.script = await getScript(contents, _contents, resource)
+  }
+}
 
 export const perform = async (ctx: TKeeperCtx) => {
   for (const {keeper, resource, data} of ctx.proposals) {
@@ -48,6 +57,13 @@ export const perform = async (ctx: TKeeperCtx) => {
     resourceRef.contents = JSON.stringify(pkgJson, null, 2)
   }
 }
+
+const getConfig = (ctx: TKeeperCtx) => ({
+  include: [],
+  exclude: [],
+  scope: defaultScopes,
+  ...ctx.configs.find(c => c.keeper === 'npm')?.options
+})
 
 export const getPackages = async (ctx: TKeeperCtx) => {
   const pkgs: [string, {json: TPkgJson, deps: TDeps}][] = []
@@ -100,12 +116,14 @@ export const filterDeps = (deps: TDeps, include: string[], exclude: string[], sc
       scopes.includes(s) && (include.length === 0 || include.includes(n)) && !exclude.includes(v))
 
 export const updateDeps = (deps: TDeps, versions: TVersionsMap): TDeps =>
-  deps.map(([name, version, scope]) => {
-    const _version = getLatestCompatibleVersion(version, versions[name])
-    if (_version && _version !== version) {
-      return [name, _version, scope]
-    }
-  }).filter(Boolean) as TDeps
+  deps
+    .map(([name, version, scope]) => {
+      const _version = getLatestCompatibleVersion(version, versions[name])
+      if (_version && _version !== version) {
+        return [name, _version, scope]
+      }
+    })
+    .filter(Boolean) as TDeps
 
 export const getLatestCompatibleVersion = (v: string, versions: string[]): string | undefined => {
   const caret = v.startsWith('^') || v.startsWith('~') ? v[0] : ''
@@ -121,11 +139,8 @@ export const updatePkgJson = (pkg: TPkgJson, deps: TDeps) => {
   return _pkg
 }
 
-export const asArray = (value: string | string[]) => [value].flat().flatMap(i => i.split(','))
-
 export const getVersions = async (name: string): Promise<TVersions> => {
   const versions = JSON.parse((await spawn('npm', ['view', name, 'versions', '--json'], {silent: true, nothrow: true})).stdout.trim())
 
   return Array.isArray(versions) ? versions.sort(semver.rcompare) : []
 }
-
