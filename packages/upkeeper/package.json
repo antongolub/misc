@@ -1,6 +1,6 @@
 {
   "name": "upkeeper",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Tiny script to update deps",
   "type": "module",
   "main": "target/cjs/index.cjs",
