@@ -7,7 +7,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 
 const flags = minimist(process.argv.slice(2), {
-  boolean: ['dryRun'],
+  boolean: ['dryrun', 'combine'],
   string: ['cwd', 'target', 'scope', 'ignore', 'match', 'commit', 'output']
 });
 

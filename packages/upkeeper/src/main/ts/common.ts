@@ -18,6 +18,7 @@ export const getResource = (ctx: TKeeperCtx, name: string) =>
 export const getPatch = async (a: string, b: string, target: string): Promise<string> => {
   const patch = (await spawn('git', [
     'diff',
+    '-U0',
     `$(echo ${quote(a)} | git hash-object -w --stdin)`,
     `$(echo ${quote(b)} | git hash-object -w --stdin)`
   ], {shell: true, silent: true})).stdout
@@ -33,6 +34,14 @@ export const getScript = async (a: string, b: string, target: string): Promise<s
 
   return `echo ${quote(patch)} | git apply --whitespace=fix --inaccurate-eof`
 }
+
+export const getScriptName = (...chunks: string[]): string =>
+  chunks.filter(Boolean).join('-')
+    .replaceAll('/', '-')
+    .replaceAll('^', '')
+    .replaceAll('@', '')
+    .replaceAll('~', '')
+    .replaceAll('.', '-') + '.sh'
 
 export const applyScript = async (script: string, cwd: string) => {
   await spawn('echo', [
