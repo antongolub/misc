@@ -108,6 +108,9 @@ export const filterDeps = (deps: TDeps, include: string[], exclude: string[], sc
 export const updateDeps = (deps: TDeps, versions: TVersionsMap): TDeps =>
   deps
     .map(([name, version, scope]) => {
+      if (version.startsWith('workspace:')) {
+        return
+      }
       const _version = getLatestCompatibleVersion(version, versions[name])
       if (_version && _version !== version) {
         return [name, _version, scope]

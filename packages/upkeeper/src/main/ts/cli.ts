@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import {upkeeper} from './index.js'
+import {upkeeper} from './index.ts'
 import minimist from 'minimist'
 import process from 'node:process'
 import fs from 'node:fs/promises'
@@ -8,20 +8,16 @@ import path from 'node:path'
 
 const flags = minimist(process.argv.slice(2), {
   boolean: ['dryrun', 'combine'],
-  string: ['cwd', 'target', 'scope', 'ignore', 'match', 'commit', 'output']
+  string: ['config', 'output', 'cwd']
 });
 
 (async () => {
   try {
-    const chunks = await upkeeper(flags)
-    const cwd = flags.cwd || process.cwd()
-    const script = chunks.join('\n')
+    const config = flags.config[0] === '{'
+      ? JSON.parse(flags.config)
+      : JSON.parse(await fs.readFile(path.resolve(flags.cwd || process.cwd(), flags.config), 'utf8'))
 
-    if (flags.output) {
-      await fs.writeFile(path.resolve(cwd, flags.output), script, 'utf8')
-    } else {
-      console.log(script)
-    }
+    await upkeeper(config)
     process.exit(0)
   } catch (e) {
     console.error(e)
@@ -29,6 +25,3 @@ const flags = minimist(process.argv.slice(2), {
   }
 })()
 
-// if (typeof input === 'string') {
-//   return input[0] === '{' ? JSON.parse(input) : JSON.parse(input)
-// }

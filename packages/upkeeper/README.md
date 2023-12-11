@@ -2,7 +2,7 @@
 > Script generator for deps updating
 
 ## Status 
-Blueprint
+PoC
 
 ## Idea
 To implement deps updating in form of git patches. As a part of Hackathon We Make QIWI 2.0 2023.
@@ -43,8 +43,8 @@ const {scripts, proposals} = await upkeeper(config)
 
 ## CLI
 ```shell
-npx upkeeper --config=config.json --output=script.sh
-sh script.sh
+npx upkeeper --config=config.json --output='patches'
+sh patches/upkeeper.sh
 ```
 
 ## Refs
