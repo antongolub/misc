@@ -61,9 +61,16 @@ echo post
 echo pre
 echo $'diff --git a/packages/infra/package.json b/packages/infra/package.json\n--- a/packages/infra/package.json\n+++ b/packages/infra/package.json\n@@ -23,7 +23,7 @@\n     "@semrel-extra/topo": "^1.14.0",\n     "c8": "^8.0.1",\n     "concurrently": "^8.2.2",\n-    "esbuild": "^0.19.8",\n+    "esbuild": "^0.19.9",\n     "esbuild-node-externals": "^1.11.0",\n     "eslint": "^8.55.0",\n     "eslint-config-qiwi": "^2.1.3",\n' | git apply --whitespace=fix --inaccurate-eof
 echo post
-
 # ...
 ```
+
+| Option      | Description                      | Default                           |
+|-------------|----------------------------------|-----------------------------------|
+| `--cwd`     | Working directory                | `process.cwd()`                   |
+| `--config`  | Path to config file              |                                   |
+| `--combine` | Join all patches into one script | `false`                           |
+| `--output`  | Output directory                 |                                   |
+| `--dryrun`  | Do not apply changes.            | `true` if `--ouput` option is set |
 
 ## Refs
 #### Updaters

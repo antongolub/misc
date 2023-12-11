@@ -16,7 +16,7 @@ export const normalizeConfig = (raw: TConfig): TConfigNormalized => {
   return {
     granularity,
     keepers,
-    dryrun:   !!raw.dryrun,
+    dryrun:   !!(raw.dryrun ?? raw.output),
     combine:  !!raw.combine,
     output:   raw.output,
     pre:      raw.pre,

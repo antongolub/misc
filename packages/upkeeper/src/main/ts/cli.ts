@@ -13,9 +13,13 @@ const flags = minimist(process.argv.slice(2), {
 
 (async () => {
   try {
-    const config = flags.config[0] === '{'
-      ? JSON.parse(flags.config)
-      : JSON.parse(await fs.readFile(path.resolve(flags.cwd || process.cwd(), flags.config), 'utf8'))
+    const config = {
+      ...(flags.config[0] === '{'
+        ? JSON.parse(flags.config)
+        : JSON.parse(await fs.readFile(path.resolve(flags.cwd || process.cwd(), flags.config), 'utf8'))
+      ),
+      ...flags
+    }
 
     await upkeeper(config)
     process.exit(0)
