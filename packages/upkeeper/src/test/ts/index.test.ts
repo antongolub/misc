@@ -17,6 +17,7 @@ describe('upkeeper()', () => {
       output: 'patches'
     }
     const {scripts, proposals} = await upkeeper(config)
+    assert.ok(scripts['upkeeper.sh'])
     console.log(scripts, proposals)
   })
 })
