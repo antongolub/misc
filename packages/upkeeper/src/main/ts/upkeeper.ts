@@ -3,6 +3,7 @@ import {TConfig, TConfigNormalized, TKeeperCtx} from './interface.ts'
 import {normalizeConfig, normalizeCtx} from './config.ts'
 import {keeper as npm} from './keepers/npm.ts'
 import {getScriptName} from './common.ts'
+import {tpl} from "./util.js";
 
 export const upkeeper = async (_config: TConfig) => {
   const config = normalizeConfig(_config)
@@ -38,7 +39,7 @@ set -e`
     for (const proposal of ctx.proposals) {
       // TODO implement granularity logic
 
-      const script = [!combine && prefix, pre, proposal.script, post].filter(Boolean).join('\n')
+      const script = [!combine && prefix, tpl(pre, proposal), proposal.script, tpl(post, proposal)].filter(Boolean).join('\n')
       const scriptName = getScriptName(ctx.keeper, proposal.action, proposal.resource, proposal.data.name, proposal.data.version)
       scripts[scriptName] = script
       proposals.push(proposal)

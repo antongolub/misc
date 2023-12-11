@@ -1,3 +1,5 @@
+import dot from 'dot'
+
 import cp from 'node:child_process'
 
 export const spawn = (
@@ -61,13 +63,8 @@ export function quote(arg: string) {
   )
 }
 
-export const tpl =(input: string, ctx: Record<string, any> = {}) => {
-  let result = input
-  for(const [k, v] of Object.entries(ctx)) {
-    result = result.replaceAll('${' + k + '}', v)
-  }
-  return result
-}
+
+export const tpl = (input?: string, opts: Record<string, any> = {}) => input && dot.template(input)(opts)
 
 export const asArray = (input: string | string[]): string[] => [input]
   .flat()

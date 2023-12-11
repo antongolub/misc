@@ -42,6 +42,14 @@ const config = {
 
 const {scripts, proposals} = await upkeeper(config)
 ```
+### dot
+[dot](https://github.com/olado/doT/blob/v2/examples/snippet.txt) is used as a template engine for `pre` and `post` options, so you can inject proposal metadata into your scripts.
+```ts
+{
+   pre: 'echo "updated {{=it.data.name}} to {{=it.data.version}}"'
+}
+// 'echo "updated @emotion/css to ^11.2.0"
+```
 
 ## CLI
 ```shell
