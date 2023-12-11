@@ -7,66 +7,6 @@ import * as os from 'node:os'
 import {applyScript, getPatch, getScript} from '../../main/ts/common'
 import {spawn} from '../../main/ts/util'
 
-
-// describe('`normalizeCtx`', () => {
-//   it('normalizes ctx', () => {
-//     const raw = {
-//       cwd: 'foo',
-//       resources: ['bar'],
-//       configs: [
-//         {
-//           keeper: 'baz',
-//           options: {
-//             include: 'qux',
-//             exclude: ['quux'],
-//             resources: 'a,b,c'
-//           }
-//         }
-//       ]
-//     }
-//
-//     const normalized = normalizeCtx(raw)
-//
-//     assert.deepEqual(normalized, {
-//       configs: [
-//         {
-//           keeper: 'baz',
-//           options: {
-//             exclude: [
-//               'quux'
-//             ],
-//             include: [
-//               'qux'
-//             ],
-//             resources: [
-//               {
-//                 contents: null,
-//                 name: 'a'
-//               },
-//               {
-//                 contents: null,
-//                 name: 'b'
-//               },
-//               {
-//                 contents: null,
-//                 name: 'c'
-//               }
-//             ]
-//           }
-//         }
-//       ],
-//       cwd: 'foo',
-//       proposals: [],
-//       resources: [
-//         {
-//           contents: null,
-//           name: 'bar'
-//         }
-//       ]
-//     })
-//   })
-// })
-
 describe('`getPatch`', () => {
   it('generates a diff patch', async () => {
     const patch = await getPatch('my first string', 'my second string', 'myfile.txt')

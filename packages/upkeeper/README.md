@@ -66,6 +66,7 @@ sh patches/upkeeper.sh
 * [cant-pipe-into-diff](https://unix.stackexchange.com/questions/922/cant-pipe-into-diff)
 * [string-difference-in-bash](https://stackoverflow.com/questions/454427/string-difference-in-bash/454549#454549)
 * [git-add-patch-with-word-diff](https://stackoverflow.com/questions/49058817/git-add-patch-with-word-diff)
+* [git-apply-error-while-searching-for-can-i-use-a-patch-to-delete-a-patch](https://stackoverflow.com/questions/75061063/git-apply-error-while-searching-for-can-i-use-a-patch-to-delete-a-patch)
 
 ## License
 [MIT](./LICENSE)

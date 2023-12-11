@@ -18,21 +18,31 @@ export const getResource = (ctx: TKeeperCtx, name: string) =>
 export const getPatch = async (a: string, b: string, target: string): Promise<string> => {
   const patch = (await spawn('git', [
     'diff',
-    '-U0',
+    //'-U1',
+    '--minimal',
     `$(echo ${quote(a)} | git hash-object -w --stdin)`,
-    `$(echo ${quote(b)} | git hash-object -w --stdin)`
-  ], {shell: true, silent: true})).stdout
+    `$(echo ${quote(b)} | git hash-object -w --stdin)`,
+  ], {shell: 'bash', silent: true})).stdout
   const prefix = `diff --git a/${target} b/${target}
 --- a/${target}
 +++ b/${target}
 `
+
   return prefix + patch.slice(patch.indexOf('@'))
+    .replaceAll('\n-$', '\n-')
+    .replaceAll('\n+$', '\n+')
 }
 
 export const getScript = async (a: string, b: string, target: string): Promise<string> => {
   const patch = await getPatch(a, b, target)
+  console.log('debug.patch=', patch)
+  console.log('debug.patch.quoted=', quote(patch))
 
   return `echo ${quote(patch)} | git apply --whitespace=fix --inaccurate-eof`
+}
+
+export const applyScript = async (script: string, cwd: string) => {
+  await spawn('sh', [], {shell: true, cwd, input: script})
 }
 
 export const getScriptName = (...chunks: string[]): string =>
@@ -42,9 +52,3 @@ export const getScriptName = (...chunks: string[]): string =>
     .replaceAll('@', '')
     .replaceAll('~', '')
     .replaceAll('.', '-') + '.sh'
-
-export const applyScript = async (script: string, cwd: string) => {
-  await spawn('echo', [
-    `${quote(script)} | sh`
-  ], {shell: true, cwd})
-}
