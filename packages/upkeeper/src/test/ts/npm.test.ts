@@ -117,7 +117,7 @@ describe('`script`', () => {
       }
     }
     await script(ctx)
-    const expected = `echo $'diff --git a/package.json b/package.json\\n--- a/package.json\\n+++ b/package.json\\n@@ -1,6 +1,6 @@\\n {\\n   "name": "mr",\\n   "dependencies": {\\n-    "@emotion/css": "^11.0.0"\\n+    "@emotion/css": "^11.2.0"\\n   }\\n }\\n' | git apply --whitespace=fix --inaccurate-eof`
+    const expected = `echo $'diff --git a/package.json b/package.json\\n--- a/package.json\\n+++ b/package.json\\n@@ -4 +4 @@\\n-    "@emotion/css": "^11.0.0"\\n+    "@emotion/css": "^11.2.0"\\n' | git apply --whitespace=fix --inaccurate-eof`
     assert.equal(ctx.proposals[0].script, expected)
   })
 })

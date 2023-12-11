@@ -15,13 +15,18 @@ export const normalizeConfig = (raw: TConfig): TConfigNormalized => {
 
   return {
     granularity,
-    keepers
+    keepers,
+    dryrun:   !!raw.dryrun,
+    combine:  !!raw.combine,
+    output:   raw.output,
+    pre:      raw.pre,
+    post:     raw.post,
   }
 }
 
 export const normalizeKeepers = (raw: TConfigDeclaration[] = []): TKeeperConfigNormalized[] =>
   raw.map(value => {
-    const [keeper, opts] = value === 'string'
+    const [keeper, opts] = typeof value === 'string'
       ? [value, {}]
       : Array.isArray(value)
         ? value
@@ -38,8 +43,6 @@ export const normalizeCtx = ({cwd, config: {keeper, options: config}}: {cwd: str
     resources:  [],
     proposals:  []
   })
-
-export const normalizeResource = (name: string) => ({name, contents: null})
 
 export const normalizeOptions = (options: Record<string, any> = {}) => ({
   cwd:        process.cwd(),

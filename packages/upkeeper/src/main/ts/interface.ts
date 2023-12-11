@@ -58,11 +58,21 @@ export type TConfigDeclaration =
 export type TConfig = {
   granularity?: TGranularity
   keepers?:     TConfigDeclaration[]
+  dryrun?:      boolean
+  combine?:     boolean
+  output?:      string
+  pre?:         string
+  post?:        string
 }
 
 export type TConfigNormalized = {
   granularity:  TGranularity
   keepers:      TKeeperConfigNormalized[]
+  dryrun:       boolean
+  combine :     boolean
+  output?:      string
+  pre?:         string
+  post?:        string
 }
 
 export type TGranularity = 'proposal' | 'common' | 'resource' | 'all-in'
