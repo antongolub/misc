@@ -1,8 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import {
-  upkeeper
-} from '../../main/ts'
+import { upkeeper } from '../../main/ts'
 
 describe('upkeeper()', () => {
   it('generates proposals and scripts', async () => {

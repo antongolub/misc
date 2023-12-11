@@ -9,9 +9,13 @@ export const spawn = (
   const now = Date.now()
   const stderr: string[] = []
   const stdout: string[] = []
-  const {nothrow, silent} = opts
+  const {nothrow, silent, input} = opts
   const p = cp.spawn(cmd, args, opts)
 
+  if (input) {
+    p.stdin.write(input)
+    p.stdin.end()
+  }
   p.stdout.on('data', (data) => stdout.push(data.toString()))
   p.stderr.on('data', (data) => stderr.push(data.toString()))
 
