@@ -12,7 +12,7 @@ describe('upkeeper()', () => {
       ],
       pre: 'echo "pre"',
       post: 'echo "post"',
-      combine: false,
+      combine: true,
       dryrun: true,
       output: 'patches'
     }
