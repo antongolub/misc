@@ -35,13 +35,14 @@ export const script = async (ctx: TKeeperCtx) => {
     if (keeper !== 'npm') {
       continue
     }
-    const {contents} = getResource(ctx, resource) as TResource
+    const res = getResource(ctx, resource) as TResource
+    const {contents} = res
     const {scope, name, version} = data
     const pkgJson = JSON.parse(contents)
     pkgJson[scope][name] = version
-    const _contents = JSON.stringify(pkgJson, null, 2)
+    res.contents = JSON.stringify(pkgJson, null, 2)
 
-    proposal.script = await getScript(contents.trim(), _contents.trim(), resource)
+    proposal.script = await getScript(contents.trim(), res.contents.trim(), resource)
   }
 
   return ctx

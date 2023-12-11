@@ -1,8 +1,8 @@
 import fs from 'node:fs/promises'
-import {TConfig, TConfigNormalized, TKeeperCtx} from './interface.ts'
+import {TConfig, TConfigNormalized, TKeeperCtx, TProposal} from './interface.ts'
 import {normalizeConfig, normalizeCtx} from './config.ts'
 import {keeper as npm} from './keepers/npm.ts'
-import {getScriptName} from './common.ts'
+import {applyScript, getScriptName} from './common.ts'
 import {tpl} from "./util.js";
 
 export const upkeeper = async (_config: TConfig) => {
@@ -12,6 +12,7 @@ export const upkeeper = async (_config: TConfig) => {
   const {scripts, proposals} = generate(ctxs, config)
 
   await save(scripts, output)
+  await run(scripts, config.dryrun)
 
   return {scripts, proposals}
 }
@@ -28,10 +29,10 @@ export const prepare = async (keepers: TConfigNormalized['keepers']): Promise<TK
     return context
   }))).filter(Boolean) as TKeeperCtx[]
 
-export const generate = (ctxs: TKeeperCtx[], config: TConfigNormalized) => {
+export const generate = (ctxs: TKeeperCtx[], config: TConfigNormalized): {scripts: [string, string][], proposals: TProposal[]} => {
   const {combine, pre, post} = config
-  const proposals: any[] = []
-  const scripts: Record<string, string> = {}
+  const proposals: TProposal[] = []
+  const scripts: [string, string][] = []
   const prefix = `#!/usr/bin/env bash
 set -e`
 
@@ -41,14 +42,14 @@ set -e`
 
       const script = [!combine && prefix, tpl(pre, proposal), proposal.script, tpl(post, proposal)].filter(Boolean).join('\n')
       const scriptName = getScriptName(ctx.keeper, proposal.action, proposal.resource, proposal.data.name, proposal.data.version)
-      scripts[scriptName] = script
+      scripts.push([scriptName, script])
       proposals.push(proposal)
     }
   }
 
   if (combine) {
     return {
-      scripts: {'upkeeper.sh': [prefix, ...Object.values(scripts)].join('\n\n') + '\n'},
+      scripts: [['upkeeper.sh', [prefix, ...scripts.map(([,s]) => s)].join('\n\n') + '\n']],
       proposals
     }
   }
@@ -56,11 +57,19 @@ set -e`
   return {scripts, proposals}
 }
 
-export const save = async (scripts: Record<string, string>, dir?: string) => {
+export const save = async (scripts: [string, string][], dir?: string) => {
   if (!dir) return
 
   await fs.mkdir(dir, {recursive: true})
-  await Promise.all(Object.entries(scripts).map(async ([name, contents]) => {
+  await Promise.all(scripts.map(async ([name, contents]) => {
     await fs.writeFile(`${dir}/${name}`, contents)
   }))
+}
+
+export const run = async (scripts: [string, string][], dryrun: boolean = true, cwd = process.cwd()) => {
+  if (dryrun) return
+
+  for (const [,script] of scripts) {
+    await applyScript(script, cwd)
+  }
 }
