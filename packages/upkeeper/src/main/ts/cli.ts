@@ -6,19 +6,25 @@ import process from 'node:process'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-const flags = minimist(process.argv.slice(2), {
+const argv = process.argv.slice(2)
+const flags = minimist(argv, {
   boolean: ['dryrun', 'combine'],
   string: ['config', 'output', 'cwd']
 });
 
 (async () => {
   try {
-    const config = {
-      ...(flags.config[0] === '{'
+    const bool = (name: string) => argv.some(v => v.startsWith(`--${name}`)) ? flags[name] : c[name]
+    const c = flags.config
+      ? flags.config[0] === '{'
         ? JSON.parse(flags.config)
         : JSON.parse(await fs.readFile(path.resolve(flags.cwd || process.cwd(), flags.config), 'utf8'))
-      ),
-      ...flags
+      : {}
+    const config = {
+      ...c,
+      ...flags,
+      combine: bool('combine'),
+      dryrun: bool('dryrun'),
     }
 
     await upkeeper(config)
