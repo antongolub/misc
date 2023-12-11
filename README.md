@@ -14,7 +14,7 @@
 | [esbuild-c](./packages/esbuild/c) | Empowers esbuild with config processing | [![npm (scoped)](https://img.shields.io/npm/v/esbuild-c/latest.svg?label=&color=white)](https://www.npmjs.com/package/esbuild-c) |
 | [lcov-utils](./packages/lcov-utils) | LCOV utils: parse, format, merge | [![npm (scoped)](https://img.shields.io/npm/v/lcov-utils/latest.svg?label=&color=white)](https://www.npmjs.com/package/lcov-utils) |
 | [topoconfig](./packages/topoconfig/core) | Toposource-enhanced uniconfig | [![npm (scoped)](https://img.shields.io/npm/v/topoconfig/latest.svg?label=&color=white)](https://www.npmjs.com/package/topoconfig) |
-| [upkeeper](./packages/upkeeper) | Tiny script to update deps | [![npm (scoped)](https://img.shields.io/npm/v/upkeeper/latest.svg?label=&color=white)](https://www.npmjs.com/package/upkeeper) |
+| [upkeeper](./packages/upkeeper) | Script generator for deps updating | [![npm (scoped)](https://img.shields.io/npm/v/upkeeper/latest.svg?label=&color=white)](https://www.npmjs.com/package/upkeeper) |
 
 ## License
 [MIT](./LICENSE)
