@@ -17,7 +17,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: ${{ github.event.commits.length }}
+          fetch-depth: ${{ github.ref == 'refs/heads/master' && github.event.commits.length || 20 }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
