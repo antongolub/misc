@@ -1,6 +1,6 @@
 import path from 'node:path'
 import semver from 'semver'
-import {spawn} from '../util.ts'
+import {memoize, spawn} from '../util.ts'
 import {TKeeper, TKeeperCtx, TResource} from '../interface.ts'
 import {getResource, getScript, loadResources} from '../common.ts'
 
@@ -123,8 +123,8 @@ export const getLatestCompatibleVersion = (v: string, versions: string[]): strin
   return caret + versions.find(_v => semver.satisfies(_v, v))
 }
 
-export const getVersions = async (name: string): Promise<TVersions> => {
+export const getVersions = memoize(async (name: string): Promise<TVersions> => {
   const versions = JSON.parse((await spawn('npm', ['view', name, 'versions', '--json'], {silent: true, nothrow: true})).stdout.trim())
 
   return Array.isArray(versions) ? versions.sort(semver.rcompare) : []
-}
+})
