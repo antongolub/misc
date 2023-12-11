@@ -13,7 +13,6 @@ To implement deps updating in form of git patches. As a part of Hackathon We Mak
 ## Requirements
 * `git`
 * `echo`
-* `cat`
 * `nodejs` <sub>for generation phase only</sub>
 
 ## Install
@@ -48,6 +47,22 @@ const {scripts, proposals} = await upkeeper(config)
 ```shell
 npx upkeeper --config=config.json --output='patches'
 sh patches/upkeeper.sh
+```
+
+#### Output
+```shell
+#!/usr/bin/env bash
+set -e
+
+echo pre
+echo $'diff --git a/packages/blank/package.json b/packages/blank/package.json\n--- a/packages/blank/package.json\n+++ b/packages/blank/package.json\n@@ -46,6 +46,6 @@\n   "homepage": "https://github.com/antongolub/misc#readme",\n   "devDependencies": {\n     "@antongolub/infra": "workspace:*",\n-    "@types/node": "^20.10.3"\n+    "@types/node": "^20.10.4"\n   }\n }\n' | git apply --whitespace=fix --inaccurate-eof
+echo post
+
+echo pre
+echo $'diff --git a/packages/infra/package.json b/packages/infra/package.json\n--- a/packages/infra/package.json\n+++ b/packages/infra/package.json\n@@ -23,7 +23,7 @@\n     "@semrel-extra/topo": "^1.14.0",\n     "c8": "^8.0.1",\n     "concurrently": "^8.2.2",\n-    "esbuild": "^0.19.8",\n+    "esbuild": "^0.19.9",\n     "esbuild-node-externals": "^1.11.0",\n     "eslint": "^8.55.0",\n     "eslint-config-qiwi": "^2.1.3",\n' | git apply --whitespace=fix --inaccurate-eof
+echo post
+
+# ...
 ```
 
 ## Refs

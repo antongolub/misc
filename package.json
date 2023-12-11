@@ -9,7 +9,7 @@
   ],
   "description": "A monorepo for everything",
   "scripts": {
-    "readme:toc": "node ./packages/infra/scripts/readme-toc.mjs",
+    "toc": "node ./packages/infra/scripts/readme-toc.mjs",
     "build": "yarn bulk:topobuild",
     "test": "yarn bulk:topobuild --no-build --no-publish",
     "cov": "yarn build:esbuild --cwd $PWD/packages/lcov-utils && node ./packages/infra/scripts/cov.mjs"
