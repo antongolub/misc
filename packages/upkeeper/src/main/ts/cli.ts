@@ -9,7 +9,7 @@ import path from 'node:path'
 const argv = process.argv.slice(2)
 const flags = minimist(argv, {
   boolean: ['dryrun', 'combine'],
-  string: ['config', 'output', 'cwd']
+  string: ['config', 'output', 'cwd', 'granularity']
 });
 
 (async () => {

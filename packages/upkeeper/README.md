@@ -54,7 +54,6 @@ Choose a scripts aggregation strategy to produce appropriate patches. Default is
 | `resource` | Joins changes for each resource entry                                                    |
 | `all-in`   | A single patch for all deps in all resources                                             |
 
-
 ### dot
 [dot](https://github.com/olado/doT/blob/v2/examples/snippet.txt) is used as a template engine for `pre` and `post` options, so you can inject proposal metadata into your scripts.
 ```ts
@@ -85,14 +84,15 @@ echo post
 # ...
 ```
 
-| Option      | Description                         | Default                           |
-|-------------|-------------------------------------|-----------------------------------|
-| `--cwd`     | Working directory                   | `process.cwd()`                   |
-| `--config`  | Path to config file                 |                                   |
-| `--combine` | Join all patches into one script    | `false`                           |
-| `--output`  | Output directory                    |                                   |
-| `--diff`    | Diff-patch provider: `git` or `sed` | `git`                             |
-| `--dryrun`  | Do not apply changes.               | `true` if `--ouput` option is set |
+| Option          | Description                         | Default                           |
+|-----------------|-------------------------------------|-----------------------------------|
+| `--cwd`         | Working directory                   | `process.cwd()`                   |
+| `--config`      | Path to config file                 |                                   |
+| `--combine`     | Join all patches into one script    | `false`                           |
+| `--diff`        | Diff-patch provider: `git` or `sed` | `git`                             |
+| `--dryrun`      | Do not apply changes.               | `true` if `--ouput` option is set |
+| `--granularity` | Granularity level                   | `proposal`                        |
+| `--output`      | Output directory                    |                                   |
 
 ## Refs
 #### Updaters
