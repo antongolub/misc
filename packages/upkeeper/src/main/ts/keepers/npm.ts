@@ -109,7 +109,8 @@ export const filterDeps = (deps: TDeps, include: string[], exclude: string[], sc
 export const updateDeps = (deps: TDeps, versions: TVersionsMap): TDeps =>
   deps
     .map(([name, version, scope]) => {
-      if (version.startsWith('workspace:')) {
+      // TODO decompose and patch semver ranges and npm: protocols
+      if (version.includes(':') || version.includes('>') || version.includes('<') || version.includes('|')) {
         return
       }
       const _version = getLatestCompatibleVersion(version, versions[name])
