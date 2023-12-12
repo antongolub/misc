@@ -7,12 +7,12 @@ import {tpl} from "./util.js";
 
 export const upkeeper = async (_config: TConfig) => {
   const config = normalizeConfig(_config)
-  const {keepers, output} = config
+  const {keepers, output, dryrun} = config
   const ctxs = await prepare(keepers)
   const {scripts, proposals} = generate(ctxs, config)
 
   await save(scripts, output)
-  await run(scripts, config.dryrun)
+  await run(scripts, dryrun)
 
   return {scripts, proposals}
 }
@@ -66,7 +66,7 @@ export const save = async (scripts: TResource[], dir?: string) => {
   }))
 }
 
-export const run = async (scripts: TResource[], dryrun: boolean = true, cwd = process.cwd()) => {
+export const run = async (scripts: TResource[], dryrun = true, cwd = process.cwd()) => {
   if (dryrun) return
 
   for (const {contents} of scripts) {

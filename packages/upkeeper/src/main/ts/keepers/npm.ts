@@ -42,6 +42,7 @@ export const script = async (ctx: TKeeperCtx) => {
     pkgJson[scope][name] = version
     res.contents = JSON.stringify(pkgJson, null, 2)
 
+    // eslint-disable-next-line unicorn/consistent-destructuring
     proposal.script = await getPatch(contents.trim(), res.contents.trim(), resource)
   }
 

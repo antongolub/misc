@@ -4,6 +4,7 @@ export const sedPatch = async (a: string, b: string, target: string): Promise<st
   const linesA = a.split('\n')
   const linesB = b.split('\n')
 
+  // eslint-disable-next-line unicorn/no-for-loop
   for (let i = 0; i < linesA.length; i++) {
     if (linesA[i] !== linesB[i]) {
       return `sed -i '' '${i+1}s/.*/${linesB[i].replace('/', '\\/')}/' ${target}`
