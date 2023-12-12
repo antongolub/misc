@@ -31,7 +31,8 @@ describe('`getPackages`', () => {
         resources: [],
         include: [],
         exclude: [],
-      }
+      },
+      flags: {}
     }
     const pkgs = (await getPackages(ctx))
       .sort(([a], [b]) => a.localeCompare(b))
@@ -66,7 +67,8 @@ describe('`propose`', () => {
         resources: [],
         include: [],
         exclude: [],
-      }
+      },
+      flags: {}
     }
     const {proposals} = await propose(ctx)
     assert.deepEqual(proposals[0], {
@@ -114,7 +116,8 @@ describe('`script`', () => {
         resources: [],
         include: [],
         exclude: [],
-      }
+      },
+      flags: {}
     }
     await script(ctx)
 

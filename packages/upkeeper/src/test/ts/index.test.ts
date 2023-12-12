@@ -58,7 +58,8 @@ describe('generate()', () => {
         resources: [],
         include: [],
         exclude: [],
-      }
+      },
+      flags: {}
     }
     const config = normalizeConfig({
       pre: 'echo "updated {{=it.data.name}} to {{=it.data.version}}"',
