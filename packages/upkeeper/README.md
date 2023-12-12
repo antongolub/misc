@@ -26,7 +26,7 @@ npm i upkeeper
 import {upkeeper} from 'upkeeper'
 
 const config = {
-  granularity:  'proposal', // Granularity level: 'proposal' | 'common' | 'resource' | 'all-in'
+  granularity:  'proposal', // Granularity level: 'proposal' | 'same' | 'resource' | 'all-in'
   keepers: [
     ['npm', {
       resources:  'package.json', // package.json,packages/*/package.json
