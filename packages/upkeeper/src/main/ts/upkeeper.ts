@@ -18,11 +18,11 @@ export const upkeeper = async (_config: TConfig) => {
 }
 
 export const prepare = async (keepers: TConfigNormalized['keepers']): Promise<TKeeperCtx[]> =>
-  (await Promise.all(keepers.map(async ({keeper, options}) => {
+  (await Promise.all(keepers.map(async ({keeper, options, flags}) => {
     if (keeper !== 'npm') {
       return
     }
-    const context = normalizeCtx({cwd: options.cwd, config: {keeper, options}})
+    const context = normalizeCtx({cwd: options.cwd, config: {keeper, options, flags}})
     await npm.propose(context)
     await npm.script(context)
 

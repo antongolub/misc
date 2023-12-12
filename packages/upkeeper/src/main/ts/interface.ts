@@ -4,6 +4,7 @@ export type TKeeperCtx = {
   resources:  TResource[]  // resources to process: package.json, requirements.txt, etc.
   proposals:  TProposal[]
   config:     TKeeperOptionsNormalized
+  flags:      Record<string, any>
 }
 
 export type TResource = {
@@ -48,6 +49,7 @@ export type TKeeperConfig = {
 export type TKeeperConfigNormalized = {
   keeper:     string
   options:    TKeeperOptionsNormalized
+  flags:      Record<string, any>
 }
 
 export type TConfigDeclaration =
