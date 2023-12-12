@@ -11,7 +11,7 @@ export const propose = async (ctx: TKeeperCtx) => {
   const {include, exclude, scope = defaultScopes} = config
   const pkgs = await getPackages(ctx)
 
-  for (const [resource, {deps}] of pkgs) {
+  await Promise.all(pkgs.map(async ([resource, {deps}]) => {
     const filteredDeps = filterDeps(deps, include, exclude, scope)
     const versions = await getVersionsMap(filteredDeps)
     const updatedDeps = updateDeps(filteredDeps, versions)
@@ -24,7 +24,7 @@ export const propose = async (ctx: TKeeperCtx) => {
         data: {name, version, scope}
       })
     }
-  }
+  }))
 
   return ctx
 }

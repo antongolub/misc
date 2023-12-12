@@ -71,13 +71,14 @@ describe('`propose`', () => {
       flags: {}
     }
     const {proposals} = await propose(ctx)
-    assert.deepEqual(proposals[0], {
+    const proposal = proposals.find(p => p.data.name === '@emotion/css')
+    assert.deepEqual(proposal, {
       keeper: 'npm',
       action: 'update',
       resource: 'packages/core/package.json',
       data: {
         name: '@emotion/css',
-        version: proposals[0].data.version,
+        version: proposal.data.version,
         scope: 'dependencies'
       }
     })
