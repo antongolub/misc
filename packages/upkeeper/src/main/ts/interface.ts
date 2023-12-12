@@ -63,6 +63,7 @@ export type TConfig = {
   output?:      string
   pre?:         string
   post?:        string
+  diff?:        string
 }
 
 export type TConfigNormalized = {
@@ -70,6 +71,7 @@ export type TConfigNormalized = {
   keepers:      TKeeperConfigNormalized[]
   dryrun:       boolean
   combine :     boolean
+  diff:         string
   output?:      string
   pre?:         string
   post?:        string

@@ -21,7 +21,7 @@ describe('upkeeper()', () => {
       dryrun: true
     }
     const {scripts, proposals} = await upkeeper(config)
-    assert.ok(scripts['upkeeper.sh'])
+    assert.ok(scripts.find(({name}) => name === 'upkeeper.sh'))
     // console.log(scripts, proposals)
   })
 })
@@ -66,6 +66,7 @@ describe('generate()', () => {
     await npm.script(ctx)
 
     const {scripts, proposals} = generate([ctx], config)
-    assert.ok(scripts['npm-update-package-json-emotion-css-11-2-0.sh'].includes('echo "updated @emotion/css to ^11.2.0"'))
+    const {contents} = scripts.find(({name}) => name === 'npm-update-package-json-emotion-css-11-2-0.sh')
+    assert.ok(contents.includes('echo "updated @emotion/css to ^11.2.0"'))
   })
 })

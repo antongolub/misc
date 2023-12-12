@@ -13,6 +13,7 @@ To implement deps updating in form of git patches. As a part of Hackathon We Mak
 ## Requirements
 * `git`
 * `echo`
+* `sed`<sub>optional</sub> 
 * `nodejs` <sub>for generation phase only</sub>
 
 ## Install
@@ -33,6 +34,7 @@ const config = {
       exlude: 'react',
     }]
   ],
+  diff: 'sed',        // Diff-patch provider: git or sed
   dryrun: true,       // Do not apply changes
   combine: false,     // Join all patches into one script
   output: 'patches',  // a directory to store patches
@@ -72,13 +74,14 @@ echo post
 # ...
 ```
 
-| Option      | Description                      | Default                           |
-|-------------|----------------------------------|-----------------------------------|
-| `--cwd`     | Working directory                | `process.cwd()`                   |
-| `--config`  | Path to config file              |                                   |
-| `--combine` | Join all patches into one script | `false`                           |
-| `--output`  | Output directory                 |                                   |
-| `--dryrun`  | Do not apply changes.            | `true` if `--ouput` option is set |
+| Option      | Description                         | Default                           |
+|-------------|-------------------------------------|-----------------------------------|
+| `--cwd`     | Working directory                   | `process.cwd()`                   |
+| `--config`  | Path to config file                 |                                   |
+| `--combine` | Join all patches into one script    | `false`                           |
+| `--output`  | Output directory                    |                                   |
+| `--diff`    | Diff-patch provider: `git` or `sed` | `git`                             |
+| `--dryrun`  | Do not apply changes.               | `true` if `--ouput` option is set |
 
 ## Refs
 #### Updaters

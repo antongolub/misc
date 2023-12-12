@@ -2,7 +2,7 @@ import path from 'node:path'
 import semver from 'semver'
 import {memoize, spawn} from '../util.ts'
 import {TKeeper, TKeeperCtx, TResource} from '../interface.ts'
-import {getResource, getScript, loadResources} from '../common.ts'
+import {getResource, getPatch, loadResources} from '../common.ts'
 
 const defaultScopes = ['dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies']
 
@@ -42,7 +42,7 @@ export const script = async (ctx: TKeeperCtx) => {
     pkgJson[scope][name] = version
     res.contents = JSON.stringify(pkgJson, null, 2)
 
-    proposal.script = await getScript(contents.trim(), res.contents.trim(), resource)
+    proposal.script = await getPatch(contents.trim(), res.contents.trim(), resource)
   }
 
   return ctx

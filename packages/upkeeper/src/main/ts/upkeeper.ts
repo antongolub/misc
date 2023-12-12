@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises'
-import {TConfig, TConfigNormalized, TKeeperCtx, TProposal} from './interface.ts'
+import {TConfig, TConfigNormalized, TKeeperCtx, TProposal, TResource} from './interface.ts'
 import {normalizeConfig, normalizeCtx} from './config.ts'
 import {keeper as npm} from './keepers/npm.ts'
 import {applyScript, getScriptName} from './common.ts'
@@ -29,10 +29,10 @@ export const prepare = async (keepers: TConfigNormalized['keepers']): Promise<TK
     return context
   }))).filter(Boolean) as TKeeperCtx[]
 
-export const generate = (ctxs: TKeeperCtx[], config: TConfigNormalized): {scripts: [string, string][], proposals: TProposal[]} => {
+export const generate = (ctxs: TKeeperCtx[], config: TConfigNormalized): {scripts: TResource[], proposals: TProposal[]} => {
   const {combine, pre, post} = config
   const proposals: TProposal[] = []
-  const scripts: [string, string][] = []
+  const scripts: TResource[] = []
   const prefix = `#!/usr/bin/env bash
 set -e`
 
@@ -40,16 +40,16 @@ set -e`
     for (const proposal of ctx.proposals) {
       // TODO implement granularity logic
 
-      const script = [!combine && prefix, tpl(pre, proposal), proposal.script, tpl(post, proposal)].filter(Boolean).join('\n')
-      const scriptName = getScriptName(ctx.keeper, proposal.action, proposal.resource, proposal.data.name, proposal.data.version)
-      scripts.push([scriptName, script])
+      const contents = [!combine && prefix, tpl(pre, proposal), proposal.script, tpl(post, proposal)].filter(Boolean).join('\n')
+      const name = getScriptName(ctx.keeper, proposal.action, proposal.resource, proposal.data.name, proposal.data.version)
+      scripts.push({name, contents})
       proposals.push(proposal)
     }
   }
 
   if (combine) {
     return {
-      scripts: [['upkeeper.sh', [prefix, ...scripts.map(([,s]) => s)].join('\n\n') + '\n']],
+      scripts: [{name: 'upkeeper.sh', contents: [prefix, ...scripts.map((r) => r.contents)].join('\n\n') + '\n'}],
       proposals
     }
   }
@@ -57,19 +57,19 @@ set -e`
   return {scripts, proposals}
 }
 
-export const save = async (scripts: [string, string][], dir?: string) => {
+export const save = async (scripts: TResource[], dir?: string) => {
   if (!dir) return
 
   await fs.mkdir(dir, {recursive: true})
-  await Promise.all(scripts.map(async ([name, contents]) => {
+  await Promise.all(scripts.map(async ({name, contents}) => {
     await fs.writeFile(`${dir}/${name}`, contents)
   }))
 }
 
-export const run = async (scripts: [string, string][], dryrun: boolean = true, cwd = process.cwd()) => {
+export const run = async (scripts: TResource[], dryrun: boolean = true, cwd = process.cwd()) => {
   if (dryrun) return
 
-  for (const [,script] of scripts) {
-    await applyScript(script, cwd)
+  for (const {contents} of scripts) {
+    await applyScript(contents, cwd)
   }
 }

@@ -11,12 +11,14 @@ import {asArray} from './util.ts'
 
 export const normalizeConfig = (raw: TConfig): TConfigNormalized => {
   const granularity = raw.granularity || 'proposal'
+  const diff = raw.diff || 'git'
   const keepers = normalizeKeepers(raw.keepers)
   const dryrun = !!((raw.dryrun || (raw as any).dryRun || (raw as any)['dry-run'] || process.env.DRYRUN || process.env.DRY_RUN) ?? raw.output)
 
   return {
     granularity,
     keepers,
+    diff,
     dryrun:   dryrun,
     combine:  !!raw.combine,
     output:   raw.output,
