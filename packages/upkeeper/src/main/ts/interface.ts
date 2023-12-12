@@ -13,6 +13,11 @@ export type TResource = {
   locked?:    boolean
 }
 
+export type TScript = TResource & {
+  pre: string
+  post: string
+}
+
 export type TKeeper = {
   propose:    (ctx: TKeeperCtx) => Promise<TKeeperCtx>  // proposes a list of updates
   script:     (ctx: TKeeperCtx) => Promise<TKeeperCtx>  // prepares scripts for updates and attaches them to proposals
@@ -79,4 +84,4 @@ export type TConfigNormalized = {
   post?:        string
 }
 
-export type TGranularity = 'proposal' | 'common' | 'resource' | 'all-in'
+export type TGranularity = 'proposal' | 'same' | 'resource' | 'all-in'

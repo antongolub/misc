@@ -17,9 +17,8 @@ export const loadResources = async (refs: string[], cwd: string, loader = (f: st
 export const getResource = (ctx: TKeeperCtx, name: string) =>
   ctx.resources.find(r => r.name === name)
 
-export const applyScript = async (script: string, cwd: string) => {
-  await spawn('sh', [], {shell: true, cwd, input: script})
-}
+export const applyScript = async (script: string, cwd: string) =>
+  spawn('sh', [], {shell: true, cwd, input: script})
 
 export const getScriptName = (...chunks: string[]): string =>
   chunks.filter(Boolean).join('-')

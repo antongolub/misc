@@ -26,24 +26,35 @@ npm i upkeeper
 import {upkeeper} from 'upkeeper'
 
 const config = {
-  granularity: 'proposal',
+  granularity:  'proposal', // Granularity level: 'proposal' | 'common' | 'resource' | 'all-in'
   keepers: [
     ['npm', {
-      resources: 'package.json', // package.json,packages/*/package.json
-      scopes: ['dependencies', 'devDependencies'],
-      exlude: 'react',
+      resources:  'package.json', // package.json,packages/*/package.json
+      scopes:     ['dependencies', 'devDependencies'],
+      exlude:     'react',
     }]
   ],
-  diff: 'sed',        // Diff-patch provider: git or sed
-  dryrun: true,       // Do not apply changes
-  combine: false,     // Join all patches into one script
-  output: 'patches',  // a directory to store patches
-  pre: '',            // a scripts to run before & after each patch
-  post: 'yarn install && git add . && git commit -m "chore(deps): update deps" && git push origin HEAD:refs/heads/up-deps'
+  dryrun:   true,       // Do not apply changes
+  combine:  false,      // Join all patches into one script
+  diff:     'sed',      // Diff-patch provider: git or sed
+  output:   'patches',  // a directory to store patches
+  pre:      '',         // a scripts to run before & after each patch
+  post:     'yarn install && git add . && git commit -m "chore(deps): update deps" && git push origin HEAD:refs/heads/up-deps'
 }
 
 const {scripts, proposals} = await upkeeper(config)
 ```
+### granularity
+Choose a scripts aggregation strategy to produce appropriate patches. Default is `proposal`.
+
+| Level      | Description                                                                              |
+|------------|------------------------------------------------------------------------------------------|
+| `proposal` | Produces a patch for each proposal: resource + dep name + dep version                    |
+| `same`     | Generates script for each common proposal: dep name + dep version. Useful for monorepos. |
+| `resource` | Joins changes for each resource entry                                                    |
+| `all-in`   | A single patch for all deps in all resources                                             |
+
+
 ### dot
 [dot](https://github.com/olado/doT/blob/v2/examples/snippet.txt) is used as a template engine for `pre` and `post` options, so you can inject proposal metadata into your scripts.
 ```ts

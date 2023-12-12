@@ -1,9 +1,11 @@
 import fs from 'node:fs/promises'
-import {TConfig, TConfigNormalized, TKeeperCtx, TProposal, TResource} from './interface.ts'
+import {TConfig, TConfigNormalized, TKeeperCtx, TScript} from './interface.ts'
 import {normalizeConfig, normalizeCtx} from './config.ts'
 import {keeper as npm} from './keepers/npm.ts'
-import {applyScript, getScriptName} from './common.ts'
-import {tpl} from "./util.js";
+import {applyScript} from './common.ts'
+import {generate, join} from './generator.ts'
+
+export {generate} from './generator.ts'
 
 export const upkeeper = async (_config: TConfig) => {
   const config = normalizeConfig(_config)
@@ -29,47 +31,19 @@ export const prepare = async (keepers: TConfigNormalized['keepers']): Promise<TK
     return context
   }))).filter(Boolean) as TKeeperCtx[]
 
-export const generate = (ctxs: TKeeperCtx[], config: TConfigNormalized): {scripts: TResource[], proposals: TProposal[]} => {
-  const {combine, pre, post} = config
-  const proposals: TProposal[] = []
-  const scripts: TResource[] = []
-  const prefix = `#!/usr/bin/env bash
-set -e`
-
-  for (const ctx of ctxs) {
-    for (const proposal of ctx.proposals) {
-      // TODO implement granularity logic
-
-      const contents = [!combine && prefix, tpl(pre, proposal), proposal.script, tpl(post, proposal)].filter(Boolean).join('\n')
-      const name = getScriptName(ctx.keeper, proposal.action, proposal.resource, proposal.data.name, proposal.data.version)
-      scripts.push({name, contents})
-      proposals.push(proposal)
-    }
-  }
-
-  if (combine) {
-    return {
-      scripts: [{name: 'upkeeper.sh', contents: [prefix, ...scripts.map((r) => r.contents)].join('\n\n') + '\n'}],
-      proposals
-    }
-  }
-
-  return {scripts, proposals}
-}
-
-export const save = async (scripts: TResource[], dir?: string) => {
+export const save = async (scripts: TScript[], dir?: string) => {
   if (!dir) return
 
   await fs.mkdir(dir, {recursive: true})
-  await Promise.all(scripts.map(async ({name, contents}) => {
-    await fs.writeFile(`${dir}/${name}`, contents)
-  }))
+  await Promise.all(scripts.map(async ({name, pre, post, contents}) =>
+    fs.writeFile(`${dir}/${name}`, join(pre, contents, post))
+  ))
 }
 
-export const run = async (scripts: TResource[], dryrun = true, cwd = process.cwd()) => {
+export const run = async (scripts: TScript[], dryrun = true, cwd = process.cwd()) => {
   if (dryrun) return
 
-  for (const {contents} of scripts) {
-    await applyScript(contents, cwd)
+  for (const {contents, pre, post} of scripts) {
+    await applyScript(join(pre, contents, post), cwd)
   }
 }
