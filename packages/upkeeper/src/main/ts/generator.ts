@@ -42,7 +42,7 @@ export const granulateBy = (ctxs: TKeeperCtx[], config: TConfigNormalized, nameg
     for (const proposal of ctx.proposals) {
       proposals.push(proposal)
       upsertScript(scripts, {
-        name:     getScriptName(ctx.keeper, proposal.action, proposal.resource, proposal.data.name, proposal.data.version),
+        name:     namegen(ctx, proposal),
         contents: proposal.script as string,
         pre:      join(!combine && prefix, tpl(pre, proposal)),
         post:     tpl(post, proposal) || ''
