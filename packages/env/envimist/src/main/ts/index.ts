@@ -11,7 +11,7 @@ export const envimist = (env: Record<string, string | undefined> = process.env, 
     .map(([k, v]) => {
       const sep = splitMap[k]
       if (sep) {
-        return [k, split(v, sep)]
+        return [k, v?.split(sep) || []]
       }
 
       return [k, v]
@@ -47,5 +47,3 @@ const envToVararg = (env: Record<string, string | undefined>): string[] => {
 }
 
 const normalizeKey = (key: string) => key.toLowerCase().replaceAll('_', '-')
-
-const split = (value: string, sep = ','): string[] => value.split(sep)

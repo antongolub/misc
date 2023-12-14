@@ -60,5 +60,12 @@ describe('envimist()', () => {
       path: ['/some/bin/path', '/another/bin/dir'],
       _: []
     })
+
+    assert.deepEqual(envimist({FOO: null}, {
+      split: ['foo']
+    }), {
+      foo: [],
+      _: []
+    })
   })
 })
