@@ -4,10 +4,11 @@ export type TOpts = minimist.Opts & {
   split?: (string | string[])[]
 }
 
-export const envimist = (env: Record<string, string | undefined> = process.env, opts: TOpts = {}) => {
+export const envimist = (env: Record<string, string | undefined> = process.env, opts: TOpts = {}, parser = minimist) => {
   const splitMap = getSplitMap(opts.split)
+  const argv = parser(envToVararg(env), opts)
 
-  return Object.fromEntries(Object.entries(minimist(envToVararg(env), opts))
+  return Object.fromEntries(Object.entries(argv)
     .map(([k, v]) => {
       const sep = splitMap[k]
       if (sep) {
