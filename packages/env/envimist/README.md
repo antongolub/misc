@@ -51,8 +51,34 @@ const envs = envimist(env, opts)
 envs.foo // === false
 ```
 
+To resolve variables as arrays, set splitting params:
+```ts
+const env = {
+  FOO: 'bar,baz,qux',
+  ABC: 'a,b,c',
+  PATH: '/some/bin/path:/another/bin/dir'
+}
+const opts = {
+  split: ['foo']
+}
 
+// You can also specify a custom separator:
+const opts1 = {
+  split: [['foo', ':']]
+}
+// Compbine diff vars with diff separators
+const opts2 = {
+  split: [['path', ':'], ['foo', 'abc', ',']]
+}
 
+envimist(env, opts2)
+// {
+//   foo: ['bar', 'baz', 'qux'],
+//   abc: ['a', 'b', 'c'],
+//   path: ['/some/bin/path', '/another/bin/dir'],
+//   _: []
+// }
+```
 
 ## License
 [MIT](./LICENSE)

@@ -26,4 +26,39 @@ describe('envimist()', () => {
     assert.equal(envs.foo, false)
     assert.equal(envs.bar, undefined)
   })
+
+  it('provides splitting', () => {
+    const env = {
+      FOO: 'bar,baz,qux',
+      ABC: 'a,b,c',
+      PATH: '/some/bin/path:/another/bin/dir'
+    }
+
+    assert.deepEqual(envimist(env, {
+      split: ['foo', 'abc']
+    }), {
+      foo: ['bar', 'baz', 'qux'],
+      abc: ['a', 'b', 'c'],
+      path: '/some/bin/path:/another/bin/dir',
+      _: []
+    })
+
+    assert.deepEqual(envimist(env, {
+      split: [['path', ':']]
+    }), {
+      foo: 'bar,baz,qux',
+      abc: 'a,b,c',
+      path: ['/some/bin/path', '/another/bin/dir'],
+      _: []
+    })
+
+    assert.deepEqual(envimist(env, {
+      split: [['path', ':'], ['foo', 'abc', ',']]
+    }), {
+      foo: ['bar', 'baz', 'qux'],
+      abc: ['a', 'b', 'c'],
+      path: ['/some/bin/path', '/another/bin/dir'],
+      _: []
+    })
+  })
 })
