@@ -5,7 +5,8 @@
   "workspaces": [
     "packages/*",
     "packages/topoconfig/*",
-    "packages/esbuild/*"
+    "packages/esbuild/*",
+    "packages/env/*"
   ],
   "description": "A monorepo for everything",
   "scripts": {
