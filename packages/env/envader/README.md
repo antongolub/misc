@@ -1,6 +1,9 @@
 # envader
 > occupies env vars for data storage
 
+[![lcov](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fantongolub%2Fmisc%2Freleases%2Fdownload%2Flcov%2Flcov-sum.json&query=%24.scopes.packages_env_envader.max&label=lcov&color=brightgreen)](https://github.com/antongolub/misc/releases/download/lcov/lcov.info)
+[![npm](https://img.shields.io/npm/v/envader.svg?&color=white)](https://www.npmjs.com/package/envader)
+
 ## Status
 PoC
 

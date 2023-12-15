@@ -11,6 +11,7 @@
 | [@antongolub/infra](./packages/infra) | Repo infra assets |  |
 | [@topoconfig/cmds](./packages/topoconfig/cmds) | Topoconfig basic cmds preset | [![npm (scoped)](https://img.shields.io/npm/v/@topoconfig/cmds/latest.svg?label=&color=white)](https://www.npmjs.com/package/@topoconfig/cmds) |
 | [@topoconfig/extends](./packages/topoconfig/extends) | Flexible config extender | [![npm (scoped)](https://img.shields.io/npm/v/@topoconfig/extends/latest.svg?label=&color=white)](https://www.npmjs.com/package/@topoconfig/extends) |
+| [envader](./packages/env/envader) | occupies env vars for data storage | [![npm (scoped)](https://img.shields.io/npm/v/envader/latest.svg?label=&color=white)](https://www.npmjs.com/package/envader) |
 | [envimist](./packages/env/envimist) | Applies minimist to process.env | [![npm (scoped)](https://img.shields.io/npm/v/envimist/latest.svg?label=&color=white)](https://www.npmjs.com/package/envimist) |
 | [esbuild-c](./packages/esbuild/c) | Empowers esbuild with config processing | [![npm (scoped)](https://img.shields.io/npm/v/esbuild-c/latest.svg?label=&color=white)](https://www.npmjs.com/package/esbuild-c) |
 | [lcov-utils](./packages/lcov-utils) | LCOV utils: parse, format, merge | [![npm (scoped)](https://img.shields.io/npm/v/lcov-utils/latest.svg?label=&color=white)](https://www.npmjs.com/package/lcov-utils) |
