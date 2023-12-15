@@ -14,17 +14,17 @@ yarn add envader
 
 ## Usage
 ```ts
-import {set, get, del, has} from 'envader'
+import { envader } from 'envader'
 
 const value = 'foobarbaz'.repeat(1000)
 
-set(
+envader.set(
   'foo',
   value,
   5000  // Optional. Chunk size limit defaults to 1000, just like Amazon does
 )
 
-const _value = get('foo')
+const _value = envader.get('foo')
 ```
 
 ## Refs
