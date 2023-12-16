@@ -50,6 +50,16 @@ export const envader = {
     index[key] = undefined
 
     storeIndex(index)
+  },
+  refs(): string[] {
+    const index = getIndex()
+    const ids = Object.values(index).filter(Boolean) as string[]
+    const refs = Object.keys(process.env)
+      .filter(k => ids.some(id => k.startsWith(id)))
+
+    refs.push('ENVADER_INDEX')
+
+    return refs
   }
 }
 

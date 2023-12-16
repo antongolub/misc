@@ -24,7 +24,10 @@ envader.set(
   5000  // Optional. Chunk size limit defaults to 1000, just like Amazon does
 )
 
-const _value = envader.get('foo')
+envader.has('foo')  // true
+envader.get('foo')  // 'foobarbazfoo...baz'
+envader.del('foo')  // Removes 'foo' entry
+envader.refs()      // Returns a list of all associated env vars: index and chunks
 ```
 
 ## Refs

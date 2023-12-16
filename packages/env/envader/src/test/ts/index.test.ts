@@ -17,6 +17,7 @@ describe('envader', () => {
 
     envader.set(key, value)
 
+    const refs = envader.refs()
     const id = JSON.parse(process.env['ENVADER_INDEX'])[key]
 
     assert.equal(envader.has(key), true)
@@ -24,8 +25,13 @@ describe('envader', () => {
     assert.equal(envader.get('unknown'), undefined)
     assert.equal(process.env[`${id}_0`], value)
 
+    assert.equal(refs.length, 2)
+    assert.ok(refs.includes(`${id}_0`))
+    assert.ok(refs.includes(`ENVADER_INDEX`))
+
     envader.del(key)
     assert.equal(envader.has(key),false)
     assert.equal(process.env[`${id}_0`], undefined)
+    assert.equal(envader.refs().length, 1)
   })
 })
