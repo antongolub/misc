@@ -4,6 +4,14 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/1e70108b3273470415c7/maintainability)](https://codeclimate.com/github/antongolub/misc/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/1e70108b3273470415c7/test_coverage)](https://codeclimate.com/github/antongolub/misc/test_coverage)
 
+## Statuses
+
+* `Blueprint/B` marks the project as an idea w/o any implementation provided. Just a contract proposal.   
+* `PoC/C` — proof of concept that shows the declared behavior in action.
+* `Workind draft/W` — the project work is in progress. Some known corner cases are not covered, but it's already mostly usable.
+* `Production ready/R` — the implementation is stable, documented, tested and ready for use.
+* `Deprecated/D` — the project is no longer maintained.
+
 ## Contents
 | Package | Description                             | Latest |
 |---------|-----------------------------------------|--------|
