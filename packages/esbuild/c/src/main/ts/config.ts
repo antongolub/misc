@@ -17,7 +17,7 @@ export const loadConfig = async ({cwd = process.cwd(), searchPlaces}: {
     searchPlaces: searchPlaces ? asArray(searchPlaces) : undefined
   }).search(cwd))?.config || {}
 
-  console.log(searchPlaces, rawConfig)
+  // console.log(searchPlaces, rawConfig)
 
   return normalizeConfig(rawConfig)
 }
@@ -38,7 +38,7 @@ export const loadPlugin = async (plugin: string | [string, PluginOptions?] | Plu
     const module = await import(name)
     const factory: PluginFactory = module.default?.default || module.default
 
-    return factory(options)
+    return factory?.(options)
   }
 
   if (typeof plugin === 'function') {

@@ -4,7 +4,6 @@ import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { normalizeConfig, loadConfig } from '../../main/ts/config.ts'
 import { nodeExternalsPlugin } from 'esbuild-node-externals'
-import { cosmiconfig } from 'cosmiconfig'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const fixtures = path.resolve(__dirname, '../fixtures')
@@ -22,7 +21,7 @@ describe('normalizeConfig()', () => {
 
 describe('loadConfig()', () => {
   // eslint-disable-next-line unicorn/consistent-function-scoping
-  const mapPlugins = ({plugins}) => plugins.map((v, i) => (plugins[i] = v.name))
+  const pluginsAsNames = ({plugins}) => plugins.forEach((v, i) => (plugins[i] = v.name))
   const expectedConfig = {
     plugins: [nodeExternalsPlugin()]
   }
@@ -34,7 +33,7 @@ describe('loadConfig()', () => {
     ['json']
   ]
 
-  mapPlugins(expectedConfig)
+  pluginsAsNames(expectedConfig)
 
   for (const [type, searchPlaces] of cases) {
     it(`loads ${type} config`, async () => {
@@ -42,7 +41,7 @@ describe('loadConfig()', () => {
         cwd: fixtures,
         searchPlaces
       })
-      mapPlugins(config)
+      pluginsAsNames(config)
       assert.deepEqual(config, expectedConfig)
     })
   }
