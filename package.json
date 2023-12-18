@@ -14,7 +14,7 @@
     "build": "yarn bulk:topobuild",
     "test": "yarn bulk:topobuild --no-build --no-publish",
     "cov": "yarn build:esbuild --cwd $PWD/packages/lcov-utils && node ./packages/infra/scripts/cov.mjs",
-    "up": "yarn build:esbuild --cwd $PWD/packages/upkeeper && upkeeper --config='{\"keepers\": [\"npm\"], \"diff\": \"sed\", \"combine\": true}'"
+    "depup": "yarn build:esbuild --cwd $PWD/packages/upkeeper && upkeeper --config='{\"keepers\": [\"npm\"], \"diff\": \"sed\", \"combine\": true}'"
   },
   "author": "Anton Golub <antongolub@antongolub.com>",
   "license": "MIT",
