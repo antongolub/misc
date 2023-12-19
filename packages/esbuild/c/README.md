@@ -10,15 +10,14 @@
 * Load configs in any suitable formats.
 
 ## Status
-Blueprint
+PoC
 
 ## Install
 ```shell
-npm i -D esbuild-c
+npm i -D esbuild-c esbuild
 ```
 
 ## Usage
-
 ### CLI
 ```shell
 esbuild-c [standard esbuild options]
