@@ -1,6 +1,6 @@
 # This is a Github Workflow that runs tests on any push or pull request.
 # If the tests pass and this is a push to the master branch it also runs Semantic Release.
-name: CI
+name: Log
 on: [push]
 jobs:
   push:
