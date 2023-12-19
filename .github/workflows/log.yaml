@@ -22,4 +22,4 @@ jobs:
         run: node -e "console.log('commits length=', process.env.COMMITS_LEN, 'commits=', process.env.COMMITS)"
         env:
           # COMMITS_LEN: ${{ github.event.commits.length > 19 && '0' || github.event.commits.length }}
-          COMMITS: ${{ github.event.commits }}
+          COMMITS: ${{ toJSON(github.event.commits) }}
