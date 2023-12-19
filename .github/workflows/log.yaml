@@ -7,11 +7,6 @@ jobs:
     name: Push ${{ github.ref }}
     runs-on: ubuntu-22.04
     steps:
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-
       - name: Depth
         run: echo "FETCH_DEPTH=$(echo '${{ toJSON(github.event.commits) }}' | jq 'length | if . < 20 then . else 0 end')" >> $GITHUB_ENV
 
@@ -19,6 +14,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: ${{ env.FETCH_DEPTH }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
 
       - name: Log
         run: node -e "console.log('commits length=', process.env.FETCH_DEPTH, 'commits=', process.env.COMMITS)"
