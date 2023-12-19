@@ -44,7 +44,7 @@ __metadata:
     ts-node: "npm:^10.9.2"
     typedoc: "npm:^0.25.4"
     typescript: "npm:^5.3.3"
-    zx-bulk-release: "npm:^2.13.3"
+    zx-bulk-release: "npm:^2.14.0"
   languageName: unknown
   linkType: soft
 
@@ -1661,7 +1661,7 @@ __metadata:
     "@topoconfig/extends": "workspace:*"
     "@types/node": "npm:^20.10.5"
     cosmiconfig: "npm:^9.0.0"
-    esbuild: "npm:>=0.19.0"
+    esbuild: "npm:>=0.19.10"
     esbuild-node-externals: "npm:^1.11.0"
     minimist: "npm:^1.2.8"
   peerDependencies:
@@ -1683,7 +1683,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:>=0.19.0, esbuild@npm:^0.19.10":
+"esbuild@npm:>=0.19.10, esbuild@npm:^0.19.10":
   version: 0.19.10
   resolution: "esbuild@npm:0.19.10"
   dependencies:
@@ -4924,9 +4924,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zx-bulk-release@npm:^2.13.3":
-  version: 2.13.3
-  resolution: "zx-bulk-release@npm:2.13.3"
+"zx-bulk-release@npm:^2.14.0":
+  version: 2.14.0
+  resolution: "zx-bulk-release@npm:2.14.0"
   dependencies:
     "@semrel-extra/topo": "npm:^1.14.1"
     cosmiconfig: "npm:^9.0.0"
@@ -4935,7 +4935,7 @@ __metadata:
     zx-extra: "npm:^2.6.4"
   bin:
     zx-bulk-release: src/main/js/cli.js
-  checksum: 6858d908d3210a9b5dcb4270f3575841377c7bd95d2b99d7ebb730e592c618926d7fa13fa36bfa5e5f5062b923fea66720bcba763c87d86f71fee8da51f420ea
+  checksum: 2891ebe210913c28c76bc35c0e5e8b405c21a07a8e71aaa385106545bdb8e9a326e666de1104c216d19b10f3b80ae726b38c55b00c94ea430cf7dcef61773a3e
   languageName: node
   linkType: hard
 
