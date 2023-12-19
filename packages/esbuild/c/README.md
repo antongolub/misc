@@ -1,5 +1,5 @@
 # esbuild-c
-> Empowers esbuild with config processing
+> Empowers [esbuild](https://esbuild.github.io/) with config processing
 
 [![lcov](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fantongolub%2Fmisc%2Freleases%2Fdownload%2Flcov%2Flcov-sum.json&query=%24.scopes.packages_esbuild_c.max&label=lcov&color=brightgreen)](https://github.com/antongolub/misc/releases/download/lcov/lcov.info)
 [![npm](https://img.shields.io/npm/v/esbuild-c.svg?&color=white)](https://www.npmjs.com/package/esbuild-c)
