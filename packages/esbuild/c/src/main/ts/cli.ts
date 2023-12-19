@@ -2,8 +2,8 @@
 
 import * as process from 'node:process'
 import esbuild, {BuildOptions} from 'esbuild'
-import { parseArgv } from './argv.ts'
-import { loadConfig } from './config.js'
+import { parseArgv, loadConfig } from './index.ts'
+import {objectToCamelCase} from './util.ts'
 
 (async () => {
   try {
@@ -12,12 +12,12 @@ import { loadConfig } from './config.js'
       cwd: process.cwd(),
       searchPlaces: flags.config
     })
-    const config = {
+    const config = objectToCamelCase({
       ..._config,
       ...flags,
       _: undefined,
       config: undefined
-    } as BuildOptions
+    }) as BuildOptions
 
     await esbuild.build(config)
     process.exit(0)

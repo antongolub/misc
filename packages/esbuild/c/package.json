@@ -4,6 +4,7 @@
   "description": "Empowers esbuild with config processing",
   "type": "module",
   "main": "target/cjs/index.cjs",
+  "bin": "target/esm/cli.mjs",
   "exports": {
     ".": {
       "types": "./target/dts/index.d.ts",
@@ -22,6 +23,7 @@
   ],
   "scripts": {
     "build": "concurrently 'npm:build:*'",
+    "build:cli": "yarn build:esbuild --entry='./src/main/ts/cli.ts'",
     "build:index": "yarn build:esbuild",
     "build:dts": "yarn build:tsc",
     "build:docs": "yarn build:typedoc",

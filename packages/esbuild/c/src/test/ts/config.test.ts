@@ -1,9 +1,9 @@
 import * as assert from 'node:assert'
-import { describe, it } from 'node:test'
 import * as path from 'node:path'
+import { describe, it } from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { normalizeConfig, loadConfig } from '../../main/ts/config.ts'
 import { nodeExternalsPlugin } from 'esbuild-node-externals'
+import { normalizeConfig, loadConfig } from '../../main/ts/config.ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const fixtures = path.resolve(__dirname, '../fixtures')

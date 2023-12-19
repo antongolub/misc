@@ -1,7 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import {splitNth} from "../../main/ts/util";
-
+import {splitNth, toCamelCase} from '../../main/ts/util'
 
 describe('splitNth()', () => {
   it('splits string', () => {
@@ -18,6 +17,20 @@ describe('splitNth()', () => {
     cases.forEach(([str, sep, n, expected]) => {
       const actual = splitNth(str, sep, n)
       assert.deepEqual(actual, expected)
+    })
+  })
+})
+
+describe('toCamelCase()', () => {
+  it('converts kebab string to camel case', () => {
+    const cases = [
+      ['foo-bar-baz', 'fooBarBaz'],
+      ['foo_bar', 'foo_bar'],
+      ['fooBar', 'fooBar'],
+    ]
+
+    cases.forEach(([input, output]) => {
+      assert.deepEqual(toCamelCase(input), output)
     })
   })
 })

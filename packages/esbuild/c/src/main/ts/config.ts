@@ -1,5 +1,5 @@
 import { cosmiconfig } from 'cosmiconfig'
-import { asArray } from './util.js'
+import { asArray } from './util.ts'
 import { populate } from '@topoconfig/extends'
 import type {
   EsbuildConfig,
@@ -7,7 +7,7 @@ import type {
   PluginFactory,
   PluginOptions,
   Plugin
-} from './interface.js'
+} from './interface.ts'
 
 export const loadConfig = async ({cwd = process.cwd(), searchPlaces}: {
   cwd?: string

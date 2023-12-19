@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import {parseArgv} from '../../main/ts/argv.ts'
+import { parseArgv } from '../../main/ts/argv.ts'
 
 describe('parseArgv()', () => {
   it('parses argv', () => {
