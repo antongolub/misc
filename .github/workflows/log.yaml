@@ -19,6 +19,6 @@ jobs:
           node-version: 20
 
       - name: Log
-        run: node -e "console.log(process.env.COMMITS)"
+        run: node -e "console.log('commits length', process.env.COMMITS)"
         env:
           COMMITS: ${{ github.event.commits.length > 19 && '0' || github.event.commits.length }}
