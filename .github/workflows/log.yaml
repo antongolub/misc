@@ -1,0 +1,22 @@
+# This is a Github Workflow that runs tests on any push or pull request.
+# If the tests pass and this is a push to the master branch it also runs Semantic Release.
+name: CI
+on: [push]
+jobs:
+  push:
+    name: Push ${{ github.ref }}
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          # fetch-depth: ${{ github.ref == 'refs/heads/master' && github.event.commits.length || 20 }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+        env:
+          COMMITS: ${{ github.event.commits.length > 19 && '0' || github.event.commits.length }}
+        run: node -e "console.log(process.env.COMMITS)"
