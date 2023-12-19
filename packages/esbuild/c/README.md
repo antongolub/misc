@@ -25,6 +25,22 @@ esbuild-c --config esbuild.config.js
 ```
 If `--config` ref is not specified, `esbuild-c` will look for it via [cosmiconfig](https://github.com/cosmiconfig/cosmiconfig).
 
+### JS/TS
+You can rebuild the CLI with your own logic:
+```ts
+#!/usr/bin/env node
+
+import esbuild from 'esbuild'
+import { loadConfig, parseArgv } from 'esbuild-c'
+
+const flags = parseArgv(process.argv.slice(2))
+const config = await loadConfig()
+
+// do smth with the config
+
+await esbuild.build(config)
+```
+
 ## Refs
 * [esbuild/issues/884](https://github.com/evanw/esbuild/issues/884)
 * [esbuild-config](https://github.com/bpierre/esbuild-config) [`npm`](https://www.npmjs.com/package/esbuild-config)
