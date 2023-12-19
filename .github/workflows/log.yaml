@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           # fetch-depth: ${{ github.ref == 'refs/heads/master' && github.event.commits.length || 20 }}
-          fetch-depth: 0
+          fetch-depth: ${{ toJSON(github.event.commits) | jq -r '.commits | length | if . < 20 then . else 0 end' }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -21,5 +21,5 @@ jobs:
       - name: Log
         run: node -e "console.log('commits length=', process.env.COMMITS_LEN, 'commits=', process.env.COMMITS)"
         env:
-          # COMMITS_LEN: ${{ github.event.commits.length > 19 && '0' || github.event.commits.length }}
+          COMMITS_LEN: ${{ toJSON(github.event.commits) | jq -r '.commits | length | if . < 20 then . else 0 end' }}
           COMMITS: ${{ toJSON(github.event.commits) }}
