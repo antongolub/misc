@@ -17,6 +17,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
+
+      - name: Log
+        run: node -e "console.log(process.env.COMMITS)"
         env:
           COMMITS: ${{ github.event.commits.length > 19 && '0' || github.event.commits.length }}
-        run: node -e "console.log(process.env.COMMITS)"
