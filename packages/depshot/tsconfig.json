@@ -1,0 +1,14 @@
+{
+  "extends": "../infra/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./src/main/ts/",
+    "baseUrl": "./src/main/ts/"
+  },
+  "include": [
+    "src/main/ts/"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/test"
+  ]
+}

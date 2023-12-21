@@ -1431,6 +1431,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"depshot@workspace:packages/depshot":
+  version: 0.0.0-use.local
+  resolution: "depshot@workspace:packages/depshot"
+  dependencies:
+    "@antongolub/infra": "workspace:*"
+    "@types/node": "npm:^20.10.5"
+  languageName: unknown
+  linkType: soft
+
 "diff@npm:^4.0.1":
   version: 4.0.2
   resolution: "diff@npm:4.0.2"
