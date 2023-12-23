@@ -1,1 +1,1 @@
-export * from './foo.ts'
+export * from './depshot.ts'
