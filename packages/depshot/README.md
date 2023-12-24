@@ -20,10 +20,9 @@ const shot = depshot({
 {
   'build/index.js': [
     {
-      statement: 'require',
-      raw: './foo',
       line: 2,
       pos: 10,
+      raw: './foo',
       resolved: 'build/foo/index.mjs'
     }
   ],

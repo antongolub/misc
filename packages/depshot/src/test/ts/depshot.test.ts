@@ -1,13 +1,31 @@
 import * as assert from 'node:assert'
+import * as path from 'node:path'
 import { describe, it } from 'node:test'
-import path from 'node:path'
-import {fileURLToPath} from 'node:url'
-import { depshot } from '../../main/ts'
+import { fileURLToPath } from 'node:url'
+import {depshot, TDepshot} from '../../main/ts'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+// const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 describe('depshot()', () => {
-  it('builds dep snapshot', () => {
-    assert.equal(depshot(), undefined)
-  })
+  const cases: [string, string, string, TDepshot][] = [
+    [
+      'basic require statement',
+      `const foo = require('foo')`,
+      'index.js',
+      {
+        'index.js': [{
+          line: 0,
+          pos: 20,
+          raw: 'foo',
+          resolved: 'foo'
+        }]
+      }
+    ]
+  ];
+
+  for (const [name, contents, location, expected] of cases) {
+    it(name, () => {
+      assert.deepEqual(depshot(contents, location), expected)
+    })
+  }
 })
