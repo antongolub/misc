@@ -26,7 +26,8 @@ const shot = depshot({
       pos: 10,
       resolved: 'build/foo/index.mjs'
     }
-  ]
+  ],
+  //...
 }
 ```
 
