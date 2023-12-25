@@ -1,10 +1,12 @@
 import * as assert from 'node:assert'
 import * as path from 'node:path'
+import * as fs from 'node:fs'
+import {Duplex} from 'node:stream'
 import { describe, it } from 'node:test'
 import { fileURLToPath } from 'node:url'
-import {depshot, TDepshot} from '../../main/ts'
+import {depshot, read, TDepshot} from '../../main/ts'
 
-// const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 describe('depshot()', () => {
   const cases: [string, string, string, TDepshot][] = [
@@ -28,4 +30,15 @@ describe('depshot()', () => {
       assert.deepEqual(depshot(contents, location), expected)
     })
   }
+})
+
+describe('read()', () => {
+  it('reads a stream', async () => {
+    // const stream = fs.createReadStream(path.join(__dirname, '../fixtures/regular-repo/build', 'index.js'))
+    const stream = new Duplex()
+    stream.push('foo "bar" baz')
+    stream.push(null)
+
+    console.log(await read(stream))
+  })
 })
