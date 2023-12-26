@@ -20,8 +20,7 @@ const shot = depshot({
 {
   'build/index.js': [
     {
-      line: 2,
-      pos: 10,
+      index: 22,
       raw: './foo',
       resolved: 'build/foo/index.mjs'
     }

@@ -1,67 +1,95 @@
-import {Duplex} from 'node:stream'
+import { Duplex } from 'node:stream'
 
 export type TDepshotEntry = {
   raw:      string
-  line:     number
-  pos:      number
+  index:    number
   resolved: string
 }
 
 export type TDepshot = Record<string, TDepshotEntry[]>
 
+type TChunk = {
+  type: string
+  value: string
+  index: number
+}
+
 // https://stackoverflow.com/questions/45891242/how-to-pass-a-buffer-as-argument-of-fs-createreadstream
 // https://stackoverflow.com/questions/30096691/read-a-file-one-character-at-a-time-in-node-js
 // https://stackoverflow.com/questions/12755997/how-to-create-streams-from-string-in-node-js
 
-
 const REQUIRE = 'require('
 const IMPORT_A = 'import('
-const IMPORT_S = 'import '
-const FROM = ' from '
-// const CMDS = [REQUIRE, IMPORT_A, IMPORT_S, FROM]
+const IMPORT_S = 'import'
+const FROM = 'from'
+const CMDS = [REQUIRE, IMPORT_A, IMPORT_S, FROM]
+
+const mayBeCmd = (proposal: string) => CMDS.some(cmd => cmd.startsWith(proposal)) ? proposal : ''
+const isCmd = (proposal: string) => CMDS.includes(proposal)
 
 export const read = (stream: Duplex) => new Promise((resolve, reject) => {
-  {
-    stream
-      .on('readable', () => {
-        let prev = ''
-        let chunk
-        let c: string | null = null
-        let q : string | null = null
-        let w = ''
-        // let cmd: string = ''
+  const chunks: TChunk[] = []
 
-        while (null !== (chunk = stream.read(1) /* here */)) {
-          const char: string = chunk.toString('utf8')
-          if (c === null && q === null && (char === '"' || char === "'" || char === '`')) {
-            q = char
-          }
+  stream
+    .on('readable', () => {
+      let i = 0
+      let prev = ''
+      let chunk
+      let c: string | null = null
+      let q : string | null = null
+      let cmd: string = ''
+      let dep = ''
+      let comment = ''
 
-          else if (c === null && q === char && prev !== '\\') {
-            q = null
-          }
-
-          else if (q === null && c === null && prev === '/' && (char === '/' || char === '*')) {
-            c = char
-          }
-
-          else if (q === null && c === '/' && char === '\n') {
-            c = null
-          }
-
-          else if (q === null && c === '*' && prev === '*' && char === '/') {
-            c = null
-          }
-
-          else if (c === null && q === null) {
-            w += char
-          }
-          prev = char
+      while (null !== (chunk = stream.read(1))) {
+        const char: string = chunk.toString('utf8')
+        if (c === null && q === null && (char === '"' || char === "'" || char === '`')) {
+          q = char
         }
-        resolve(w)
-      })
-      .on('error', reject)
-  }
+
+        else if (c === null && q === char && prev !== '\\') {
+          q = null
+          dep && chunks.push({
+            type: 'dep',
+            value: dep,
+            index: i - dep.length
+          })
+          dep = ''
+          cmd = ''
+        }
+
+        else if (q === null && c === null && prev === '/' && (char === '/' || char === '*')) {
+          c = char
+        }
+
+        else if (q === null && (c === '/' && char === '\n' || c === '*' && prev === '*' && char === '/')) {
+          const value = c === '*' ? comment.slice(0, -1) : comment
+          comment && chunks.push({
+            type: 'comment',
+            value,
+            index: i - value.length
+          })
+          comment = ''
+          c = null
+        }
+
+        else if (c === null && q === null && (cmd || !prev.trim())) {
+          cmd = mayBeCmd(cmd + char.trim())
+        }
+
+        else if (isCmd(cmd) && q !== null && c === null) {
+          dep += char
+        }
+        else if (c !== null && q === null) {
+          comment += char
+        }
+
+        prev = char
+        i++
+      }
+      resolve(chunks)
+    })
+    .on('error', reject)
 })
 
 export const depshot = (contents: string, location: string, depshot: TDepshot = {}): TDepshot => {
@@ -80,8 +108,7 @@ export const depshot = (contents: string, location: string, depshot: TDepshot = 
 
       entries.push({
         raw,
-        line: Number.parseInt(l),
-        pos,
+        index: Number.parseInt(l),
         resolved
       })
     }

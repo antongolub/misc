@@ -16,8 +16,7 @@ describe('depshot()', () => {
       'index.js',
       {
         'index.js': [{
-          line: 0,
-          pos: 20,
+          index: 0,
           raw: 'foo',
           resolved: 'foo'
         }]
@@ -35,10 +34,18 @@ describe('depshot()', () => {
 describe('read()', () => {
   it('reads a stream', async () => {
     // const stream = fs.createReadStream(path.join(__dirname, '../fixtures/regular-repo/build', 'index.js'))
+    const input = `
+import fs from "node:fs"
+import 'foo'      // @1.0.0
+iimport 'qux'
+const bar = require('bar')  /* @2 */
+const baz = (await import('baz')).default
+`
     const stream = new Duplex()
-    stream.push('foo "bar" baz')
+    stream.push(input)
     stream.push(null)
 
-    console.log(await read(stream))
+    const chunks = await read(stream)
+    console.log(chunks)
   })
 })
