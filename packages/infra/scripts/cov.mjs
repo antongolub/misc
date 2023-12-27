@@ -1,8 +1,12 @@
 import fs from 'node:fs/promises'
+import fss from 'node:fs'
 import path from 'node:path'
+import util from 'node:util'
 import glob from 'fast-glob'
 import minimist from 'minimist'
 import { merge, parse, format, sum, collide } from 'lcov-utils'
+
+const fsExists = util.promisify(fss.exists)
 
 const {GITHUB_TOKEN, GH_TOKEN = GITHUB_TOKEN} = process.env
 const {_: patterns, cwd = process.cwd(), output = 'lcov.info', outputSum = 'lcov-sum.json'} = minimist(process.argv.slice(2), {
@@ -35,6 +39,13 @@ try {
 } catch (e) {
   lcov = merge(...lcovs.map(([l]) => l))
 }
+
+lcov = Object.fromEntries((await Promise.all(Object.entries(lcov).map(async ([k, v]) =>
+  await fsExists(path.resolve(cwd, k))
+    ? [k, v]
+    : false
+))).filter(Boolean))
+
 const lcovSum = sum(lcov)
 lcovSum.scopes = spaces.reduce((acc, scope) => {
   const _scope = path.relative(cwd, scope)
