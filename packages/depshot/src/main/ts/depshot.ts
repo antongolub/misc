@@ -18,14 +18,31 @@ type TChunk = {
 // https://stackoverflow.com/questions/30096691/read-a-file-one-character-at-a-time-in-node-js
 // https://stackoverflow.com/questions/12755997/how-to-create-streams-from-string-in-node-js
 
-const REQUIRE = 'require('
-const IMPORT_A = 'import('
-const IMPORT_S = 'import'
-const FROM = 'from'
-const CMDS = [REQUIRE, IMPORT_A, IMPORT_S, FROM]
+const OPS = '({}[><=+-*/%&|^!~?:;,.'.split('')
+const FNS = [
+  'require(',
+  'import('
+]
+const ISOLATED = [
+  'import',
+  'from',
+  ...FNS
+]
+const STICKY = [
+  '...require(',
+  '}from',
+  ...OPS.flatMap(op => FNS.map(cmd => op + cmd))
+]
+const KEYWORDS = [
+  'import',
+  'from',
+  '}from',
+]
 
-const mayBeCmd = (proposal: string) => CMDS.some(cmd => cmd.startsWith(proposal)) ? proposal : ''
-const isCmd = (proposal: string) => CMDS.includes(proposal)
+const mayBeCmd = (proposal: string, prev = '') =>
+  ISOLATED.some(cmd => cmd.startsWith(proposal)) && (!prev.trim() || proposal.length > 1) ||
+  STICKY.some(cmd => cmd.startsWith(proposal)) ? proposal : ''
+const isCmd = (proposal: string) => ISOLATED.includes(proposal) || STICKY.includes(proposal)
 
 export const read = (stream: Duplex) => new Promise((resolve, reject) => {
   const chunks: TChunk[] = []
@@ -70,15 +87,22 @@ export const read = (stream: Duplex) => new Promise((resolve, reject) => {
             index: i - value.length
           })
           comment = ''
+          cmd = ''
           c = null
         }
 
-        else if (c === null && q === null && (cmd || !prev.trim())) {
-          cmd = mayBeCmd(cmd + char.trim())
+        else if (c === null && q === null) {
+          if (char === '\n'){
+            cmd = ''
+          } else {
+            cmd = mayBeCmd(cmd + char.trim(), prev)
+          }
+          // console.log('cmd=', cmd, 'char=', char)
         }
 
         else if (isCmd(cmd) && q !== null && c === null) {
           dep += char
+          // console.log('dep=', dep)
         }
         else if (c !== null && q === null) {
           comment += char
