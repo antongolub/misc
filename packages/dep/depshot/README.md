@@ -1,8 +1,9 @@
 # depshot
 > Gathers deps snapshot by analyzing sources
 
+
 ## Motivation
-Dep scanners are mostly focused on dep graphs. More granular and more code bound output requires _heavy_ AST parsing. There should be a compact and lightweight solution.
+Combine [depseek]() and [fast-glob](https://github.com/mrmlnc/fast-glob) to implement efficient dep scanner. 
 
 ## Status
 Blueprint
@@ -28,11 +29,6 @@ const shot = depshot({
   //...
 }
 ```
-
-## Refs
-* [browserify/module-deps](https://github.com/browserify/module-deps)
-* [browserify/detective](https://github.com/browserify/detective)
-* [Joris-van-der-Wel/node-module-references](https://github.com/Joris-van-der-Wel/node-module-references#readme)
 
 ## License
 [MIT](./LICENSE)

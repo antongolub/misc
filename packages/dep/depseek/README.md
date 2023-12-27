@@ -28,5 +28,10 @@ const stream = fs.createReadStream('index.js')
 const deps = await depseek(stream)
 ```
 
+## Refs
+* [browserify/module-deps](https://github.com/browserify/module-deps)
+* [browserify/detective](https://github.com/browserify/detective)
+* [Joris-van-der-Wel/node-module-references](https://github.com/Joris-van-der-Wel/node-module-references#readme)
+
 ## License
 [MIT](./LICENSE)
