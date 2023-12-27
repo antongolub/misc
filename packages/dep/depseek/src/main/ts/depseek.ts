@@ -6,7 +6,7 @@ type TCodeRef = {
   index: number
 }
 
-const OPS = [...'({}[><=+-*/%&|^!~?:;,']
+const OPS = '({}[><=+-*/%&|^!~?:;,'
 const FNS = [
   'require(',
   'import('
@@ -19,22 +19,29 @@ const ISOLATED = [
 const STICKY = [
   '...require(',
   '}from',
-  ...OPS.flatMap(op => FNS.map(cmd => op + cmd))
+  ...[...OPS].flatMap(op => FNS.map(cmd => op + cmd))
 ]
 
-const isCmd = (proposal: string) => ISOLATED.includes(proposal) || STICKY.includes(proposal)
-const mayBeCmd = (proposal: string, prev = '') =>
+const ALL = new Set([...ISOLATED, ...STICKY])
+
+const isCmd = (proposal: string) => ALL.has(proposal)
+const mayBeCmd = (proposal: string, prev = '', _p = proposal.slice(1)) =>
   ISOLATED.some(cmd => cmd.startsWith(proposal)) && (!prev.trim() || proposal.length > 1) ||
-  STICKY.some(cmd => cmd.startsWith(proposal)) ? proposal : ''
+  OPS.includes(proposal[0]) && FNS.some(cmd => cmd.startsWith(_p)) ||
+  '...require('.startsWith(proposal) ||
+  '}from'.startsWith(proposal)
+    ? proposal
+    : ''
 
 export const depseek = (stream: Duplex): Promise<TCodeRef[]> => new Promise((resolve, reject) => {
-  const chunks: TCodeRef[] = []
 
   // https://stackoverflow.com/questions/45891242/how-to-pass-a-buffer-as-argument-of-fs-createreadstream
   // https://stackoverflow.com/questions/30096691/read-a-file-one-character-at-a-time-in-node-js
   // https://stackoverflow.com/questions/12755997/how-to-create-streams-from-string-in-node-js
   stream
     .on('readable', () => {
+      const chunks: TCodeRef[] = []
+
       let i = 0
       let prev = ''
       let chunk
@@ -44,56 +51,61 @@ export const depseek = (stream: Duplex): Promise<TCodeRef[]> => new Promise((res
       let dep = ''
       let comment = ''
 
-      while (null !== (chunk = stream.read(1))) {
-        const char: string = chunk.toString('utf8')
-        if (c === null && q === null && (char === '"' || char === "'" || char === '`')) {
-          q = char
-        }
+      while (null !== (chunk = stream.read(1000))) {
+        const chars = [...chunk.toString('utf8')]
+        chars.forEach(char => {
+          if (c === q) {
+            if (char === '"' || char === "'" || char === '`') {
+              q = char
+            }
+            else if (prev === '/' && (char === '/' || char === '*')) {
+              c = char
+            }
+            else {
+              cmd = char === '\n'
+                ? ''
+                : mayBeCmd(cmd + char.trim(), prev)
+            }
+          }
+          else if (c === null) {
+            if (q === char && prev !== '\\') {
+              dep && chunks.push({
+                type: 'dep',
+                value: dep,
+                index: i - dep.length
+              })
+              dep = ''
+              cmd = ''
+              q = null
+            }
+            else if (q !== null && isCmd(cmd)) {
+              dep += char
+              // console.log('dep=', dep)
+            }
+          }
+          else if (q === null) {
+            if (c === '/' && char === '\n' || c === '*' && prev === '*' && char === '/') {
+              const value = c === '*'
+                ? comment.slice(0, -1)
+                : comment
 
-        else if (c === null && q === char && prev !== '\\') {
-          q = null
-          dep && chunks.push({
-            type: 'dep',
-            value: dep,
-            index: i - dep.length
-          })
-          dep = ''
-          cmd = ''
-        }
+              comment && chunks.push({
+                type: 'comment',
+                value,
+                index: i - value.length
+              })
+              comment = ''
+              cmd = ''
+              c = null
+            }
+            else {
+              comment += char
+            }
+          }
 
-        else if (q === null && c === null && prev === '/' && (char === '/' || char === '*')) {
-          c = char
-        }
-
-        else if (q === null && (c === '/' && char === '\n' || c === '*' && prev === '*' && char === '/')) {
-          const value = c === '*' ? comment.slice(0, -1) : comment
-          comment && chunks.push({
-            type: 'comment',
-            value,
-            index: i - value.length
-          })
-          comment = ''
-          cmd = ''
-          c = null
-        }
-
-        else if (c === null && q === null) {
-          cmd = char === '\n'
-            ? ''
-            : mayBeCmd(cmd + char.trim(), prev)
-          // console.log('cmd=', cmd, 'char=', char)
-        }
-
-        else if (isCmd(cmd) && q !== null && c === null) {
-          dep += char
-          // console.log('dep=', dep)
-        }
-        else if (c !== null && q === null) {
-          comment += char
-        }
-
-        prev = char
-        i++
+          prev = char
+          i++
+        })
       }
       resolve(chunks)
     })
