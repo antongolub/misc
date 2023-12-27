@@ -6,7 +6,8 @@
     "packages/*",
     "packages/topoconfig/*",
     "packages/esbuild/*",
-    "packages/env/*"
+    "packages/env/*",
+    "packages/dep/*"
   ],
   "description": "A monorepo for everything",
   "scripts": {

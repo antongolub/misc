@@ -3,7 +3,7 @@
   "version": "7.2.3",
   "description": "A tool for writing better scripts",
   "type": "module",
-  "main": "./build/index.js",
+  "main": "build/index.js",
   "types": "./build/index.d.ts",
   "typesVersions": {
     "*": {
@@ -33,14 +33,14 @@
     "./package.json": "./package.json"
   },
   "bin": {
-    "zx": "./build/cli.js"
+    "zx": "build/cli.js"
   },
   "engines": {
     "node": ">= 16.0.0"
   },
   "scripts": {
-    "fmt": "prettier --write .",
-    "fmt:check": "prettier --check .",
+    "fmt": "prettier --write ",
+    "fmt:check": "prettier --check ",
     "build": "tsc --project tsconfig.prod.json",
     "build:check": "tsc",
     "test": "npm run build && node ./test/all.test.js",

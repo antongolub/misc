@@ -1431,9 +1431,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"depshot@workspace:packages/depshot":
+"depseek@workspace:packages/dep/depseek":
   version: 0.0.0-use.local
-  resolution: "depshot@workspace:packages/depshot"
+  resolution: "depseek@workspace:packages/dep/depseek"
+  dependencies:
+    "@antongolub/infra": "workspace:*"
+    "@types/node": "npm:^20.10.5"
+  languageName: unknown
+  linkType: soft
+
+"depshot@workspace:packages/dep/depshot":
+  version: 0.0.0-use.local
+  resolution: "depshot@workspace:packages/dep/depshot"
   dependencies:
     "@antongolub/infra": "workspace:*"
     "@types/node": "npm:^20.10.5"

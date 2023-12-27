@@ -1,7 +1,5 @@
 {
   "extends": ["eslint-config-qiwi"],
-  "rules": {
-    "sonarjs/cognitive-complexity": "off"
-  },
+  "rules": {},
   "ignorePatterns": ["src/test/fixtures/**/*"]
 }
