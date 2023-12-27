@@ -26,6 +26,14 @@ import {depseek} from 'depseek'
 
 const stream = fs.createReadStream('index.js')
 const deps = await depseek(stream)
+
+// returns
+[
+  { type: 'dep', value: 'node:fs', index: 17 },
+  { type: 'dep', value: 'foo', index: 34 },
+  { type: 'dep', value: 'q', index: 92 }
+  // ...
+]
 ```
 
 ## Refs
