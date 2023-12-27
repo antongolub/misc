@@ -13,18 +13,20 @@
 * `Deprecated/D` — the project is no longer maintained.
 
 ## Contents
-| Package | Description                             | Latest |
-|---------|-----------------------------------------|--------|
-| [@antongolub/blank](./packages/blank) | Blank TS project                        |  |
-| [@antongolub/infra](./packages/infra) | Repo infra assets                       |  |
-| [@topoconfig/cmds](./packages/topoconfig/cmds) | Topoconfig basic cmds preset            | [![npm (scoped)](https://img.shields.io/npm/v/@topoconfig/cmds/latest.svg?label=&color=white)](https://www.npmjs.com/package/@topoconfig/cmds) |
-| [@topoconfig/extends](./packages/topoconfig/extends) | Flexible config extender                | [![npm (scoped)](https://img.shields.io/npm/v/@topoconfig/extends/latest.svg?label=&color=white)](https://www.npmjs.com/package/@topoconfig/extends) |
-| [envader](./packages/env/envader) | Occupies env vars for data storage      | [![npm (scoped)](https://img.shields.io/npm/v/envader/latest.svg?label=&color=white)](https://www.npmjs.com/package/envader) |
-| [envimist](./packages/env/envimist) | Applies minimist to process.env         | [![npm (scoped)](https://img.shields.io/npm/v/envimist/latest.svg?label=&color=white)](https://www.npmjs.com/package/envimist) |
+| Package | Description | Latest |
+|---------|-------------|--------|
+| [@antongolub/blank](./packages/blank) | Blank TS project |  |
+| [@antongolub/infra](./packages/infra) | Repo infra assets |  |
+| [@topoconfig/cmds](./packages/topoconfig/cmds) | Topoconfig basic cmds preset | [![npm (scoped)](https://img.shields.io/npm/v/@topoconfig/cmds/latest.svg?label=&color=white)](https://www.npmjs.com/package/@topoconfig/cmds) |
+| [@topoconfig/extends](./packages/topoconfig/extends) | Flexible config extender | [![npm (scoped)](https://img.shields.io/npm/v/@topoconfig/extends/latest.svg?label=&color=white)](https://www.npmjs.com/package/@topoconfig/extends) |
+| [depseek](./packages/dep/depseek) | Seeks for dependency references in JS/TS code | [![npm (scoped)](https://img.shields.io/npm/v/depseek/latest.svg?label=&color=white)](https://www.npmjs.com/package/depseek) |
+| [depshot](./packages/dep/depshot) | Gathers deps snapshot by analyzing sources | [![npm (scoped)](https://img.shields.io/npm/v/depshot/latest.svg?label=&color=white)](https://www.npmjs.com/package/depshot) |
+| [envader](./packages/env/envader) | Occupies env vars for data storage | [![npm (scoped)](https://img.shields.io/npm/v/envader/latest.svg?label=&color=white)](https://www.npmjs.com/package/envader) |
+| [envimist](./packages/env/envimist) | Applies minimist to process.env | [![npm (scoped)](https://img.shields.io/npm/v/envimist/latest.svg?label=&color=white)](https://www.npmjs.com/package/envimist) |
 | [esbuild-c](./packages/esbuild/c) | Empowers esbuild with config processing | [![npm (scoped)](https://img.shields.io/npm/v/esbuild-c/latest.svg?label=&color=white)](https://www.npmjs.com/package/esbuild-c) |
-| [lcov-utils](./packages/lcov-utils) | LCOV utils: parse, format, merge        | [![npm (scoped)](https://img.shields.io/npm/v/lcov-utils/latest.svg?label=&color=white)](https://www.npmjs.com/package/lcov-utils) |
-| [topoconfig](./packages/topoconfig/core) | Toposource-enhanced uniconfig           | [![npm (scoped)](https://img.shields.io/npm/v/topoconfig/latest.svg?label=&color=white)](https://www.npmjs.com/package/topoconfig) |
-| [upkeeper](./packages/upkeeper) | Script generator for deps updating      | [![npm (scoped)](https://img.shields.io/npm/v/upkeeper/latest.svg?label=&color=white)](https://www.npmjs.com/package/upkeeper) |
+| [lcov-utils](./packages/lcov-utils) | LCOV utils: parse, format, merge | [![npm (scoped)](https://img.shields.io/npm/v/lcov-utils/latest.svg?label=&color=white)](https://www.npmjs.com/package/lcov-utils) |
+| [topoconfig](./packages/topoconfig/core) | Toposource-enhanced uniconfig | [![npm (scoped)](https://img.shields.io/npm/v/topoconfig/latest.svg?label=&color=white)](https://www.npmjs.com/package/topoconfig) |
+| [upkeeper](./packages/upkeeper) | Script generator for deps updating | [![npm (scoped)](https://img.shields.io/npm/v/upkeeper/latest.svg?label=&color=white)](https://www.npmjs.com/package/upkeeper) |
 
 ## License
 [MIT](./LICENSE)
