@@ -36,6 +36,7 @@ describe('depseek()', () => {
     stream.push(null)
 
     const chunks = await depseek(stream)
+
     assert.deepEqual(chunks, [
       { type: 'dep', value: 'a', index: 12 },
       { type: 'comment', value: ' @1.0.0', index: 18 },

@@ -1,4 +1,4 @@
-import { Duplex } from 'node:stream'
+import { Readable } from 'node:stream'
 
 type TCodeRef = {
   type: string
@@ -6,35 +6,12 @@ type TCodeRef = {
   index: number
 }
 
-const OPS = '({}[><=+-*/%&|^!~?:;,'
-const FNS = [
-  'require(',
-  'import('
-]
-const ISOLATED = [
-  'import',
-  'from',
-  ...FNS
-]
-const STICKY = [
-  '...require(',
-  '}from',
-  ...[...OPS].flatMap(op => FNS.map(cmd => op + cmd))
-]
+const isDep = (proposal: string) => /((\.\.\.|\s|[({}[><=+\-*/%&|^!~?:;,]|^)(require\(|import\(?)|\sfrom)\s*$/.test(proposal)
 
-const ALL = new Set([...ISOLATED, ...STICKY])
+export const depseek = (stream: Readable): Promise<TCodeRef[]> => new Promise((resolve, reject) => {
 
-const isCmd = (proposal: string) => ALL.has(proposal)
-const mayBeCmd = (proposal: string, prev = '', _p = proposal.slice(1)) =>
-  ISOLATED.some(cmd => cmd.startsWith(proposal)) && (!prev.trim() || proposal.length > 1) ||
-  OPS.includes(proposal[0]) && FNS.some(cmd => cmd.startsWith(_p)) ||
-  '...require('.startsWith(proposal) ||
-  '}from'.startsWith(proposal)
-    ? proposal
-    : ''
-
-export const depseek = (stream: Duplex): Promise<TCodeRef[]> => new Promise((resolve, reject) => {
-
+  stream.setEncoding('utf8')
+  // https://nodejs.org/api/stream.html#stream_readable_read_size
   // https://stackoverflow.com/questions/45891242/how-to-pass-a-buffer-as-argument-of-fs-createreadstream
   // https://stackoverflow.com/questions/30096691/read-a-file-one-character-at-a-time-in-node-js
   // https://stackoverflow.com/questions/12755997/how-to-create-streams-from-string-in-node-js
@@ -44,27 +21,27 @@ export const depseek = (stream: Duplex): Promise<TCodeRef[]> => new Promise((res
 
       let i = 0
       let prev = ''
-      let chunk
+      let chunk: string
       let c: string | null = null
       let q : string | null = null
-      let cmd = ''
+      let token = ''
       let dep = ''
       let comment = ''
 
       while (null !== (chunk = stream.read(1000))) {
-        const chars = [...chunk.toString('utf8')]
-        chars.forEach(char => {
+        chunk.split('').forEach(char => {
           if (c === q) {
-            if (char === '"' || char === "'" || char === '`') {
+            if (char === '\n') {
+              token = ''
+            }
+            else if (char === '"' || char === "'" || char === '`') {
               q = char
             }
             else if (prev === '/' && (char === '/' || char === '*')) {
               c = char
             }
             else {
-              cmd = char === '\n'
-                ? ''
-                : mayBeCmd(cmd + char.trim(), prev)
+              token += char
             }
           }
           else if (c === null) {
@@ -75,12 +52,11 @@ export const depseek = (stream: Duplex): Promise<TCodeRef[]> => new Promise((res
                 index: i - dep.length
               })
               dep = ''
-              cmd = ''
+              token = ''
               q = null
             }
-            else if (q !== null && isCmd(cmd)) {
+            else if (q !== null && isDep(token)) {
               dep += char
-              // console.log('dep=', dep)
             }
           }
           else if (q === null) {
@@ -95,7 +71,7 @@ export const depseek = (stream: Duplex): Promise<TCodeRef[]> => new Promise((res
                 index: i - value.length
               })
               comment = ''
-              cmd = ''
+              token = ''
               c = null
             }
             else {

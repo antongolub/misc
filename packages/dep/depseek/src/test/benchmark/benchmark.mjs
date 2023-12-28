@@ -1,6 +1,7 @@
 import Benchmark from 'benchmark'
 import { depseek } from '../../../target/esm/index.mjs'
 import { parseDeps } from './zx-deps.mjs'
+import { getDeps } from './esprima.mjs'
 import { Duplex } from "node:stream";
 
 const suite = new Benchmark.Suite
@@ -46,6 +47,13 @@ suite
     defer: true,
     fn: async (deferred) => {
       await parseDeps(input)
+      deferred.resolve()
+    }
+  })
+  .add('esprima', {
+    defer: true,
+    fn: async(deferred) =>{
+      await getDeps(input)
       deferred.resolve()
     }
   })
