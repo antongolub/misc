@@ -5,8 +5,8 @@ type TCodeRef = {
   value: string
   index: number
 }
-
-const isDep = (proposal: string) => /((\.\.\.|\s|[({}[><=+\-*/%&|^!~?:;,]|^)(require\(|import\(?)|\sfrom)\s*$/.test(proposal)
+const re = /((\.{3}|\s|[!%&(*+,/:;<=>?[^{|}~\-]|^)(require\(|import\(?)|\sfrom)\s*$/
+const isDep = (proposal: string) => !!proposal && re.test(proposal)
 
 export const depseek = (stream: Readable): Promise<TCodeRef[]> => new Promise((resolve, reject) => {
 
@@ -29,7 +29,7 @@ export const depseek = (stream: Readable): Promise<TCodeRef[]> => new Promise((r
       let comment = ''
 
       while (null !== (chunk = stream.read(1000))) {
-        chunk.split('').forEach(char => {
+        for (const char of chunk) {
           if (c === q) {
             if (char === '\n') {
               token = ''
@@ -46,7 +46,7 @@ export const depseek = (stream: Readable): Promise<TCodeRef[]> => new Promise((r
           }
           else if (c === null) {
             if (q === char && prev !== '\\') {
-              dep && chunks.push({
+              dep.length && isDep(token.slice(-12)) && chunks.push({
                 type: 'dep',
                 value: dep,
                 index: i - dep.length
@@ -55,7 +55,7 @@ export const depseek = (stream: Readable): Promise<TCodeRef[]> => new Promise((r
               token = ''
               q = null
             }
-            else if (q !== null && isDep(token)) {
+            else {
               dep += char
             }
           }
@@ -65,7 +65,7 @@ export const depseek = (stream: Readable): Promise<TCodeRef[]> => new Promise((r
                 ? comment.slice(0, -1)
                 : comment
 
-              comment && chunks.push({
+              comment.length && chunks.push({
                 type: 'comment',
                 value,
                 index: i - value.length
@@ -81,7 +81,7 @@ export const depseek = (stream: Readable): Promise<TCodeRef[]> => new Promise((r
 
           prev = char
           i++
-        })
+        }
       }
       resolve(chunks)
     })
