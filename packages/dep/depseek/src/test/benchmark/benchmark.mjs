@@ -43,20 +43,20 @@ suite
       deferred.resolve()
     }
   })
-  // .add('zx-parse-deps', {
-  //   defer: true,
-  //   fn: async (deferred) => {
-  //     await parseDeps(input)
-  //     deferred.resolve()
-  //   }
-  // })
-  // .add('esprima', {
-  //   defer: true,
-  //   fn: async(deferred) =>{
-  //     await getDeps(input)
-  //     deferred.resolve()
-  //   }
-  // })
+  .add('zx-parse-deps', {
+    defer: true,
+    fn: async (deferred) => {
+      await parseDeps(input)
+      deferred.resolve()
+    }
+  })
+  .add('esprima', {
+    defer: true,
+    fn: async(deferred) =>{
+      await getDeps(input)
+      deferred.resolve()
+    }
+  })
   .on('cycle', (event) => {
     console.log(String(event.target))
   })
