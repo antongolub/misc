@@ -58,6 +58,7 @@ const deps = await depseek(stream, {bufferSize: 10000})
 ## Refs
 * [browserify/module-deps](https://github.com/browserify/module-deps)
 * [browserify/detective](https://github.com/browserify/detective)
+* [babel/parser](https://github.com/babel/babel/tree/main/packages/babel-parser)
 * [Joris-van-der-Wel/node-module-references](https://github.com/Joris-van-der-Wel/node-module-references#readme)
 
 ## License
