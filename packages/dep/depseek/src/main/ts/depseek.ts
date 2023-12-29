@@ -24,7 +24,7 @@ export const depseek = (stream: Readable, opts: TOpts = {comments: false}): Prom
   stream
     .setEncoding('utf8')
     .on('readable', () => {
-      const chunks: TCodeRef[] = []
+      const refs: TCodeRef[] = []
       let i = 0
       let prev = ''
       let chunk: string
@@ -35,7 +35,7 @@ export const depseek = (stream: Readable, opts: TOpts = {comments: false}): Prom
       let commentBlock = ''
       let commentValue = ''
 
-      const pushChunk = (type: string, value: string, index: number) => chunks.push({ type, value, index })
+      const pushChunk = (type: string, value: string, index: number) => refs.push({ type, value, index })
 
       while (null !== (chunk = stream.read(size))) {
         const len = chunk.length
@@ -71,7 +71,7 @@ export const depseek = (stream: Readable, opts: TOpts = {comments: false}): Prom
         }
       }
 
-      resolve(chunks)
+      resolve(refs)
     })
     .on('error', reject)
 })
