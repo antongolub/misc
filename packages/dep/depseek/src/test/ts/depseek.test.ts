@@ -35,7 +35,7 @@ describe('depseek()', () => {
     stream.push(input)
     stream.push(null)
 
-    const chunks = await depseek(stream)
+    const chunks = await depseek(stream, { comments: true })
 
     assert.deepEqual(chunks, [
       { type: 'dep', value: 'a', index: 12 },
@@ -93,7 +93,7 @@ const baz = (await import('baz')).default
     stream.push(input)
     stream.push(null)
 
-    const chunks = await depseek(stream)
+    const chunks = await depseek(stream, { comments: true })
 
     assert.deepEqual(chunks, [
       { type: 'dep', value: 'node:fs', index: 17 },

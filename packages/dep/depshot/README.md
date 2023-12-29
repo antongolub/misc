@@ -5,7 +5,7 @@
 [![npm](https://img.shields.io/npm/v/depshot.svg?&color=white)](https://www.npmjs.com/package/depshot)
 
 ## Motivation
-Combine [depseek]() and [fast-glob](https://github.com/mrmlnc/fast-glob) to implement efficient dep scanner. 
+Combine [depseek](https://github.com/antongolub/misc/tree/master/packages/dep/depseek) and [fast-glob](https://github.com/mrmlnc/fast-glob) to implement efficient dep scanner. 
 
 ## Status
 Blueprint

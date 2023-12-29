@@ -5,10 +5,17 @@ type TCodeRef = {
   value: string
   index: number
 }
+
+type TOpts = {
+  comments?: boolean
+  bufferSize?: number
+}
+
 const re = /((\.{3}|\s|[!%&(*+,/:;<=>?[^{|}~-]|^)(require\(|import\(?)|\sfrom)\s*$/
 const isDep = (proposal: string) => !!proposal && re.test(proposal)
 
-export const depseek = (stream: Readable): Promise<TCodeRef[]> => new Promise((resolve, reject) => {
+export const depseek = (stream: Readable, opts: TOpts = {comments: false}): Promise<TCodeRef[]> => new Promise((resolve, reject) => {
+  const size = opts.bufferSize || 1000
 
   // https://nodejs.org/api/stream.html#stream_readable_read_size
   // https://stackoverflow.com/questions/45891242/how-to-pass-a-buffer-as-argument-of-fs-createreadstream
@@ -30,7 +37,7 @@ export const depseek = (stream: Readable): Promise<TCodeRef[]> => new Promise((r
 
       const pushChunk = (type: string, value: string, index: number) => chunks.push({ type, value, index })
 
-      while (null !== (chunk = stream.read(1000))) {
+      while (null !== (chunk = stream.read(size))) {
         const len = chunk.length
         let j = 0
 
@@ -51,7 +58,7 @@ export const depseek = (stream: Readable): Promise<TCodeRef[]> => new Promise((r
           } else if (q === null) {
             if ((c === '/' && char === '\n') || (c === '*' && prev === '*' && char === '/')) {
               commentValue = c === '*' ? commentBlock.slice(0, -1) : commentBlock
-              if (commentValue) pushChunk('comment', commentValue, i - commentValue.length)
+              if (commentValue && opts.comments) pushChunk('comment', commentValue, i - commentValue.length)
               commentBlock = ''
               token = ''
               c = null

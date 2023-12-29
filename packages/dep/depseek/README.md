@@ -38,6 +38,22 @@ const deps = await depseek(stream)
   // ...
 ]
 ```
+### Options
+By default `depseek` extracts only `require` and `import` arguments. You can also capture bound comments.
+```ts
+const depsAndComments = await depseek(stream, {comments: true})
+
+[
+  { type: 'dep', value: 'node:fs', index: 17 },
+  { type: 'dep', value: 'foo', index: 34 },
+  { type: 'comment', value: ' @1.0.0', index: 46 }
+  //...
+]
+```
+Stream buffer size set to `1000` by default. You can change the limit by passing `bufferSize`.
+```ts
+const deps = await depseek(stream, {bufferSize: 10000})
+```
 
 ## Refs
 * [browserify/module-deps](https://github.com/browserify/module-deps)
