@@ -6,15 +6,15 @@
 
 ## Motivation
 Dep extraction is a common task for many tools solved in different ways from regexps to AST parsing.
-This implementation relies on streams, which should significantly reduce memory consumption.
+This implementation relies on streams to make controllable memory consumption.
 
 ## Status
 PoC
 
 ## Key features
-* Streams instead of RegExp or AST parsing
-* Specifies exact code references by offset
-* Handles string literal and comment boundaries
+* Uses stream-based reader
+* Points exact dependency references by offset
+* Handles string literal and comments
 * Captures bound comments (optional)
 
 ## Usage
