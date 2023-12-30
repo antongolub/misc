@@ -55,6 +55,16 @@ Stream buffer size set to `1000` by default. You can change the limit by passing
 const deps = await depseek(stream, {bufferSize: 10000})
 ```
 
+### Sync
+Streams are aimed at intensive bulk operations. If you need to process just a few files, you can use a pair of _internal_ sync methods.
+```ts
+import fs from 'node:fs'
+import { readify, extract } from 'depseek'
+
+const contents = fs.readFileSync('index.js', 'utf8')
+const deps = extract(readify(contents))
+```
+
 ## Refs
 * [browserify/module-deps](https://github.com/browserify/module-deps)
 * [browserify/detective](https://github.com/browserify/detective)

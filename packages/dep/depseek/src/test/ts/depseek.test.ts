@@ -111,4 +111,26 @@ const baz = (await import('baz')).default
       { type: 'dep', value: 'baz', index: 367 }
     ])
   })
+
+  it('accepts string input', async () => {
+    const input = `
+import fs from "node:fs"
+import 'foo'      // @1.0.0
+iimport 'qux'
+const q = await import('q')         // @1.2.3
+const l = await _import('l')        // @3.2.1
+const br = _require('br')           /* @0 */
+`
+    const chunks = await depseek(input, { comments: true })
+
+    assert.deepEqual(chunks, [
+      { type: 'dep', value: 'node:fs', index: 17 },
+      { type: 'dep', value: 'foo', index: 34 },
+      { type: 'comment', value: ' @1.0.0', index: 46 },
+      { type: 'dep', value: 'q', index: 92 },
+      { type: 'comment', value: ' @1.2.3', index: 106 },
+      { type: 'comment', value: ' @3.2.1', index: 152 },
+      { type: 'comment', value: ' @0 ', index: 199 },
+    ])
+  })
 })
