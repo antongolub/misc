@@ -56,13 +56,13 @@ const deps = await depseek(stream, {bufferSize: 10000})
 ```
 
 ### Sync
-Streams are aimed at intensive bulk operations. If you need to process just a few files, you can use a pair of _internal_ sync methods.
+Streams are aimed at intensive bulk operations. If you need to process just a few files, you can use `depseekSync`.
 ```ts
 import fs from 'node:fs'
-import { readify, extract } from 'depseek'
+import { depseekSync } from 'depseek'
 
 const contents = fs.readFileSync('index.js', 'utf8')
-const deps = extract(readify(contents))
+const deps = depseekSync(contents)
 ```
 
 ## Refs
