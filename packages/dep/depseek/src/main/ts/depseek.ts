@@ -1,17 +1,17 @@
 import { Readable } from 'node:stream'
 
-type TCodeRef = {
+export type TCodeRef = {
   type: string
   value: string
   index: number
 }
 
-type TOptsNormalized = {
+export type TOptsNormalized = {
   comments: boolean
   bufferSize: number
 }
 
-type TOpts = Partial<TOptsNormalized>
+export type TOpts = Partial<TOptsNormalized>
 
 type TPseudoReadable = { read: (size: number) => string | null }
 
