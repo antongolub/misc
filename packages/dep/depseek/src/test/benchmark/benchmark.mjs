@@ -2,7 +2,6 @@ import Benchmark from 'benchmark'
 import { depseek } from '../../../target/esm/index.mjs'
 import { parseDeps } from './zx-deps.mjs'
 import { getDeps } from './esprima.mjs'
-import { Duplex } from "node:stream";
 
 const suite = new Benchmark.Suite
 const input = `
@@ -36,10 +35,7 @@ suite
   .add('depseek', {
     defer: true,
     fn: async (deferred) => {
-      const stream = new Duplex()
-      stream.push(input)
-      stream.push(null)
-      await depseek(stream)
+      await depseek(input)
       deferred.resolve()
     }
   })
@@ -62,6 +58,6 @@ suite
   })
   .on('complete', function () {
     const fastest = this.filter('fastest').map('name')
-    console.log('Fastest is ' + fastest)
+    console.log('The fastest is ' + fastest)
   })
   .run({ 'async': true })

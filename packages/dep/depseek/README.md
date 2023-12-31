@@ -9,7 +9,7 @@ Dep extraction is a common task for many tools solved in different ways from reg
 This implementation relies on streams to make controllable memory consumption.
 
 ## Status
-PoC
+Working draft
 
 ## Key features
 * Uses stream-based reader

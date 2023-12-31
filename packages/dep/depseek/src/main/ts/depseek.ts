@@ -25,7 +25,7 @@ const normalizeOpts = (opts?: TOpts): TOptsNormalized => ({
 
 export const depseek = (stream: Readable | string, opts?: TOpts): Promise<TCodeRef[]> => new Promise((resolve, reject) => {
   if (typeof stream === 'string') {
-    return resolve(extract(readify(stream), opts))
+    return resolve(depseekSync(stream, opts))
   }
 
   // https://nodejs.org/api/stream.html#stream_readable_read_size
