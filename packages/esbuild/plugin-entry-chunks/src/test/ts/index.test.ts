@@ -1,9 +1,11 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { foo } from '../../main/ts'
+import { entryChunksPlugin } from '../../main/ts'
 
-describe('foo()', () => {
-  it('is callable', () => {
-    assert.equal(foo(), undefined)
+describe('entryChunksPlugin()', () => {
+  it('is a plugin factory', () => {
+    const plugin = entryChunksPlugin()
+    assert.equal(plugin.name, 'entry-chunks')
+    assert.equal(typeof plugin.setup, 'function')
   })
 })

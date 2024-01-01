@@ -1,1 +1,3 @@
-export * from './foo.ts'
+export * from './plugin.ts'
+
+export const foo = 'bar'
