@@ -1,27 +1,26 @@
 #!/usr/bin/env node
 
-import fs from 'node:fs/promises'
-import path from 'node:path'
 import esbuild from 'esbuild'
 import { nodeExternalsPlugin } from 'esbuild-node-externals'
 import { entryChunksPlugin } from '../../esbuild/plugin-entry-chunks/src/main/ts/index.ts'
 import minimist from 'minimist'
 import glob from 'fast-glob'
 
-const { entry, external, bundle, minify, sourcemap, license, format, map, cwd: _cwd } = minimist(process.argv.slice(2), {
+const argv = minimist(process.argv.slice(2), {
   default: {
-    entry: './src/main/ts/index.ts',
-    external: 'node:*',
-    bundle: 'src', // 'all' | 'none'
-    license: 'eof',
-    minify: false,
-    sourcemap: false,
-    format: 'cjs,esm',
-    cwd: process.cwd()
+    entry:      './src/main/ts/index.ts',
+    external:   'node:*',
+    bundle:     'src', // 'all' | 'none'
+    license:    'eof',
+    minify:     false,
+    sourcemap:  false,
+    format:     'cjs,esm',
+    cwd:        process.cwd()
   },
-  boolean: ['minify', 'sourcemap'],
+  boolean: ['minify', 'sourcemap', 'banner'],
   string: ['entry', 'external', 'bundle', 'license', 'format', 'map', 'cwd']
 })
+const { entry, external, bundle, minify, sourcemap, license, format, map, cwd: _cwd } = argv
 
 const plugins = []
 const cwd = Array.isArray(_cwd) ? _cwd[_cwd.length - 1] : _cwd
@@ -47,6 +46,16 @@ if (bundle === 'all') {
 }
 
 const formats = format.split(',')
+const banner = argv.banner
+  ? {
+    js: `
+const require = (await import("node:module")).createRequire(import.meta.url);
+const __filename = (await import("node:url")).fileURLToPath(import.meta.url);
+const __dirname = (await import("node:path")).dirname(__filename);
+`
+  }
+  : {}
+
 
 const esmConfig = {
   absWorkingDir: cwd,
@@ -66,6 +75,8 @@ const esmConfig = {
   plugins,
   legalComments: license,
   tsconfig: './tsconfig.json',
+  //https://github.com/evanw/esbuild/issues/1921
+  banner
 }
 
 const cjsConfig = {
@@ -73,6 +84,7 @@ const cjsConfig = {
   outdir: './target/cjs',
   target: 'es6',
   format: 'cjs',
+  banner: {},
   outExtension: {
     '.js': '.cjs'
   }
@@ -84,23 +96,6 @@ for (const format of formats) {
   await esbuild
     .build(config)
     .catch(() => process.exit(1))
-  // await patchOutputs(config)
 }
 
-// async function patchOutputs (config) {
-//   for (const entry of config.entryPoints) {
-//     const ext = config.outExtension['.js']
-//     const filename = path.resolve(cwd, config.outdir, path.basename(entry).replace('.ts', ext))
-//     const contents = await fs.readFile(filename, 'utf-8')
-//     const _contents = fixModuleReferences(contents, ext)
-//     await fs.writeFile(filename, _contents)
-//   }
-// }
-//
-// function fixModuleReferences (contents, ext = '.js',) {
-//   return contents.replace(
-//     /((?:\s|^)import\s+|\s+from\s+|\W(?:import|require)\s*\()(["'])([^"']+\/[^"']+|\.{1,2})\/?(["'])/g,
-//     (_matched, control, q1, from, q2) =>
-//       `${control}${q1}${from.startsWith('.') ? (mappings[from] || from) + ext : from}${q2}`,
-//   )
-// }
+process.exit(0)
