@@ -1,5 +1,6 @@
 import * as assert from 'node:assert'
 import * as path from 'node:path'
+import * as fs from 'node:fs/promises'
 import { describe, it } from 'node:test'
 import {fileURLToPath} from 'node:url'
 
@@ -33,5 +34,43 @@ describe('plugin()', () => {
     }
 
     await build(config)
+
+    const a = await fs.readFile(path.join(temp, 'a.js'), 'utf8')
+    const b = await fs.readFile(path.join(temp, 'b.js'), 'utf8')
+    const c = await fs.readFile(path.join(temp, 'c.js'), 'utf8')
+
+    assert.equal(a, `// a.ts
+export * from "./b.js";
+var a = "a";
+export {
+  a
+};
+`)
+
+    assert.equal(b, `// b.ts
+export * from "./c.js";
+var b = "b";
+export {
+  b
+};
+`)
+    assert.equal(c, `// e.ts
+import * as fs from "node:fs";
+var e = "e";
+var rf = fs.readFile;
+
+// d.ts
+var d = "d";
+
+// c.ts
+var c = "c";
+export {
+  c,
+  d,
+  e,
+  rf
+};
+`)
+
   })
 })
