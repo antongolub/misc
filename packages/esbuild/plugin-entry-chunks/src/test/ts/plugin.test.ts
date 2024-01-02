@@ -7,18 +7,18 @@ import {type BuildOptions, build} from 'esbuild'
 import { entryChunksPlugin } from '../../main/ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-// const fixtures = path.resolve(__dirname, '../fixtures')
+const fixtures = path.resolve(__dirname, '../fixtures')
+const temp = path.resolve(__dirname, '../temp')
 
 describe('plugin()', () => {
   it('assembles entries as chunks', async () => {
     const plugin = entryChunksPlugin()
-    const cwd = path.resolve(__dirname, '../../..')
-    console.log('cwd', cwd)
-
+    const cwd = fixtures
     const config: BuildOptions = {
       entryPoints: [
-        './src/main/ts/index.ts',
-        './src/main/ts/plugin.ts',
+        'a.ts',
+        'b.ts',
+        'c.ts',
       ],
       plugins: [plugin],
       external: ['node:*'],
@@ -28,7 +28,8 @@ describe('plugin()', () => {
       format: 'esm',
       legalComments: 'none',
       absWorkingDir: cwd,
-      outdir: './dist',
+      outdir: temp,
+      allowOverwrite: true,
     }
 
     await build(config)

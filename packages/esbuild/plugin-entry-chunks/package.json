@@ -2,7 +2,6 @@
   "name": "esbuild-plugin-entry-chunks",
   "version": "0.0.0",
   "description": "Esbuild plugin to assemble entries as chunks",
-  "private": true,
   "type": "module",
   "main": "target/cjs/index.cjs",
   "exports": {
@@ -45,6 +44,7 @@
   },
   "homepage": "https://github.com/antongolub/misc#readme",
   "peerDependencies": {
+    "depseek": "workspace:*",
     "esbuild": ">=0.19.0"
   },
   "devDependencies": {

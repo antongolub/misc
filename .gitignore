@@ -23,6 +23,7 @@ typings
 # Temp assets
 .temp
 temp
+**/temp/*
 
 # Codeclimate
 codeclimate.*
