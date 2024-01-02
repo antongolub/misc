@@ -2,7 +2,6 @@
 
 import esbuild from 'esbuild'
 import { nodeExternalsPlugin } from 'esbuild-node-externals'
-import { entryChunksPlugin } from '../../esbuild/plugin-entry-chunks/src/main/ts/index.ts'
 import minimist from 'minimist'
 import glob from 'fast-glob'
 
@@ -35,6 +34,7 @@ const _external = _bundle
   : undefined  // https://github.com/evanw/esbuild/issues/1466
 
 if (_bundle && entryPoints.length > 1) {
+  const {entryChunksPlugin } = await import('esbuild-plugin-entry-chunks')
   plugins.push(entryChunksPlugin())
 }
 
