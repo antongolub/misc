@@ -1,6 +1,7 @@
-import Ajv from 'ajv'
+import * as _ajv from 'ajv'
 import { createRequire } from 'node:module'
 
+const Ajv = _ajv?.default ?? _ajv
 const DEFAULT_OPTS = {}
 const ajvStack: Record<string, any> = {}
 const require = global.require || createRequire(import.meta.url)
