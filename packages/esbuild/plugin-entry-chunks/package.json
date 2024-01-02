@@ -1,7 +1,7 @@
 {
   "name": "esbuild-plugin-entry-chunks",
   "version": "0.0.0",
-  "description": "Esbuild plugin to assemble entries as chunks",
+  "description": "Esbuild plugin to compose entryPoints as chunks",
   "type": "module",
   "main": "target/cjs/index.cjs",
   "exports": {
