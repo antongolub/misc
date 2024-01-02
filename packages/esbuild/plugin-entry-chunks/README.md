@@ -8,7 +8,7 @@
 PoC
 
 ## Problem
-Esbuild provides [code-splitting](https://esbuild.github.io/api/#splitting) with dynamic imports to reuse common code chunks of several entries. This plugin provides similar functionality, but:
+Esbuild provides [code-splitting](https://esbuild.github.io/api/#splitting) with dynamic imports to reuse common code chunks of several entries. This plugin has similar functionality, but:
 1. Bounds parts in static form.
 2. Composes entryPoints bundles as chunks without extracting common parts.
 
@@ -68,15 +68,15 @@ export const rf = fs.readFile
 Outputs:
 ```ts
 // a.js -----------------
-// a.js
+// a.ts
 export * from "./b.js";
 var a = "a";
 export {
   a
 };
 
-// a.js -----------------
-// b.js
+// b.js -----------------
+// b.ts
 export * from "./c.js";
 var b = "b";
 export {
