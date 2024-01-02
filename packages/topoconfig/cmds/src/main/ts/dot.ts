@@ -1,3 +1,4 @@
-import _dot from 'dot'
+import * as _dot from 'dot'
 
-export const dot = (...chunks: any[]) => _dot.template(chunks.map(c => c === undefined ? '' : c).join(''))({})
+const _d = _dot?.default ?? _dot
+export const dot = (...chunks: any[]) => _d.template(chunks.map(c => c === undefined ? '' : c).join(''))({})
