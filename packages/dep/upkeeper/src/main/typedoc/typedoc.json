@@ -1,6 +1,6 @@
 {
   "name": "upkeeper",
-  "extends": ["../../../../infra/typedoc.json"],
+  "extends": ["../../../../../infra/typedoc.json"],
   "entryPoints": ["../../../src/main/ts/"],
   "exclude": ["../../../src/test", "**/node_modules/**"],
   "externalPattern": ["**/node_modules/**"],

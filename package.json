@@ -14,7 +14,7 @@
     "toc": "node ./packages/infra/scripts/toc.mjs",
     "build": "yarn bulk:topobuild",
     "test": "yarn bulk:topobuild --no-build --no-publish",
-    "cov": "yarn build:esbuild --cwd $PWD/packages/lcov-utils && node ./packages/infra/scripts/cov.mjs",
+    "cov": "yarn build:esbuild --cwd $PWD/packages/lcov-utils && node --loader ts-node/esm ./packages/infra/scripts/cov.mjs",
     "depup": "yarn build:esbuild --cwd $PWD/packages/upkeeper && upkeeper --config='{\"keepers\": [\"npm\"], \"diff\": \"sed\", \"combine\": true, \"post\": \"yarn\"}'"
   },
   "author": "Anton Golub <antongolub@antongolub.com>",
