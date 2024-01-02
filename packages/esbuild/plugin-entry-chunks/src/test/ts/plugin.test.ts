@@ -12,6 +12,21 @@ const fixtures = path.resolve(__dirname, '../fixtures')
 const temp = path.resolve(__dirname, '../temp')
 
 describe('plugin()', () => {
+  it('throws if bundle is false', async () => {
+    const plugin = entryChunksPlugin()
+    const config: BuildOptions = {
+      plugins: [plugin],
+    }
+    let error: Error | undefined
+
+    try {
+      await build(config)
+    } catch (err) {
+      error = err
+    }
+    assert.ok(error.message.endsWith('esbuild-plugin-entry-chunks requires `bundle: true`'))
+  })
+
   it('assembles entries as chunks', async () => {
     const plugin = entryChunksPlugin()
     const cwd = fixtures

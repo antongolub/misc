@@ -15,6 +15,7 @@ export const entryChunksPlugin = (options: Record<string, any> = {}): Plugin => 
     setup(build) {
       const {
         absWorkingDir,
+        bundle,
         entryPoints: entries,
         outExtension: {
           '.js': ext = '.js'} = {}
@@ -27,6 +28,11 @@ export const entryChunksPlugin = (options: Record<string, any> = {}): Plugin => 
         ext,
       }
 
+      build.onStart(() => {
+        if (!bundle) {
+          throw new Error('esbuild-plugin-entry-chunks requires `bundle: true`')
+        }
+      })
       build.onResolve({ filter: /.*/ }, ctx => onResolve(ctx, opts))
       build.onLoad({ filter: /.*/ }, ctx => onLoad(ctx, opts))
     }
