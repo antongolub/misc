@@ -4,6 +4,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import esbuild from 'esbuild'
 import { nodeExternalsPlugin } from 'esbuild-node-externals'
+import { entryChunksPlugin } from '../../esbuild/plugin-entry-chunks/src/main/ts/index.ts'
 import minimist from 'minimist'
 import glob from 'fast-glob'
 
@@ -22,20 +23,28 @@ const { entry, external, bundle, minify, sourcemap, license, format, map, cwd: _
   string: ['entry', 'external', 'bundle', 'license', 'format', 'map', 'cwd']
 })
 
+const plugins = []
 const cwd = Array.isArray(_cwd) ? _cwd[_cwd.length - 1] : _cwd
 const mappings = map ? Object.fromEntries(map.split(',').map(v => v.split(':'))) : {}
 const entryPoints = entry.includes('*')
   ? await glob(entry.split(':'), { absolute: false, onlyFiles: true, cwd })
   : entry.split(':')
-const plugins = bundle === 'all'
-  ? []
-  : [nodeExternalsPlugin({            // https://github.com/evanw/esbuild/issues/619
-    packagePath: path.resolve(cwd, 'package.json') // https://github.com/pradel/esbuild-node-externals/pull/52
-  })]
+
 const _bundle = bundle !== 'none' && !process.argv.includes('--no-bundle')
 const _external = _bundle
   ? external.split(',')
   : undefined  // https://github.com/evanw/esbuild/issues/1466
+
+if (_bundle && entryPoints.length > 1) {
+  plugins.push(entryChunksPlugin())
+}
+
+if (bundle === 'all') {
+  // https://github.com/evanw/esbuild/issues/619
+  // https://github.com/pradel/esbuild-node-externals/pull/52
+  plugins
+    .push(nodeExternalsPlugin())
+}
 
 const formats = format.split(',')
 
@@ -75,23 +84,23 @@ for (const format of formats) {
   await esbuild
     .build(config)
     .catch(() => process.exit(1))
-  await patchOutputs(config)
+  // await patchOutputs(config)
 }
 
-async function patchOutputs (config) {
-  for (const entry of config.entryPoints) {
-    const ext = config.outExtension['.js']
-    const filename = path.resolve(cwd, config.outdir, path.basename(entry).replace('.ts', ext))
-    const contents = await fs.readFile(filename, 'utf-8')
-    const _contents = fixModuleReferences(contents, ext)
-    await fs.writeFile(filename, _contents)
-  }
-}
-
-function fixModuleReferences (contents, ext = '.js',) {
-  return contents.replace(
-    /((?:\s|^)import\s+|\s+from\s+|\W(?:import|require)\s*\()(["'])([^"']+\/[^"']+|\.{1,2})\/?(["'])/g,
-    (_matched, control, q1, from, q2) =>
-      `${control}${q1}${from.startsWith('.') ? (mappings[from] || from) + ext : from}${q2}`,
-  )
-}
+// async function patchOutputs (config) {
+//   for (const entry of config.entryPoints) {
+//     const ext = config.outExtension['.js']
+//     const filename = path.resolve(cwd, config.outdir, path.basename(entry).replace('.ts', ext))
+//     const contents = await fs.readFile(filename, 'utf-8')
+//     const _contents = fixModuleReferences(contents, ext)
+//     await fs.writeFile(filename, _contents)
+//   }
+// }
+//
+// function fixModuleReferences (contents, ext = '.js',) {
+//   return contents.replace(
+//     /((?:\s|^)import\s+|\s+from\s+|\W(?:import|require)\s*\()(["'])([^"']+\/[^"']+|\.{1,2})\/?(["'])/g,
+//     (_matched, control, q1, from, q2) =>
+//       `${control}${q1}${from.startsWith('.') ? (mappings[from] || from) + ext : from}${q2}`,
+//   )
+// }

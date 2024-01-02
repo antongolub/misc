@@ -23,7 +23,7 @@
   ],
   "scripts": {
     "build": "concurrently 'npm:build:*'",
-    "build:index": "yarn build:esbuild",
+    "build:js": "yarn build:esbuild",
     "build:dts": "yarn build:tsc",
     "build:docs": "yarn build:typedoc",
     "test": "concurrently 'npm:test:*'",

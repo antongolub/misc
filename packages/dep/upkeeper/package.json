@@ -23,8 +23,7 @@
   ],
   "scripts": {
     "build": "concurrently 'npm:build:*'",
-    "build:index": "yarn build:esbuild",
-    "build:cli": "yarn build:esbuild --entry='./src/main/ts/cli.ts'",
+    "build:js": "yarn build:esbuild --entry='./src/main/ts/index.ts:./src/main/ts/cli.ts'",
     "build:dts": "yarn build:tsc",
     "build:docs": "yarn build:typedoc",
     "test": "concurrently 'npm:test:*'",
