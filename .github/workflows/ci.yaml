@@ -32,7 +32,9 @@ jobs:
         run: yarn --silent --immutable
 
       - name: Build
-        run: yarn build
+        run: |
+          yarn warmup
+          yarn build
 
       - name: Coverage
         run: yarn cov
@@ -86,4 +88,6 @@ jobs:
         run: yarn --silent --immutable
 
       - name: Build
-        run: yarn build
+        run: |
+          yarn warmup
+          yarn build
