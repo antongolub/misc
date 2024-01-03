@@ -38,7 +38,7 @@ if (_bundle && entryPoints.length > 1) {
   plugins.push(entryChunksPlugin())
 }
 
-if (bundle === 'all') {
+if (bundle === 'src') {
   // https://github.com/evanw/esbuild/issues/619
   // https://github.com/pradel/esbuild-node-externals/pull/52
   plugins
@@ -46,7 +46,7 @@ if (bundle === 'all') {
 }
 
 const formats = format.split(',')
-const banner = argv.banner
+const banner = argv.banner && bundle === 'all'
   ? {
     js: `
 const require = (await import("node:module")).createRequire(import.meta.url);
