@@ -19,11 +19,10 @@ const argv = minimist(process.argv.slice(2), {
   boolean: ['minify', 'sourcemap', 'banner'],
   string: ['entry', 'external', 'bundle', 'license', 'format', 'map', 'cwd']
 })
-const { entry, external, bundle, minify, sourcemap, license, format, map, cwd: _cwd } = argv
+const { entry, external, bundle, minify, sourcemap, license, format, cwd: _cwd } = argv
 
 const plugins = []
 const cwd = Array.isArray(_cwd) ? _cwd[_cwd.length - 1] : _cwd
-const mappings = map ? Object.fromEntries(map.split(',').map(v => v.split(':'))) : {}
 const entryPoints = entry.includes('*')
   ? await glob(entry.split(':'), { absolute: false, onlyFiles: true, cwd })
   : entry.split(':')
@@ -41,8 +40,7 @@ if (_bundle && entryPoints.length > 1) {
 if (bundle === 'src') {
   // https://github.com/evanw/esbuild/issues/619
   // https://github.com/pradel/esbuild-node-externals/pull/52
-  plugins
-    .push(nodeExternalsPlugin())
+  plugins.push(nodeExternalsPlugin())
 }
 
 const formats = format.split(',')
