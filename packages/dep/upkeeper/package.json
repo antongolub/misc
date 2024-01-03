@@ -29,7 +29,7 @@
     "test": "concurrently 'npm:test:*'",
     "test:lint": "yarn test:eslint",
     "test:unit": "yarn test:c8",
-    "test:it": "node ./target/cjs/cli.cjs --dryrun",
+    "test:it": "node ./target/esm/cli.mjs --dryrun",
     "publish:draft": "yarn build && npm publish --no-git-tag-version --tag draft"
   },
   "publishConfig": {
