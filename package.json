@@ -16,7 +16,8 @@
     "build": "yarn bulk:topobuild",
     "test": "yarn bulk:topobuild --no-build --no-publish",
     "cov": "node ./packages/infra/scripts/cov.mjs",
-    "depup": "yarn workspace upkeeper build:js && upkeeper --config='{\"keepers\": [\"npm\"], \"diff\": \"sed\", \"combine\": true, \"post\": \"yarn\"}'"
+    "depup": "yarn workspace upkeeper build:js && upkeeper --config='{\"keepers\": [\"npm\"], \"diff\": \"sed\", \"combine\": true, \"post\": \"yarn\"}'",
+    "lint": "yarn workspaces foreach -Ap --exclude packages/infra --exclude . run test:eslint"
   },
   "author": "Anton Golub <antongolub@antongolub.com>",
   "license": "MIT",
