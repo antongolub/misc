@@ -252,19 +252,17 @@ If `Object`, `Subject` and `Context` are bearers of attributes, and `Action` is 
 type TPolicy = {
   id: TId
   description?: string
-  subject: TEntity
-  object: TEntity
-  context: TContext
-  action: TAction
   validFrom: Date
   validTo: Date
   status: string
-  resolution: 'allow' | 'deny'
+  action: string[], // array of actions
+  resolution: 'allow' | 'deny' | 'notify'
   
   // magic goes here
-  conditions: [
-    
-  ]
+  condition: {
+    syntax: string, // jsonschema expr
+    predicate: string
+  }
 }
 ```
 
