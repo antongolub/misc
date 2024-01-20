@@ -13,7 +13,7 @@
     }
   },
   "module": "target/esm/index.mjs",
-  "types": "target/dts/index.d.ts",
+  "types": "./target/dts/index.d.ts",
   "files": [
     "target/cjs",
     "target/esm",
