@@ -14,6 +14,7 @@
     "warmup": "yarn workspace depseek build:js && yarn workspace esbuild-plugin-entry-chunks build:js && yarn workspace lcov-utils build:js",
     "toc": "node ./packages/infra/scripts/toc.mjs",
     "build": "yarn bulk:topobuild",
+    "build:all": "yarn warmup && yarn workspaces foreach -Ap --exclude . run build",
     "test": "yarn bulk:topobuild --no-build --no-publish",
     "cov": "node ./packages/infra/scripts/cov.mjs",
     "depup": "yarn workspace upkeeper build:js && upkeeper --config='{\"keepers\": [\"npm\"], \"diff\": \"sed\", \"combine\": true, \"post\": \"yarn\"}'",
