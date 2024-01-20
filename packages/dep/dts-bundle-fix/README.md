@@ -9,6 +9,9 @@ When using `tsc --declarationOnly --outFile index.d.ts` to generate a single fil
 Why just not [dts-bundle](https://github.com/TypeStrong/dts-bundle) or [dts-bundle-generator](https://github.com/timocov/dts-bundle-generator)?
 Well, I believe the mentioned issue is just a temporary bug, and I'd like to keep `tsc` as _native_ typings generator.
 
+## Status
+Blueprint
+
 ## Install
 ```sh
 yarn add dts-bundle-fix -D
