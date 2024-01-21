@@ -1,5 +1,5 @@
 {
-  "name": "dts-bundle-fix",
+  "name": "tsc-dts-bundle",
   "version": "0.0.0",
   "description": "Fix module resolution in dts bundles",
   "private": true,
@@ -44,6 +44,9 @@
     "url": "https://github.com/antongolub/misc/issues"
   },
   "homepage": "https://github.com/antongolub/misc#readme",
+  "dependencies": {
+    "depseek": "workspace:*"
+  },
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
     "@types/node": "^20.10.6"

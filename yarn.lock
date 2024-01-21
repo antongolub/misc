@@ -1723,15 +1723,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dts-bundle-fix@workspace:packages/dep/dts-bundle-fix":
-  version: 0.0.0-use.local
-  resolution: "dts-bundle-fix@workspace:packages/dep/dts-bundle-fix"
-  dependencies:
-    "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.10.6"
-  languageName: unknown
-  linkType: soft
-
 "duplexer@npm:~0.1.1":
   version: 0.1.2
   resolution: "duplexer@npm:0.1.2"
@@ -4837,6 +4828,16 @@ __metadata:
   checksum: a91a15b3c9f76ac462f006fa88b6bfa528130dcfb849dd7ef7f9d640832ab681e235b8a2bc58ecde42f72851cc1d5d4e22c901b0c11aa51001ea1d395074b794
   languageName: node
   linkType: hard
+
+"tsc-dts-bundle@workspace:packages/dep/tsc-libdef":
+  version: 0.0.0-use.local
+  resolution: "tsc-dts-bundle@workspace:packages/dep/tsc-libdef"
+  dependencies:
+    "@antongolub/infra": "workspace:*"
+    "@types/node": "npm:^20.10.6"
+    depseek: "workspace:*"
+  languageName: unknown
+  linkType: soft
 
 "tslib@npm:^1.8.1":
   version: 1.14.1
