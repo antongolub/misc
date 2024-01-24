@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "allowImportingTsExtensions": true
+    "declaration": true
   },
   "exclude": [
     "node_modules"

@@ -9,6 +9,46 @@ Other issues affect typings. This library is aimed to provide a workaroud for co
 <details>
 <summary>Example</summary>
 
+[coderef-1](src/test/fixtures/allow-ts-ext)
+
+```ts
+// a.ts
+export * from './b.ts'
+// b.ts
+export const b = 'b'
+// index.ts
+export * from './a.ts'
+```
+
+```shell
+tsc --emitDeclarationOnly --allowImportingTsExtensions
+```
+gives several dts:
+```ts
+// a.d.ts
+export * from './b.ts'
+// b.d.ts
+export const b = 'b'
+// index.d.ts
+export * from './a.ts'
+```
+
+Meanwhile, [coderef-2](src/test/fixtures/legacy-ts-project)
+```ts
+export * from 'allow-ts-ext'
+```
+```shell
+tsc --emitDeclarationOnly
+
+1:15 - error TS5097: An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled.
+1 export * from './a.ts'
+                ~~~~~~~~
+Found 2 errors in 2 files.
+Errors  Files
+     1  ../allow-ts-ext/a.ts:1
+     1  ../allow-ts-ext/index.ts:1
+```
+
 </details>
 
 2. Merging dts may cause name conflicts between local and external modules.
@@ -17,6 +57,27 @@ Other issues affect typings. This library is aimed to provide a workaroud for co
 
 <details>
 <summary>Example</summary>
+
+[coderef](./src/test/fixtures/name-clash)
+
+```ts
+// depseek.ts
+export const foo = 'bar'
+
+// index.ts
+export {foo} from './depseek'
+export {depseek} from 'depseek'
+```
+````shell
+tsc --emitDeclarationOnly --declaration --outFile index.d.ts
+````
+gives:
+```ts
+declare module "index" {
+  export {foo} from "depseek";
+  export {depseek} from "depseek";
+}
+```
 
 </details>
 
