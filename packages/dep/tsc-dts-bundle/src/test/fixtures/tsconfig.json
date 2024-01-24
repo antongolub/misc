@@ -1,7 +1,0 @@
-{
-  "extends": "../../../../../infra/tsconfig.json",
-  "compilerOptions": {},
-  "exclude": [
-    "node_modules",
-  ]
-}

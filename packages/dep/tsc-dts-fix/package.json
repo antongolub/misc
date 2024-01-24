@@ -1,7 +1,7 @@
 {
-  "name": "tsc-dts-bundle",
+  "name": "tsc-dts-fix",
   "version": "0.0.0",
-  "description": "Fix module resolution in dts bundles",
+  "description": "Applies some fixes to dts produced by tsc",
   "private": true,
   "type": "module",
   "main": "target/cjs/index.cjs",

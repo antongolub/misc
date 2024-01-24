@@ -1,5 +1,5 @@
 {
-  "name": "tsc-dts-bundle",
+  "name": "tsc-dts-fix",
   "extends": ["../../../../../infra/typedoc.json"],
   "entryPoints": ["../../../src/main/ts/"],
   "exclude": ["../../../src/test", "**/node_modules/**"],

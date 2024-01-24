@@ -1,0 +1,7 @@
+{
+  "name": "example-legacy-ts-project",
+  "type": "module",
+  "scripts": {
+    "generate": "tsc --emitDeclarationOnly"
+  }
+}

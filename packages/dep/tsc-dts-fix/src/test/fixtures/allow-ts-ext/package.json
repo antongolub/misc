@@ -1,0 +1,7 @@
+{
+  "name": "example-allow-ts-ext",
+  "type": "module",
+  "scripts": {
+    "generate": "tsc --emitDeclarationOnly"
+  }
+}

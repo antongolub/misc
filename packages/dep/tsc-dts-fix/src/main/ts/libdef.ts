@@ -31,7 +31,7 @@ export const normalizeOpts = (opts?: Partial<TOptions>): TOptions => ({
   ...opts
 })
 
-const tempy = (): string => fs.mkdtempSync(path.join(os.tmpdir(), 'tsc-dts-bundle-'))
+const tempy = (): string => fs.mkdtempSync(path.join(os.tmpdir(), 'tsc-dts-fix-'))
 
 export const extractModuleDeclarations = (input: string): {name: string, contents: string}[] => {
   const lines = input.split('\n')

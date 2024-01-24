@@ -1,0 +1,7 @@
+{
+  "name": "example-name-clash",
+  "type": "module",
+  "scripts": {
+    "generate": "tsc --emitDeclarationOnly --outFile index.d.ts"
+  }
+}
