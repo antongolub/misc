@@ -5,7 +5,7 @@
 Despite the fact that TS is actively developing, there are still a number of problems with its `tsc` compiler.
 In some situations, [generated bundles](https://github.com/antongolub/tsc-esm-fix) require modification to work correctly in runtime.
 Other issues affect typings. This library is aimed to provide a workaroud for couple of them:
-1. Extra extensions in modules declarations force dependent projects to inherit tsconfig resolution rules.
+1. Extra extensions in modules declarations force dependent projects to partially inherit tsconfig rules.
 <details>
 <summary>Example</summary>
 
@@ -19,7 +19,6 @@ export const b = 'b'
 // index.ts
 export * from './a.ts'
 ```
-
 ```shell
 tsc --emitDeclarationOnly --allowImportingTsExtensions
 ```

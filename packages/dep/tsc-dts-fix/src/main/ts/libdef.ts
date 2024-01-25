@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import os from 'node:os'
 import {depseek} from 'depseek'
+import * as ts from 'typescript'
 
 export type TOptions = {
   output: string
@@ -15,6 +16,8 @@ export type TOptions = {
 // https://typescript-v2-121.ortam.vercel.app/docs/handbook/module-resolution.html
 
 export const libdef = async (opts?: Partial<TOptions>) => {
+  const source = 'let a: string = "bar"'
+  let result = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS }})
   const {output} = normalizeOpts(opts)
   // const dts = await fs.readFile(input, 'utf-8')
   // const declarations = extractModuleDeclarations(dts)
