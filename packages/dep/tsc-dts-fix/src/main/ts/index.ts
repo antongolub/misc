@@ -1,1 +1,1 @@
-export * from './libdef.ts'
+export * from './dts.ts'
