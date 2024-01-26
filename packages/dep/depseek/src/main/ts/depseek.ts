@@ -42,6 +42,18 @@ export const depseek = (stream: Readable | string, opts?: TOpts): Promise<TCodeR
 
 export const depseekSync = (input: string, opts?: TOpts): TCodeRef[] => extract(readify(input), opts)
 
+export const patchRefs = (contents: string, patcher: (ref: string) => string) => {
+  const deps = depseekSync(contents)
+  let pos = 0
+  let _contents = ''
+
+  for (const {index, value} of deps) {
+    _contents = _contents + contents.slice(pos, index) + patcher(value)
+    pos = index + value.length
+  }
+  return _contents + contents.slice(pos)
+}
+
 const readify = (input: string): TPseudoReadable => {
   const chunks = [null, input]
   return { read: () => chunks.pop() as string }

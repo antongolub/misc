@@ -65,6 +65,27 @@ const contents = fs.readFileSync('index.js', 'utf8')
 const deps = depseekSync(contents)
 ```
 
+### `patchRefs`
+The one more utility is `patchRefs` that replaces dependency references with a given value.
+```ts
+import {patchRefs} from 'depseek'
+
+const patcher = (v: string) => v.startsWith('.') ? v + '.js' : v
+const input = `
+import {foo} from './foo'
+import {bar} from "./bar"
+import {baz} from 'baz'
+`
+
+patchRefs(input, patcher)
+// gives as a result:
+`
+import {foo} from './foo.js'
+import {bar} from "./bar.js"
+import {baz} from 'baz'
+`
+```
+
 ## Refs
 * [browserify/module-deps](https://github.com/browserify/module-deps)
 * [browserify/detective](https://github.com/browserify/detective)

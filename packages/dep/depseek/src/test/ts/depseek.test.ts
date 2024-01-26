@@ -1,7 +1,7 @@
 import * as assert from 'node:assert'
 import {Duplex} from 'node:stream'
 import { describe, it } from 'node:test'
-import { depseek } from '../../main/ts'
+import { depseek, patchRefs } from '../../main/ts'
 
 describe('depseek()', () => {
   it('searches for deps and comments', async () => {
@@ -132,5 +132,23 @@ const br = _require('br')           /* @0 */
       { type: 'comment', value: ' @3.2.1', index: 152 },
       { type: 'comment', value: ' @0 ', index: 199 },
     ])
+  })
+})
+
+describe('patchRefs()', () => {
+  it('applies dep patch to code fragment', () => {
+    const input = `
+import {foo} from './foo'
+import {bar} from "./bar"
+import {baz} from 'baz'
+`
+    // eslint-disable-next-line unicorn/consistent-function-scoping
+    const patcher = (v: string) => v.startsWith('.') ? v + '.js' : v
+    const expected = `
+import {foo} from './foo.js'
+import {bar} from "./bar.js"
+import {baz} from 'baz'
+`
+    assert.equal(patchRefs(input, patcher), expected)
   })
 })
