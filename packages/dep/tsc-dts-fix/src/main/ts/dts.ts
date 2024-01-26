@@ -1,26 +1,26 @@
-import fs from 'node:fs'
 import path from 'node:path'
-import os from 'node:os'
-import { depseekSync } from 'depseek'
+import { patchRefs } from 'depseek'
 import ts from 'typescript'
+
+export type TDeclarations = {name: string, contents: string}[]
 
 export type TOptions = {
   input: string
   output: string
   tsconfig: string
-  temp: string
   compilerOptions: ts.CompilerOptions,
   strategy: 'separate' | 'bundle' | 'merge'
+  ext: string
   // force node prefix
   // shake
 }
 
-// https://blog.logrocket.com/common-typescript-module-problems-how-to-solve/#solution-locating-module-resolve-imports
-// https://typescript-v2-121.ortam.vercel.app/docs/handbook/module-resolution.html
-export const generateDts = (opts?: Partial<TOptions>) => {
+const log = (any: any) => {console.log(any); return any}
+
+export const generateDts = (opts?: Partial<TOptions>): string => {
   const {output, input, compilerOptions, strategy} = normalizeOpts(opts)
-  const outFile = strategy === 'separate' ? undefined : 'bundle.d.ts'
-  const rootDir = strategy === 'bundle' ? '../'.repeat(100) : compilerOptions.rootDir
+  const outFile = strategy === 'bundle' ? 'bundle.d.ts' : undefined
+  const rootDir = compilerOptions.rootDir ?? '../'.repeat(100)
   const declarations = compile([input], {
     ...compilerOptions,
     emitDeclarationOnly: true,
@@ -29,62 +29,99 @@ export const generateDts = (opts?: Partial<TOptions>) => {
     rootDir,
   })
 
-  // console.log('decl', declarations)
-
   if (strategy === 'merge') {
-    // apply dts merge
-    return {}
+    return log(buildDtsBundle(declarations))
   }
 
   if (strategy === 'bundle') {
-    // generate pkg related links
-    const result = patchDtsBundle(declarations[outFile as any])
-    console.log(result)
-
-    return {}
+    return patchDtsBundle({
+      ...parseBundleDeclarations(declarations[0].contents),
+      conceal: false,
+    })
   }
 
-  // fix extensions
-
-  return {}
+  throw new Error(`Unknown strategy: ${strategy}`)
 }
 
-export const patchDtsBundle = (input: string, prefix = 'package-name', conceal = true) => {
-  const declarations = parseBundleDeclarations(input)
+export const buildDtsBundle = (declarations: TDeclarations) => {
+  // Gathers triple-slash directives
+  // https://www.typescriptlang.org/docs/handbook/triple-slash-directives.html
+  const directives: Set<string> = new Set()
+  const _declarations = declarations
+    .map<TDeclarations[number]>(({name, contents}) => {
+      const lines = contents
+        .trim().split('\n')
+        .filter(l => {
+          if (l.startsWith('/// <reference')) {
+            directives.add(l)
+            return false
+          }
+          return true
+        })
+
+      return ({
+        name: name.slice(0, -5),
+        contents: fixLines(lines).join('\n')
+      })
+    })
+
+  return patchDtsBundle({
+    directives,
+    declarations: _declarations,
+    conceal: false,
+  })
+}
+
+// https://blog.logrocket.com/common-typescript-module-problems-how-to-solve/#solution-locating-module-resolve-imports
+// https://typescript-v2-121.ortam.vercel.app/docs/handbook/module-resolution.html
+export const patchDtsBundle = (opts: {directives: Set<string>, prefix?: string, conceal?: boolean, ext?: string, declarations: TDeclarations}) => {
+  const {
+    prefix = 'package-name',
+    conceal = true,
+    ext,
+    declarations,
+    directives
+  } = opts
+  const banner = directives.size ? [...directives, ''].join('\n') : ''
+  const nameMap = getNameMap(declarations, prefix, conceal, ext)
+
+  return declarations.reduce((m, d) =>
+    m + `declare module "${nameMap[d.name]}" {
+${patchRefs(d.contents, v => patchLocation(v, nameMap, d.name))}
+}
+`,
+    banner)
+}
+
+export const getNameMap = (declarations: TDeclarations, prefix = 'package-name', conceal = true, ext?: string) => {
   const actualNames = declarations.map(d => d.name)
   const rootDir = findRoot(actualNames)
-  const nameMap = actualNames.reduce<Record<string, string>>((m, v) => {
+
+  return actualNames.reduce<Record<string, string>>((m, v) => {
     m[v] = conceal
       ? 'm' + Math.random().toString(16).slice(2)
-      : prefix + '/' + v.slice(rootDir.length)
+      : prefix + '/' + patchExt(v.slice(rootDir.length), ext)
     return m
   }, {})
-
-  return declarations.reduce((m, d) => {
-    return m + `declare module "${nameMap[d.name]}" {
-${patchModuleDeclarationRefs(d.contents, nameMap)}`
-  }, '')
 }
 
-export const patchModuleDeclarationRefs = (contents: string, nameMap: Record<string, string>) => {
-
-  const deps = depseekSync(contents)
-  console.log('deps', deps)
-  let pos = 0
-  let _contents = ''
-
-  for (const {index, value} of deps) {
-    const _value = nameMap[value] || value
-
-    _contents = _contents + contents.slice(pos, index) + _value
-    pos = index + value.length
-  }
-  return _contents + contents.slice(pos)
+export const patchExt = (value: string, _ext?: string) => {
+  const {ext} = path.parse(value)
+  return (ext ? value.slice(0, -ext.length) : value) + (_ext ?? ext)
 }
 
-export const assembleDtsBundle = () => {}
+export const patchLocation = (value: string, nameMap: Record<string, string>, name: string) => {
+  const _value = value.startsWith('.')
+    ? path.resolve(path.dirname(name), trimExt(value))
+    : value
 
-export const patchExtensions = () => {}
+  return nameMap[_value] || _value
+}
+
+const trimExt = (value: string) => {
+  const {ext} = path.parse(value)
+  return ext ? value.slice(0, -ext.length) : value
+}
 
 export const normalizeOpts = (opts?: Partial<TOptions>): TOptions => ({
   input: './index.ts',
@@ -92,32 +129,48 @@ export const normalizeOpts = (opts?: Partial<TOptions>): TOptions => ({
   tsconfig: './tsconfig.json',
   strategy: 'separate',
   compilerOptions: {},
-  temp: tempy(),
+  ext: '',
   ...opts
 })
 
-const tempy = (): string => fs.mkdtempSync(path.join(os.tmpdir(), 'tsc-dts-fix-'))
-
-export const parseBundleDeclarations = (input: string): {name: string, contents: string}[] => {
+export const parseBundleDeclarations = (input: string): {
+  declarations: TDeclarations
+  directives: Set<string>
+} => {
+  let declaration: {name: string, contents: string} | null = null
   const lines = input.split('\n')
   const declarations: {name: string, contents: string}[] = []
+  const directives: Set<string> = new Set()
+  const capture = () => {
+    if (declaration) {
+      declaration.contents = declaration.contents.slice(0, -1) // trim last \n
+      declarations.push(declaration)
+      declaration = null
+    }
+  }
 
-  let declaration
   for (const line of lines) {
+    if (line.startsWith('/// <reference')) {
+      directives.add(line)
+      continue
+    }
+    if (line[0] === '}') {
+      capture()
+      continue
+    }
     if (line.startsWith('declare module')) {
-      if (declaration) declarations.push(declaration)
       declaration = {name: line.slice(16, -3), contents: ''}
       continue
     }
     if (declaration) declaration.contents += line + '\n'
   }
 
-  return declarations
+  return {declarations, directives}
 }
 
 // https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API#getting-the-dts-from-a-javascript-file
 const memo: Record<string, string> = {}
-export const compile =(fileNames: string[], options: ts.CompilerOptions) => {
+export const compile =(fileNames: string[], options: ts.CompilerOptions): TDeclarations => {
   const n = Date.now()
   // Create a Program with an in-memory emit
   const createdFiles: Record<string, string> = {}
@@ -136,8 +189,20 @@ export const compile =(fileNames: string[], options: ts.CompilerOptions) => {
   program.emit()
 
   console.log('compile time', Date.now() - n)
-  return createdFiles
+  return Object.entries(createdFiles)
+    .map(([name, contents]) => ({name, contents}))
 }
 
 const findRoot = (files: string[]) =>
   files[0].slice(0, [...(files[0])].findIndex((c, i) => files.some(f => f.charAt(i) !== c)))
+
+const fixLines = (lines: string[]): string[] => lines.map(l => fixLine(l))
+
+const fixLine = (l: string) => fixTabs(fixShebang(fixExportDeclare(l)))
+
+const fixTabs = (l: string, symbol = '  ', n = 2): string => `${symbol.repeat(n)}${l}`
+
+const fixExportDeclare = (l: string): string => l.startsWith('export declare ') ? `export ${l.slice(15)}`: l
+
+const fixShebang = (l: string): string => l.startsWith('#!') ? '' : l
+
