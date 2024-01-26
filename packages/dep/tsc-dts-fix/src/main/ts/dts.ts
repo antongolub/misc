@@ -4,24 +4,42 @@ import ts from 'typescript'
 
 export type TDeclarations = {name: string, contents: string}[]
 
+export type TAssets = {
+  declarations: TDeclarations
+  directives: Set<string>
+}
+
 export type TOptions = {
-  input: string
-  output: string
-  tsconfig: string
+  input: string[]
   compilerOptions: ts.CompilerOptions,
   strategy: 'separate' | 'bundle' | 'merge'
   ext: string
+  pkgName: string
+  entryPoints: Record<string, string>
+  conceal: boolean
   // force node prefix
   // shake
 }
 
-const log = (any: any) => {console.log(any); return any}
+export const normalizeOpts = (opts: Partial<TOptions> = {}): TOptions => ({
+  strategy: 'separate',
+  compilerOptions: {},
+  ext: '',
+  pkgName: 'package-name',
+  conceal: false,
+  entryPoints: {
+    '.': './index.ts'
+  },
+  ...opts,
+  input: [opts.input ?? './index.ts'].flat(),
+})
 
 export const generateDts = (opts?: Partial<TOptions>): string => {
-  const {output, input, compilerOptions, strategy} = normalizeOpts(opts)
+  const _opts = normalizeOpts(opts)
+  const {input, compilerOptions, strategy} = _opts
   const outFile = strategy === 'bundle' ? 'bundle.d.ts' : undefined
   const rootDir = compilerOptions.rootDir ?? '../'.repeat(100)
-  const declarations = compile([input], {
+  const declarations = compile([input].flat(), {
     ...compilerOptions,
     emitDeclarationOnly: true,
     declaration: true,
@@ -30,23 +48,19 @@ export const generateDts = (opts?: Partial<TOptions>): string => {
   })
 
   if (strategy === 'merge') {
-    return log(buildDtsBundle(declarations))
+    return buildDtsBundle({declarations, directives: new Set()}, _opts)
   }
 
   if (strategy === 'bundle') {
-    return patchDtsBundle({
-      ...parseBundleDeclarations(declarations[0].contents),
-      conceal: false,
-    })
+    return patchDtsBundle(parseBundleDeclarations(declarations[0].contents), _opts)
   }
 
   throw new Error(`Unknown strategy: ${strategy}`)
 }
 
-export const buildDtsBundle = (declarations: TDeclarations) => {
+export const buildDtsBundle = ({declarations, directives}: TAssets, opts: TOptions) => {
   // Gathers triple-slash directives
   // https://www.typescriptlang.org/docs/handbook/triple-slash-directives.html
-  const directives: Set<string> = new Set()
   const _declarations = declarations
     .map<TDeclarations[number]>(({name, contents}) => {
       const lines = contents
@@ -68,32 +82,29 @@ export const buildDtsBundle = (declarations: TDeclarations) => {
   return patchDtsBundle({
     directives,
     declarations: _declarations,
-    conceal: false,
-  })
+  }, opts)
 }
 
 // https://blog.logrocket.com/common-typescript-module-problems-how-to-solve/#solution-locating-module-resolve-imports
 // https://typescript-v2-121.ortam.vercel.app/docs/handbook/module-resolution.html
-export const patchDtsBundle = (opts: {directives: Set<string>, prefix?: string, conceal?: boolean, ext?: string, declarations: TDeclarations}) => {
+export const patchDtsBundle = ({declarations, directives}: TAssets, opts: TOptions) => {
   const {
-    prefix = 'package-name',
-    conceal = true,
     ext,
-    declarations,
-    directives
+    conceal,
+    pkgName,
   } = opts
   const banner = directives.size ? [...directives, ''].join('\n') : ''
-  const nameMap = getNameMap(declarations, prefix, conceal, ext)
+  const namesMap = getNamesMap(declarations, pkgName, conceal, ext)
 
   return declarations.reduce((m, d) =>
-    m + `declare module "${nameMap[d.name]}" {
-${patchRefs(d.contents, v => patchLocation(v, nameMap, d.name))}
+    m + `declare module "${namesMap[d.name]}" {
+${patchRefs(d.contents, v => patchLocation(v, namesMap, d.name))}
 }
 `,
     banner)
 }
 
-export const getNameMap = (declarations: TDeclarations, prefix = 'package-name', conceal = true, ext?: string) => {
+export const getNamesMap = (declarations: TDeclarations, prefix = 'package-name', conceal = true, ext?: string) => {
   const actualNames = declarations.map(d => d.name)
   const rootDir = findRoot(actualNames)
 
@@ -123,20 +134,7 @@ const trimExt = (value: string) => {
   return ext ? value.slice(0, -ext.length) : value
 }
 
-export const normalizeOpts = (opts?: Partial<TOptions>): TOptions => ({
-  input: './index.ts',
-  output: './index.d.ts',
-  tsconfig: './tsconfig.json',
-  strategy: 'separate',
-  compilerOptions: {},
-  ext: '',
-  ...opts
-})
-
-export const parseBundleDeclarations = (input: string): {
-  declarations: TDeclarations
-  directives: Set<string>
-} => {
+export const parseBundleDeclarations = (input: string): TAssets => {
   let declaration: {name: string, contents: string} | null = null
   const lines = input.split('\n')
   const declarations: {name: string, contents: string}[] = []
@@ -193,3 +191,4 @@ const fixExportDeclare = (l: string): string => l.startsWith('export declare ') 
 
 const fixShebang = (l: string): string => l.startsWith('#!') ? '' : l
 
+const log = (any: any) => {console.log(any); return any}
