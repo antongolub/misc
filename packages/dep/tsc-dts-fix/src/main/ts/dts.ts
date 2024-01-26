@@ -152,17 +152,14 @@ export const parseBundleDeclarations = (input: string): {
   for (const line of lines) {
     if (line.startsWith('/// <reference')) {
       directives.add(line)
-      continue
     }
-    if (line[0] === '}') {
+    else if (line[0] === '}') {
       capture()
-      continue
     }
-    if (line.startsWith('declare module')) {
+    else if (line.startsWith('declare module')) {
       declaration = {name: line.slice(16, -3), contents: ''}
-      continue
     }
-    if (declaration) declaration.contents += line + '\n'
+    else if (declaration) declaration.contents += line + '\n'
   }
 
   return {declarations, directives}
