@@ -1,5 +1,5 @@
 # tsc-dts-fix
-> Applies some fixes to libdefs (d.ts) produced by tsc
+> Applies some fixes to libdefs (d.ts) produced with tsc
 
 ## Problem
 Despite the fact that TS is actively developing, there are still a number of problems with its `tsc` compiler.

@@ -1,7 +1,7 @@
 {
   "name": "tsc-dts-fix",
   "version": "0.0.0",
-  "description": "Applies some fixes to dts produced by tsc",
+  "description": "Applies some fixes to libdefs produced with tsc",
   "private": true,
   "type": "module",
   "main": "target/cjs/index.cjs",
@@ -44,6 +44,9 @@
     "url": "https://github.com/antongolub/misc/issues"
   },
   "homepage": "https://github.com/antongolub/misc#readme",
+  "peerDependencies": {
+    "typescript": ">=4.0.0"
+  },
   "dependencies": {
     "depseek": "workspace:*"
   },

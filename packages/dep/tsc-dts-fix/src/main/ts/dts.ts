@@ -166,22 +166,12 @@ export const parseBundleDeclarations = (input: string): {
 }
 
 // https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API#getting-the-dts-from-a-javascript-file
-const memo: Record<string, string> = {}
 export const compile =(fileNames: string[], options: ts.CompilerOptions): TDeclarations => {
   const n = Date.now()
-  // Create a Program with an in-memory emit
   const createdFiles: Record<string, string> = {}
   const host = ts.createCompilerHost(options)
   host.writeFile = (fileName: string, contents: string) => createdFiles[fileName] = contents
-  // host.readFile = (fileName: string) => {
-  //   if (memo[fileName]) return memo[fileName]
-  //
-  //
-  //   // console.log('name', fileName)
-  //   return fs.readFileSync(fileName, 'utf8')
-  // }
 
-  // Prepare and emit the d.ts files
   const program = ts.createProgram(fileNames, options, host);
   program.emit()
 
