@@ -1,5 +1,5 @@
 # tsc-dts-fix
-> Applies some fixes to dts produced by tsc
+> Applies some fixes to libdefs (d.ts) produced by tsc
 
 ## Problem
 Despite the fact that TS is actively developing, there are still a number of problems with its `tsc` compiler.
@@ -47,7 +47,6 @@ Errors  Files
      1  ../allow-ts-ext/a.ts:1
      1  ../allow-ts-ext/index.ts:1
 ```
-
 </details>
 
 2. Merging dts may cause name conflicts between local and external modules.
@@ -77,8 +76,13 @@ declare module "index" {
   export {depseek} from "depseek";
 }
 ```
-
 </details>
+
+## Solution
+While the [dts-bundle-generator](https://github.com/timocov/dts-bundle-generator) and [dts-bundle](https://github.com/TypeStrong/dts-bundle) libraries are focused on deep restructuring of declarations, I would still like to keep `tsc` as libdefs producer and assist it make some minor adjustments to module paths resolution:
+* fix relative paths
+* remap extensions
+* explicitly declare pkg entrypoints
 
 ## Status
 Blueprint

@@ -1,1 +1,3 @@
-export * from 'allow-ts-ext';
+declare module "index" {
+    export * from 'allow-ts-ext';
+}
