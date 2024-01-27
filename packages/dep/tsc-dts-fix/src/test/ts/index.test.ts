@@ -87,7 +87,8 @@ describe('patchExt()', () => {
     ['foo/bar/baz', '.js', 'foo/bar/baz.js'],
   ]
 
-  cases.forEach(([input, ext, result]) => it(`${input} + ${ext} = ${result}`, () => {
-    assert.equal(patchExt(input, ext), result)
-  }))
+  cases.forEach(([input, ext, result]) =>
+    it(`${input} + ${ext} = ${result}`, () => {
+      assert.equal(patchExt(input, ext), result)
+    }))
 })

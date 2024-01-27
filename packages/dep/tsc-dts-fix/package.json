@@ -23,7 +23,7 @@
   ],
   "scripts": {
     "build": "concurrently 'npm:build:*'",
-    "build:js": "yarn build:esbuild",
+    "build:js": "yarn build:esbuild --entry='./src/main/ts/index.ts:./src/main/ts/cli.ts'",
     "build:dts": "yarn build:tsc",
     "build:docs": "yarn build:typedoc",
     "test": "concurrently 'npm:test:*'",
@@ -48,7 +48,9 @@
     "typescript": ">=4.0.0"
   },
   "dependencies": {
-    "depseek": "workspace:*"
+    "@topoconfig/extends": "workspace:*",
+    "depseek": "workspace:*",
+    "minimist": "^1.2.8"
   },
   "devDependencies": {
     "@antongolub/infra": "workspace:*",

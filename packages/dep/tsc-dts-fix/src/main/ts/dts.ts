@@ -1,27 +1,7 @@
 import path from 'node:path'
 import { patchRefs } from 'depseek'
 import ts from 'typescript'
-
-export type TDeclarations = {name: string, contents: string}[]
-
-export type TAssets = {
-  declarations: TDeclarations
-  directives: Set<string>
-}
-
-export type TOptionsNormalized = {
-  input: string[]
-  compilerOptions: ts.CompilerOptions,
-  strategy: 'separate' | 'bundle' | 'merge'
-  ext: string
-  pkgName: string
-  entryPoints: Record<string, string>
-  conceal: boolean
-  // force node prefix
-  // shake
-}
-
-export type TOptions = Partial<Omit<TOptionsNormalized, 'input'> & {input: string | string[]}>
+import type {TOptions, TOptionsNormalized, TAssets, TDeclarations} from './interface.js'
 
 export const normalizeOpts = (opts: TOptions = {}): TOptionsNormalized => ({
   strategy: 'separate',
@@ -29,6 +9,7 @@ export const normalizeOpts = (opts: TOptions = {}): TOptionsNormalized => ({
   ext: '',
   pkgName: 'package-name',
   conceal: false,
+  cwd: process.cwd(),
   entryPoints: {
     '.': './index.ts'
   },
@@ -40,16 +21,22 @@ const BUNDLE = 'bundle.d.ts'
 
 export const generateDts = (opts?: TOptions): Record<string, string> => {
   const _opts = normalizeOpts(opts)
-  const {input, compilerOptions, strategy} = _opts
+  const {input, compilerOptions, strategy, cwd} = _opts
   const outFile = strategy === 'bundle' ? BUNDLE : undefined
   const rootDir = compilerOptions.rootDir ?? '../'.repeat(100)
-  const declarations = compile([input].flat(), {
-    ...compilerOptions,
+  const inputs = [input].flat().map(v => path.resolve(cwd, v))
+  const declarations = compile(inputs, {
+    // https://github.com/microsoft/TypeScript/issues/23564
+    // ...compilerOptions,
     emitDeclarationOnly: true,
     declaration: true,
     outFile,
     rootDir,
   })
+
+  if (declarations.length === 0) {
+    throw new Error(`No declarations found. Check your options: ${JSON.stringify(_opts, null, 2)}`)
+  }
 
   if (strategy === 'merge') {
     return {[BUNDLE]: formatDtsBundle(parseDtsChunks(declarations), _opts)}

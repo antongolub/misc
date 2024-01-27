@@ -5101,8 +5101,10 @@ __metadata:
   resolution: "tsc-dts-fix@workspace:packages/dep/tsc-dts-fix"
   dependencies:
     "@antongolub/infra": "workspace:*"
+    "@topoconfig/extends": "workspace:*"
     "@types/node": "npm:^20.11.6"
     depseek: "workspace:*"
+    minimist: "npm:^1.2.8"
   peerDependencies:
     typescript: ">=4.0.0"
   languageName: unknown
