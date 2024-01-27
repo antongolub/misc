@@ -100,7 +100,7 @@ export const parseDtsChunks = (declarations: TDeclarations): TAssets => {
         })
 
       return ({
-        name: name.slice(0, -5),
+        name: name.slice(0, -5), // .d.ts, .d.tsx, .d.cts, d.mts .d.ctsx, d.mtsx?
         contents: fixLines(lines).join('\n')
       })
     })

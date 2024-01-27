@@ -16,7 +16,7 @@ export const camelizeFlags = (flags: Record<string, any>) => Object.fromEntries(
   v
 ])))
 
-export const run = async (exit = process.exit, _opts: any) => {
+export const run = async (exit = process.exit, _opts?: any) => {
   try {
     const opts = _opts || await parseArgv()
     const declarations = generateDts(opts)
