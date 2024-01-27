@@ -9,7 +9,7 @@ export type TAssets = {
   directives: Set<string>
 }
 
-export type TOptions = {
+export type TOptionsNormalized = {
   input: string[]
   compilerOptions: ts.CompilerOptions,
   strategy: 'separate' | 'bundle' | 'merge'
@@ -21,7 +21,9 @@ export type TOptions = {
   // shake
 }
 
-export const normalizeOpts = (opts: Partial<TOptions> = {}): TOptions => ({
+export type TOptions = Partial<Omit<TOptionsNormalized, 'input'> & {input: string | string[]}>
+
+export const normalizeOpts = (opts: TOptions = {}): TOptionsNormalized => ({
   strategy: 'separate',
   compilerOptions: {},
   ext: '',
@@ -34,7 +36,7 @@ export const normalizeOpts = (opts: Partial<TOptions> = {}): TOptions => ({
   input: [opts.input ?? './index.ts'].flat(),
 })
 
-export const generateDts = (opts?: Partial<TOptions>): string => {
+export const generateDts = (opts?: TOptions): string => {
   const _opts = normalizeOpts(opts)
   const {input, compilerOptions, strategy} = _opts
   const outFile = strategy === 'bundle' ? 'bundle.d.ts' : undefined
@@ -58,7 +60,7 @@ export const generateDts = (opts?: Partial<TOptions>): string => {
   throw new Error(`Unknown strategy: ${strategy}`)
 }
 
-export const buildDtsBundle = ({declarations, directives}: TAssets, opts: TOptions) => {
+export const buildDtsBundle = ({declarations, directives}: TAssets, opts: TOptionsNormalized) => {
   // Gathers triple-slash directives
   // https://www.typescriptlang.org/docs/handbook/triple-slash-directives.html
   const _declarations = declarations
@@ -87,7 +89,7 @@ export const buildDtsBundle = ({declarations, directives}: TAssets, opts: TOptio
 
 // https://blog.logrocket.com/common-typescript-module-problems-how-to-solve/#solution-locating-module-resolve-imports
 // https://typescript-v2-121.ortam.vercel.app/docs/handbook/module-resolution.html
-export const patchDtsBundle = ({declarations, directives}: TAssets, opts: TOptions) => {
+export const patchDtsBundle = ({declarations, directives}: TAssets, opts: TOptionsNormalized) => {
   const {
     ext,
     conceal,
@@ -95,14 +97,31 @@ export const patchDtsBundle = ({declarations, directives}: TAssets, opts: TOptio
   } = opts
   const banner = directives.size ? [...directives, ''].join('\n') : ''
   const namesMap = getNamesMap(declarations, pkgName, conceal, ext)
+  const entryPointsDeclarations = genEntryPointsDeclarations(namesMap, opts)
+  const patchedDeclarations = patchModuleDeclarations(declarations, namesMap)
 
-  return declarations.reduce((m, d) =>
-    m + `declare module "${namesMap[d.name]}" {
-${patchRefs(d.contents, v => patchLocation(v, namesMap, d.name))}
+  return banner + [...patchedDeclarations, ...entryPointsDeclarations].map(formatModuleDeclaration).join('\n')
 }
-`,
-    banner)
+
+export const patchModuleDeclarations = (declarations: TDeclarations, namesMap: Record<string, string>) => declarations.map(({name, contents}) => ({
+  name: namesMap[name],
+  contents: patchRefs(contents, v => patchLocation(v, namesMap, name))
+}))
+
+export const genEntryPointsDeclarations = (namesMap: Record<string, string>, opts: TOptionsNormalized) => {
+  const {entryPoints, pkgName, ext} = opts
+  return Object.entries(entryPoints).map(([entry, ref]) =>
+    ({
+      name: path.join(pkgName, entry),
+      contents: `    export * from "${namesMap[log(patchExt(path.join(namesMap._root, ref), ''))]}"`
+    })
+  )
 }
+
+export const formatModuleDeclaration = ({name, contents}: TDeclarations[number]) =>
+  `declare module "${name}" {
+${contents}
+}`
 
 export const getNamesMap = (declarations: TDeclarations, prefix = 'package-name', conceal = true, ext?: string) => {
   const actualNames = declarations.map(d => d.name)
@@ -113,7 +132,7 @@ export const getNamesMap = (declarations: TDeclarations, prefix = 'package-name'
       ? 'm' + Math.random().toString(16).slice(2)
       : prefix + '/' + patchExt(v.slice(rootDir.length), ext)
     return m
-  }, {})
+  }, {_root: rootDir})
 }
 
 export const patchExt = (value: string, _ext?: string) => {

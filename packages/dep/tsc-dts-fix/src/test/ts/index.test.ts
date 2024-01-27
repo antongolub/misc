@@ -46,12 +46,15 @@ declare module "package-name/index" {
         plus: string;
     };
 }
+declare module "package-name" {
+    export * from "package-name/index"
+}
 `
 
   it('with `bundle` strategy', () => {
-    assert.deepEqual(generateDts({
+    checkLineByLine(generateDts({
       input: path.resolve(fixtures, 'name-clash/index.ts'),
-      strategy: 'bundle'
+      strategy: 'bundle',
     }), expected)
   })
 
@@ -59,7 +62,7 @@ declare module "package-name/index" {
     checkLineByLine(
       generateDts({
         input: path.resolve(fixtures, 'name-clash/index.ts'),
-        strategy: 'merge'
+        strategy: 'merge',
       }),
       expected
     )
