@@ -55,7 +55,7 @@ declare module "package-name" {
     checkLineByLine(generateDts({
       input: path.resolve(fixtures, 'name-clash/index.ts'),
       strategy: 'bundle',
-    }), expected)
+    })['bundle.d.ts'], expected)
   })
 
   it('with `merge` strategy', () => {
@@ -63,9 +63,19 @@ declare module "package-name" {
       generateDts({
         input: path.resolve(fixtures, 'name-clash/index.ts'),
         strategy: 'merge',
-      }),
+      })['bundle.d.ts'],
       expected
     )
+  })
+
+  it('with `separate` strategy', () => {
+    const declarations = generateDts({
+      input: path.resolve(fixtures, 'name-clash/index.ts'),
+      strategy: 'separate',
+      ext: '.js'
+    })
+
+    assert.equal(declarations['depseek.d.ts'], `export declare const foo = "bar";\n`)
   })
 })
 

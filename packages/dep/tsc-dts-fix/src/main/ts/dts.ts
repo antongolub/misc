@@ -36,7 +36,7 @@ export const normalizeOpts = (opts: TOptions = {}): TOptionsNormalized => ({
   input: [opts.input ?? './index.ts'].flat(),
 })
 
-export const generateDts = (opts?: TOptions): string => {
+export const generateDts = (opts?: TOptions): Record<string, string> => {
   const _opts = normalizeOpts(opts)
   const {input, compilerOptions, strategy} = _opts
   const outFile = strategy === 'bundle' ? 'bundle.d.ts' : undefined
@@ -50,11 +50,16 @@ export const generateDts = (opts?: TOptions): string => {
   })
 
   if (strategy === 'merge') {
-    return formatDtsBundle(parseDtsChunks(declarations), _opts)
+    return {[outFile!]: formatDtsBundle(parseDtsChunks(declarations), _opts)}
   }
 
   if (strategy === 'bundle') {
-    return formatDtsBundle(parseDtsBundle(declarations[0].contents), _opts)
+    return {[outFile!]: formatDtsBundle(parseDtsBundle(declarations[0].contents), _opts)}
+  }
+
+  if (strategy === 'separate') {
+    return Object.fromEntries(patchDeclarationsExt(declarations, _opts.ext)
+      .map(({name, contents}) => [name, contents]))
   }
 
   throw new Error(`Unknown strategy: ${strategy}`)
@@ -117,6 +122,16 @@ export const parseDtsChunks = (declarations: TDeclarations): TAssets => {
   }
 }
 
+export const patchDeclarationsExt = (declarations: TDeclarations, ext?: string): TDeclarations => {
+  const actualNames = declarations.map(d => d.name)
+  const rootDir = findRoot(actualNames)
+
+  return declarations.map(({name, contents}) => ({
+    name: name.slice(rootDir.length),
+    contents: patchRefs(contents, v => v.startsWith('.') ? patchExt(v, ext) : v)
+  }))
+}
+
 // https://blog.logrocket.com/common-typescript-module-problems-how-to-solve/#solution-locating-module-resolve-imports
 // https://typescript-v2-121.ortam.vercel.app/docs/handbook/module-resolution.html
 export const formatDtsBundle = ({declarations, directives}: TAssets, opts: TOptionsNormalized) => {
@@ -128,10 +143,11 @@ export const formatDtsBundle = ({declarations, directives}: TAssets, opts: TOpti
   return banner + [...patchedDeclarations, ...entryPointsDeclarations].map(formatModuleDeclaration).join('\n')
 }
 
-export const patchModuleDeclarations = (declarations: TDeclarations, namesMap: Record<string, string>) => declarations.map(({name, contents}) => ({
-  name: namesMap[name],
-  contents: patchRefs(contents, v => patchLocation(v, namesMap, name))
-}))
+export const patchModuleDeclarations = (declarations: TDeclarations, namesMap: Record<string, string>) =>
+  declarations.map(({name, contents}) => ({
+    name: namesMap[name],
+    contents: patchRefs(contents, v => patchLocation(v, namesMap, name))
+  }))
 
 export const genEntryPointsDeclarations = (namesMap: Record<string, string>, opts: TOptionsNormalized) => {
   const {entryPoints, pkgName, ext} = opts
