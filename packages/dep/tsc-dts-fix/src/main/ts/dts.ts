@@ -50,19 +50,49 @@ export const generateDts = (opts?: TOptions): string => {
   })
 
   if (strategy === 'merge') {
-    return buildDtsBundle({declarations, directives: new Set()}, _opts)
+    return formatDtsBundle(parseDtsChunks(declarations), _opts)
   }
 
   if (strategy === 'bundle') {
-    return patchDtsBundle(parseBundleDeclarations(declarations[0].contents), _opts)
+    return formatDtsBundle(parseDtsBundle(declarations[0].contents), _opts)
   }
 
   throw new Error(`Unknown strategy: ${strategy}`)
 }
 
-export const buildDtsBundle = ({declarations, directives}: TAssets, opts: TOptionsNormalized) => {
+export const parseDtsBundle = (input: string): TAssets => {
+  let declaration: {name: string, contents: string} | null = null
+  const lines = input.split('\n')
+  const declarations: {name: string, contents: string}[] = []
+  const directives: Set<string> = new Set()
+  const capture = () => {
+    if (declaration) {
+      declaration.contents = declaration.contents.slice(0, -1) // trim last \n
+      declarations.push(declaration)
+      declaration = null
+    }
+  }
+
+  for (const line of lines) {
+    if (line.startsWith('/// <reference')) {
+      directives.add(line)
+    }
+    else if (line[0] === '}') {
+      capture()
+    }
+    else if (line.startsWith('declare module')) {
+      declaration = {name: line.slice(16, -3), contents: ''}
+    }
+    else if (declaration) declaration.contents += line + '\n'
+  }
+
+  return { declarations, directives }
+}
+
+export const parseDtsChunks = (declarations: TDeclarations): TAssets => {
   // Gathers triple-slash directives
   // https://www.typescriptlang.org/docs/handbook/triple-slash-directives.html
+  const directives: Set<string> = new Set()
   const _declarations = declarations
     .map<TDeclarations[number]>(({name, contents}) => {
       const lines = contents
@@ -81,22 +111,17 @@ export const buildDtsBundle = ({declarations, directives}: TAssets, opts: TOptio
       })
     })
 
-  return patchDtsBundle({
-    directives,
+  return {
     declarations: _declarations,
-  }, opts)
+    directives
+  }
 }
 
 // https://blog.logrocket.com/common-typescript-module-problems-how-to-solve/#solution-locating-module-resolve-imports
 // https://typescript-v2-121.ortam.vercel.app/docs/handbook/module-resolution.html
-export const patchDtsBundle = ({declarations, directives}: TAssets, opts: TOptionsNormalized) => {
-  const {
-    ext,
-    conceal,
-    pkgName,
-  } = opts
+export const formatDtsBundle = ({declarations, directives}: TAssets, opts: TOptionsNormalized) => {
   const banner = directives.size ? [...directives, ''].join('\n') : ''
-  const namesMap = getNamesMap(declarations, pkgName, conceal, ext)
+  const namesMap = getNamesMap(declarations, opts)
   const entryPointsDeclarations = genEntryPointsDeclarations(namesMap, opts)
   const patchedDeclarations = patchModuleDeclarations(declarations, namesMap)
 
@@ -123,29 +148,17 @@ export const formatModuleDeclaration = ({name, contents}: TDeclarations[number])
 ${contents}
 }`
 
-export const getNamesMap = (declarations: TDeclarations, prefix = 'package-name', conceal = true, ext?: string) => {
+export const getNamesMap = (declarations: TDeclarations, opts: TOptionsNormalized) => {
+  const {conceal, ext, pkgName} = opts
   const actualNames = declarations.map(d => d.name)
   const rootDir = findRoot(actualNames)
 
   return actualNames.reduce<Record<string, string>>((m, v) => {
     m[v] = conceal
       ? 'm' + Math.random().toString(16).slice(2)
-      : prefix + '/' + patchExt(v.slice(rootDir.length), ext)
+      : path.join(pkgName, patchExt(v.slice(rootDir.length), ext))
     return m
   }, {_root: rootDir})
-}
-
-export const patchExt = (value: string, _ext?: string) => {
-  const {ext} = path.parse(value)
-  return (ext ? value.slice(0, -ext.length) : value) + (_ext ?? ext)
-}
-
-export const patchLocation = (value: string, nameMap: Record<string, string>, name: string) => {
-  const _value = value.startsWith('.')
-    ? path.resolve(path.dirname(name), trimExt(value))
-    : value
-
-  return nameMap[_value] || _value
 }
 
 const trimExt = (value: string) => {
@@ -153,33 +166,17 @@ const trimExt = (value: string) => {
   return ext ? value.slice(0, -ext.length) : value
 }
 
-export const parseBundleDeclarations = (input: string): TAssets => {
-  let declaration: {name: string, contents: string} | null = null
-  const lines = input.split('\n')
-  const declarations: {name: string, contents: string}[] = []
-  const directives: Set<string> = new Set()
-  const capture = () => {
-    if (declaration) {
-      declaration.contents = declaration.contents.slice(0, -1) // trim last \n
-      declarations.push(declaration)
-      declaration = null
-    }
-  }
+export const patchExt = (value: string, _ext?: string) =>
+  _ext === undefined
+    ? value
+    : trimExt(value) + _ext
 
-  for (const line of lines) {
-    if (line.startsWith('/// <reference')) {
-      directives.add(line)
-    }
-    else if (line[0] === '}') {
-      capture()
-    }
-    else if (line.startsWith('declare module')) {
-      declaration = {name: line.slice(16, -3), contents: ''}
-    }
-    else if (declaration) declaration.contents += line + '\n'
-  }
+export const patchLocation = (value: string, nameMap: Record<string, string>, name: string) => {
+  const _value = value.startsWith('.')
+    ? path.resolve(path.dirname(name), trimExt(value))
+    : value
 
-  return {declarations, directives}
+  return nameMap[_value] || _value
 }
 
 // https://github.com/Microsoft/TypeScript/wiki/Using-the-Compiler-API#getting-the-dts-from-a-javascript-file
@@ -200,7 +197,7 @@ export const compile =(fileNames: string[], options: ts.CompilerOptions): TDecla
 const findRoot = (files: string[]) =>
   files[0].slice(0, [...(files[0])].findIndex((c, i) => files.some(f => f.charAt(i) !== c)))
 
-const fixLines = (lines: string[]): string[] => lines.map(l => fixLine(l))
+const fixLines = (lines: string[]): string[] => lines.map(fixLine)
 
 const fixLine = (l: string) => fixTabs(fixShebang(fixExportDeclare(l)))
 
