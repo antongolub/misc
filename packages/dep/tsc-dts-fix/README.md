@@ -2,7 +2,7 @@
 > Applies some fixes to libdefs (d.ts) produced with tsc
 
 ## Problem
-Despite the fact that TS is actively developing, there are still a number of problems with its `tsc` compiler.
+Despite the fact that TS is actively developed, there are still a number of problems with its `tsc` compiler.
 In some situations, [generated bundles](https://github.com/antongolub/tsc-esm-fix) require modification to work correctly in runtime.
 Other issues affect typings. This library is aimed to provide a workaroud for couple of them:
 1. Extra extensions in modules declarations force dependent projects to partially inherit tsconfig rules.
@@ -79,7 +79,7 @@ declare module "index" {
 </details>
 
 ## Solution
-While the [dts-bundle-generator](https://github.com/timocov/dts-bundle-generator) and [dts-bundle](https://github.com/TypeStrong/dts-bundle) libraries are focused on deep restructuring of declarations, I would still like to keep `tsc` as libdefs producer and assist it make some minor adjustments to module paths resolution:
+While the [dts-bundle-generator](https://github.com/timocov/dts-bundle-generator) and [dts-bundle](https://github.com/TypeStrong/dts-bundle) projects are focused on deep restructuring of declarations, I would still like to keep `tsc` as libdefs producer and assist it make some minor adjustments to module paths resolution:
 * fix relative paths
 * remap extensions
 * explicitly declare pkg entrypoints
@@ -93,8 +93,32 @@ yarn add tsc-dts-fix -D
 ```
 
 ## Usage
+### JS API
+
+```ts
+import {generateDts} from 'tsc-dts-fix'
+
+const declarations = generateDts({
+  input: 'index.ts',      // Compilation entrypoint: string | string[]
+  compilerOptions: {},    // Standard ts.CompilerOptions,
+  strategy: 'separate',   // Generator strategy:
+                          //   'separate' – formats libdefs as separate files,
+                          //   'bundle' – uses tsc to produce single dts file via `outFile` param,
+                          //   'merge' – assembles separate dts chunks into single file.
+  ext: '',                // Extension to remap, for ex '.js', '.cjs'.
+                          // Default is '' which means to remove any existent. If `undefined`, no effect
+  pkgName: 'pkg-name',    // Package name to prepend to module declarations.
+  entryPoints: {
+    '.': 'index.ts',      // Entry points map.
+    '/cli': 'cli.ts'
+  },
+  conceal: true           // Restrict access to internal modules (technically replaces their names with randoms).
+})
+```
+
+### CLI
 ```sh
-tsc-dts-fix --output index.d.ts
+tsc-dts-fix --strategy='merge' --pkg-name='@foo/bar'
 ```
 
 ## Alternatives
@@ -102,7 +126,7 @@ tsc-dts-fix --output index.d.ts
 * [timocov/dts-bundle-generator](https://github.com/timocov/dts-bundle-generator)
 * [vytenisu/npm-dts](https://github.com/vytenisu/npm-dts)
 * [guoyunhe/bundle-dts](https://github.com/guoyunhe/bundle-dts)
-* [package/bundle-dts](https://www.npmjs.com/package/bundle-dts)
+* [bundle-dts](https://www.npmjs.com/package/bundle-dts) `npm`
 * [antongolub/tsc-esm-fix](https://github.com/antongolub/tsc-esm-fix)
 
 ## License

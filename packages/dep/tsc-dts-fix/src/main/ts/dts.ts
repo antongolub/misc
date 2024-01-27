@@ -173,7 +173,7 @@ export const patchExt = (value: string, _ext?: string) =>
 
 export const patchLocation = (value: string, nameMap: Record<string, string>, name: string) => {
   const _value = value.startsWith('.')
-    ? path.resolve(path.dirname(name), trimExt(value))
+    ? path.join(path.dirname(name), trimExt(value))
     : value
 
   return nameMap[_value] || _value
