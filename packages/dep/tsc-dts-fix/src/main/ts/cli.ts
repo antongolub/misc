@@ -16,11 +16,11 @@ export const camelizeFlags = (flags: Record<string, any>) => Object.fromEntries(
   v
 ])))
 
-export const run = async (exit = process.exit, _cwd = process.cwd()) => {
+export const run = async (exit = process.exit, _opts: any) => {
   try {
-    const opts = await parseArgv()
+    const opts = _opts || await parseArgv()
     const declarations = generateDts(opts)
-    const { dryRun, cwd = _cwd } = opts as any
+    const { dryRun, cwd} = opts as any
 
     if (dryRun) {
       process.stdout.write(JSON.stringify(declarations, null, 2))

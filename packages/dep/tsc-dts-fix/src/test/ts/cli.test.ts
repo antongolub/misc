@@ -21,7 +21,10 @@ describe('cli', () => {
   it('run()', async () => {
     await run(
       (code: number) => console.log('exit code=', code),
-      path.resolve(fixtures, 'name-clash')
+      {
+        cwd: path.resolve(fixtures, 'name-clash'),
+        strategy: 'bundle',
+      }
     )
   })
 })
