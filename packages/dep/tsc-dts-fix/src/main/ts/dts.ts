@@ -36,10 +36,12 @@ export const normalizeOpts = (opts: TOptions = {}): TOptionsNormalized => ({
   input: [opts.input ?? './index.ts'].flat(),
 })
 
+const BUNDLE = 'bundle.d.ts'
+
 export const generateDts = (opts?: TOptions): Record<string, string> => {
   const _opts = normalizeOpts(opts)
   const {input, compilerOptions, strategy} = _opts
-  const outFile = strategy === 'bundle' ? 'bundle.d.ts' : undefined
+  const outFile = strategy === 'bundle' ? BUNDLE : undefined
   const rootDir = compilerOptions.rootDir ?? '../'.repeat(100)
   const declarations = compile([input].flat(), {
     ...compilerOptions,
@@ -50,11 +52,11 @@ export const generateDts = (opts?: TOptions): Record<string, string> => {
   })
 
   if (strategy === 'merge') {
-    return {[outFile!]: formatDtsBundle(parseDtsChunks(declarations), _opts)}
+    return {[BUNDLE]: formatDtsBundle(parseDtsChunks(declarations), _opts)}
   }
 
   if (strategy === 'bundle') {
-    return {[outFile!]: formatDtsBundle(parseDtsBundle(declarations[0].contents), _opts)}
+    return {[BUNDLE]: formatDtsBundle(parseDtsBundle(declarations[0].contents), _opts)}
   }
 
   if (strategy === 'separate') {
@@ -154,7 +156,7 @@ export const genEntryPointsDeclarations = (namesMap: Record<string, string>, opt
   return Object.entries(entryPoints).map(([entry, ref]) =>
     ({
       name: path.join(pkgName, entry),
-      contents: `    export * from "${namesMap[log(patchExt(path.join(namesMap._root, ref), ''))]}"`
+      contents: `    export * from "${namesMap[patchExt(path.join(namesMap._root, ref), '')]}"`
     })
   )
 }
