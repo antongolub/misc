@@ -18,9 +18,18 @@ type TExtendCtx = {
 
 export type TExtendOpts = Partial<TExtendCtx>
 
+export const loader = async (id: string, cwd: string) => {
+  const abspath = path.resolve(cwd, id)
+
+  return (id.endsWith('.json')
+    ? (await import(abspath, {assert: {type: 'json'}}))
+    : (await import(abspath))
+  )?.default
+}
+
 export const populate = async (config: any, {
   cwd = process.cwd(),
-  load = async (id, cwd) => (await import(path.resolve(cwd, id)))?.default,
+  load = loader,
   merge,
   clone = v => JSON.parse(JSON.stringify(v)),
   extends: _extends
