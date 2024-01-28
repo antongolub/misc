@@ -27,6 +27,7 @@
 | [esbuild-plugin-entry-chunks](./packages/esbuild/plugin-entry-chunks) | Esbuild plugin to compose entryPoints as chunks | [![npm (scoped)](https://img.shields.io/npm/v/esbuild-plugin-entry-chunks/latest.svg?label=&color=white)](https://www.npmjs.com/package/esbuild-plugin-entry-chunks) | C |
 | [lcov-utils](./packages/lcov-utils) | LCOV utils: parse, format, merge | [![npm (scoped)](https://img.shields.io/npm/v/lcov-utils/latest.svg?label=&color=white)](https://www.npmjs.com/package/lcov-utils) | W |
 | [topoconfig](./packages/topoconfig/core) | Toposource-enhanced uniconfig | [![npm (scoped)](https://img.shields.io/npm/v/topoconfig/latest.svg?label=&color=white)](https://www.npmjs.com/package/topoconfig) | W |
+| [tsc-dts-fix](./packages/dep/tsc-dts-fix) | Applies some fixes to libdefs produced with tsc | [![npm (scoped)](https://img.shields.io/npm/v/tsc-dts-fix/latest.svg?label=&color=white)](https://www.npmjs.com/package/tsc-dts-fix) | W |
 | [upkeeper](./packages/dep/upkeeper) | Script generator for deps updating | [![npm (scoped)](https://img.shields.io/npm/v/upkeeper/latest.svg?label=&color=white)](https://www.npmjs.com/package/upkeeper) | C |
 
 ## License

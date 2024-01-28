@@ -43,7 +43,7 @@
   "bugs": {
     "url": "https://github.com/antongolub/misc/issues"
   },
-  "homepage": "https://github.com/antongolub/misc#readme",
+  "homepage": "https://github.com/antongolub/misc/tree/master/packages/dep/tsc-dts-fix",
   "peerDependencies": {
     "typescript": ">=4.0.0"
   },
