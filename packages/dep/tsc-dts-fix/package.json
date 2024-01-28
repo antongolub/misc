@@ -2,9 +2,11 @@
   "name": "tsc-dts-fix",
   "version": "0.0.0",
   "description": "Applies some fixes to libdefs produced with tsc",
-  "private": true,
   "type": "module",
   "main": "target/cjs/index.cjs",
+  "bin": {
+    "tsc-dts-fix": "target/esm/cli.mjs"
+  },
   "exports": {
     ".": {
       "types": "./target/dts/index.d.ts",
