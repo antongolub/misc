@@ -16,6 +16,7 @@
     "build": "yarn bulk:topobuild",
     "build:all": "yarn warmup && yarn workspaces foreach -Ap --exclude . run build",
     "test": "yarn bulk:topobuild --no-build --no-publish",
+    "test:clones": "npx jscpd@3.5.10 --pattern packages/**/src/main/ts/**/*.ts",
     "cov": "node ./packages/infra/scripts/cov.mjs",
     "depup": "yarn workspace upkeeper build:js && upkeeper --config='{\"keepers\": [\"npm\"], \"diff\": \"sed\", \"combine\": true, \"post\": \"yarn\"}'",
     "lint": "yarn workspaces foreach -Ap --exclude packages/infra --exclude . run test:eslint"
