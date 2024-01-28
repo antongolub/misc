@@ -77,6 +77,12 @@ declare module "package-name" {
 
     assert.equal(declarations['depseek.d.ts'], `export declare const foo = "bar";\n`)
   })
+
+  it('throws on empty declarations', () => {
+    assert.throws(() => generateDts({
+      input: path.resolve(fixtures, 'empty/index.ts'),
+    }))
+  })
 })
 
 describe('patchExt()', () => {
