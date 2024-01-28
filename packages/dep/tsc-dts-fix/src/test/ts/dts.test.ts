@@ -2,7 +2,7 @@ import * as assert from 'node:assert'
 import * as path from 'node:path'
 import { describe, it } from 'node:test'
 import { fileURLToPath } from 'node:url'
-import { generateDts, patchExt } from '../../main/ts'
+import { generateDts, patchExt } from '../../main/ts/dts.ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const fixtures = path.resolve(__dirname, '../fixtures')

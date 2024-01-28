@@ -85,7 +85,7 @@ While the [dts-bundle-generator](https://github.com/timocov/dts-bundle-generator
 * explicitly declare pkg entrypoints
 
 ## Status
-Blueprint
+Working draft
 
 ## Install
 ```sh

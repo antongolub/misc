@@ -1,7 +1,9 @@
 import path from 'node:path'
-import { patchRefs } from 'depseek'
+import {patchRefs} from 'depseek'
 import ts from 'typescript'
+
 import type {TOptions, TOptionsNormalized, TAssets, TDeclarations} from './interface.js'
+import {findCommon} from './util.js'
 
 export const normalizeOpts = (opts: TOptions = {}): TOptionsNormalized => ({
   strategy: 'separate',
@@ -100,7 +102,7 @@ export const parseDtsChunks = (declarations: TDeclarations): TAssets => {
         })
 
       return ({
-        name: name.slice(0, -5), // .d.ts, .d.tsx, .d.cts, d.mts .d.ctsx, d.mtsx?
+        name: name.slice(0, -2 -path.extname(name).length), // .d.ts, .d.tsx, .d.cts, d.mts .d.ctsx, .d.mtsx
         contents: fixLines(lines).join('\n')
       })
     })
@@ -113,7 +115,7 @@ export const parseDtsChunks = (declarations: TDeclarations): TAssets => {
 
 export const patchDeclarationsExt = (declarations: TDeclarations, ext?: string): TDeclarations => {
   const actualNames = declarations.map(d => d.name)
-  const rootDir = findRoot(actualNames)
+  const rootDir = findCommon(actualNames)
 
   return declarations.map(({name, contents}) => ({
     name: name.slice(rootDir.length),
@@ -156,7 +158,7 @@ ${contents}
 export const getNamesMap = (declarations: TDeclarations, opts: TOptionsNormalized) => {
   const {conceal, ext, pkgName} = opts
   const actualNames = declarations.map(d => d.name)
-  const rootDir = findRoot(actualNames)
+  const rootDir = findCommon(actualNames)
 
   return actualNames.reduce<Record<string, string>>((m, v) => {
     m[v] = conceal
@@ -194,13 +196,10 @@ export const compile =(fileNames: string[], options: ts.CompilerOptions): TDecla
   const program = ts.createProgram(fileNames, options, host);
   program.emit()
 
-  console.log('compile time', Date.now() - n)
+  console.log('tsc compile time', Date.now() - n)
   return Object.entries(createdFiles)
     .map(([name, contents]) => ({name, contents}))
 }
-
-const findRoot = (files: string[]) =>
-  files[0].slice(0, [...(files[0])].findIndex((c, i) => files.some(f => f.charAt(i) !== c)))
 
 const fixLines = (lines: string[]): string[] => lines.map(fixLine)
 
@@ -211,5 +210,3 @@ const fixTabs = (l: string, symbol = '  ', n = 2): string => `${symbol.repeat(n)
 const fixExportDeclare = (l: string): string => l.startsWith('export declare ') ? `export ${l.slice(15)}`: l
 
 const fixShebang = (l: string): string => l.startsWith('#!') ? '' : l
-
-const log = (any: any) => {console.log(any); return any}

@@ -10,11 +10,7 @@ import {populate} from '@topoconfig/extends'
 
 import {TOptions} from './interface.ts'
 import {generateDts} from './dts.ts'
-
-export const camelizeFlags = (flags: Record<string, any>) => Object.fromEntries(Object.entries(flags).map(([k, v]) => ([
-  k.replace(/-([a-z])/g, (_, c) => c.toUpperCase()),
-  v
-])))
+import {camelizeRecord} from './util.js'
 
 export const run = async (exit = process.exit, _opts?: any) => {
   try {
@@ -37,7 +33,7 @@ export const run = async (exit = process.exit, _opts?: any) => {
 }
 
 export const parseArgv = async (argv = process.argv.slice(2)): Promise<TOptions> => {
-  const flags = camelizeFlags(minimist(argv, {
+  const flags = camelizeRecord(minimist(argv, {
     string: ['tsconfig', 'strategy', 'ext', 'pkg-name', 'entry-points', 'cwd'],
     boolean: ['conceal', 'dry-run'],
   }))
@@ -62,5 +58,3 @@ if (import.meta.url.startsWith('file:')) {
     (async () => run())()
   }
 }
-
-
