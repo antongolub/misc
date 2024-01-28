@@ -4,9 +4,7 @@
   "description": "Applies some fixes to libdefs produced with tsc",
   "type": "module",
   "main": "target/cjs/index.cjs",
-  "bin": {
-    "tsc-dts-fix": "target/esm/cli.mjs"
-  },
+  "bin": "target/esm/cli.mjs",
   "exports": {
     ".": {
       "types": "./target/dts/index.d.ts",

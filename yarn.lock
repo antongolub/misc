@@ -5107,6 +5107,8 @@ __metadata:
     minimist: "npm:^1.2.8"
   peerDependencies:
     typescript: ">=4.0.0"
+  bin:
+    tsc-dts-fix: target/esm/cli.mjs
   languageName: unknown
   linkType: soft
 
