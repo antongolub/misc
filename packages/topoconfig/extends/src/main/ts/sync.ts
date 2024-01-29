@@ -13,7 +13,7 @@ const _require = import.meta.url ? createRequire(import.meta.url) : require
 const loader = (id: string, cwd: string) =>
   _require(path.resolve(cwd, id))
 
-export const populateSync = (config: any, opts: PopulateOpts = {}): Record<any, any> => {
+export const populateSync = <R = Record<any, any>>(config: any, opts: PopulateOpts = {}): R => {
   const _config = config
   const _opts = normalizeOpts(opts, loader, populateSync)
   const _extras: any[] = loadExtras(_config, _opts)

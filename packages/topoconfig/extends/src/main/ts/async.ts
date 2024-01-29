@@ -16,7 +16,7 @@ const loader = async (id: string, cwd: string) => {
   )?.default
 }
 
-export const populate = async (config: any, opts: PopulateOpts = {}): Promise<Record<any, any>> => {
+export const populate = async <R = Record<any, any>>(config: any, opts: PopulateOpts = {}): Promise<R> => {
   const _config = await config
   const _opts = normalizeOpts(opts, loader, populate)
   const _extras: any[] = await Promise.all(loadExtras(_config, _opts))
