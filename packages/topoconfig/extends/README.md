@@ -53,6 +53,23 @@ const result = await populate(config, opts)
  */
 ```
 
+The sync version is also available. But keep in mind that `.mjs` (ESM) files cannot be processed in this mode.
+```ts
+import { populateSync } from '@topoconfig/extends'
+
+const result = populateSync({
+  extends: '../base.config.cjs',
+  foo: 'foo',
+  bar: {
+    a: 'a'
+  }
+}, {
+  merge: {
+    bar: 'merge'
+  }
+})
+```
+
 | Option | Description                                                               | Default                                                             |
 |---|---------------------------------------------------------------------------|---------------------------------------------------------------------|
 | `cwd` | Current working directory                                                 | `process.cwd()`                                                     |
