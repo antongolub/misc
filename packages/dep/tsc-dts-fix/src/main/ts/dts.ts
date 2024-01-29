@@ -23,18 +23,8 @@ const BUNDLE = 'bundle.d.ts'
 
 export const generateDts = (opts?: TOptions): Record<string, string> => {
   const _opts = normalizeOpts(opts)
-  const {input, compilerOptions, strategy, cwd} = _opts
-  const outFile = strategy === 'bundle' ? BUNDLE : undefined
-  const rootDir = compilerOptions.rootDir ?? '../'.repeat(100)
-  const inputs = [input].flat().map(v => path.resolve(cwd, v))
-  const declarations = compile(inputs, {
-    // https://github.com/microsoft/TypeScript/issues/23564
-    // ...compilerOptions,
-    emitDeclarationOnly: true,
-    declaration: true,
-    outFile,
-    rootDir,
-  })
+  const { strategy} = _opts
+  const declarations = getDeclarations(_opts)
 
   if (declarations.length === 0) {
     throw new Error(`No declarations found. Check your options: ${JSON.stringify(_opts, null, 2)}`)
@@ -54,6 +44,23 @@ export const generateDts = (opts?: TOptions): Record<string, string> => {
   }
 
   throw new Error(`Unknown strategy: ${strategy}`)
+}
+
+export const getDeclarations = (opts: TOptionsNormalized): TDeclarations => {
+  const {input, compilerOptions, strategy, cwd} = opts
+  const outFile = strategy === 'bundle' ? BUNDLE : undefined
+  const rootDir = compilerOptions.rootDir ?? '../'.repeat(100)
+  const inputs = [input].flat().map(v => path.resolve(cwd, v))
+
+  return opts?.declarations ??
+    compile(inputs, {
+      // https://github.com/microsoft/TypeScript/issues/23564
+      // ...compilerOptions,
+      emitDeclarationOnly: true,
+      declaration: true,
+      outFile,
+      rootDir,
+    })
 }
 
 export const parseDtsBundle = (input: string): TAssets => {

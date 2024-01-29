@@ -16,6 +16,7 @@ export type TOptionsNormalized = {
   entryPoints: Record<string, string>
   conceal: boolean
   cwd: string
+  declarations?: TDeclarations
   // force: boolean // node prefix
   // shake: boolean // tree shake redundant declarations
 }
