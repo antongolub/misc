@@ -13,6 +13,7 @@ export type TOptionsNormalized = {
   strategy: 'separate' | 'bundle' | 'merge'
   ext: string
   pkgName: string
+  outDir: string
   entryPoints: Record<string, string>
   conceal: boolean
   cwd: string

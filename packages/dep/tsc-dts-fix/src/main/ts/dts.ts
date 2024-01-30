@@ -16,6 +16,7 @@ export const normalizeOpts = (opts: TOptions = {}): TOptionsNormalized => ({
     '.': './index.ts'
   },
   ...opts,
+  outDir: opts.outDir ?? opts.compilerOptions?.outDir ?? '',
   input: [opts.input ?? './index.ts'].flat(),
 })
 
@@ -167,14 +168,14 @@ ${contents}
 }`
 
 export const getNamesMap = (declarations: TDeclarations, opts: TOptionsNormalized) => {
-  const {conceal, ext, pkgName} = opts
+  const {conceal, ext, pkgName, outDir} = opts
   const actualNames = declarations.map(d => d.name)
   const rootDir = findCommon(actualNames)
 
   return actualNames.reduce<Record<string, string>>((m, v) => {
-    m[v] = conceal
+    m[patchExt(v, '')] = conceal
       ? 'm' + Math.random().toString(16).slice(2)
-      : path.join(pkgName, patchExt(v.slice(rootDir.length), ext))
+      : path.join(pkgName, outDir, patchExt(v.slice(rootDir.length), ext))
     return m
   }, {_root: rootDir})
 }
