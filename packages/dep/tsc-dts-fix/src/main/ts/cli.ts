@@ -9,7 +9,7 @@ import minimist from 'minimist'
 import {populate} from '@topoconfig/extends'
 
 import {TOptions} from './interface.ts'
-import {generateDts} from './dts.ts'
+import {generateDts} from './index.ts'
 import {camelizeRecord} from './util.js'
 
 export const run = async (exit = process.exit, _opts?: any) => {
