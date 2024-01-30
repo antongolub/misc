@@ -5,7 +5,7 @@
 [![npm (scoped)](https://img.shields.io/npm/v/@topoconfig/extends/latest.svg?label=npm&color=white)](https://www.npmjs.com/package/@topoconfig/extends)
 
 ## Motivation
-Many tools provide `extends` feature for their configs, but they _seem_ not flexible enough. Different scenarios require corresponding approaches. For example, `tsconfig` applies deep merge to `compilerOptions`, while `prettier` concatenates `overrides` array sections, etc. So we have to implement these nuances on site every time, and it's tiring and annoying a bit. I think we could make this a little simpler.
+Many tools provide `extends` feature for their configs, but it works a little differently in each place. For example, `tsconfig` applies deep merge to `compilerOptions`, while `prettier` concatenates `overrides` array sections, etc. So we have to implement these nuances on site every time, and it's tiring and annoying a bit. I think we could make this a little simpler.
 
 ## Status
 Working draft
@@ -70,10 +70,10 @@ const result = populateSync({
 })
 ```
 
-| Option | Description                                                               | Default                                                             |
-|---|---------------------------------------------------------------------------|---------------------------------------------------------------------|
-| `cwd` | Current working directory                                                 | `process.cwd()`                                                     |
-| `load` | Resource loader                                                           | `async (id, cwd) => (await import(path.resolve(cwd, id)))?.default` |
+| Option  | Description                                                               | Default                                                             |
+|---------|---------------------------------------------------------------------------|---------------------------------------------------------------------|
+| `cwd`   | Current working directory                                                 | `process.cwd()`                                                     |
+| `load`  | Resource loader                                                           | `async (id, cwd) => (await import(path.resolve(cwd, id)))?.default` |
 | `merge` | Merge function. Smth like `Object.assign` or `deepExtend` should be ok.   | `extend` with default opts                                          |
 | `clone` | Internal clone function. Customize to handle non-JSON types like function | `v => JSON.parse(JSON.stringify(v))`                                |
 
