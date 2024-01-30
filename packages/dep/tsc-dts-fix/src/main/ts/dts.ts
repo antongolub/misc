@@ -3,7 +3,7 @@ import {patchRefs} from 'depseek'
 import ts from 'typescript'
 
 import type {TOptions, TOptionsNormalized, TAssets, TDeclarations} from './interface.js'
-import {findCommon} from './util.js'
+import {findBase} from './util.js'
 
 export const normalizeOpts = (opts: TOptions = {}): TOptionsNormalized => ({
   strategy: 'separate',
@@ -123,7 +123,7 @@ export const parseDtsChunks = (declarations: TDeclarations): TAssets => {
 
 export const patchDeclarationsExt = (declarations: TDeclarations, ext?: string): TDeclarations => {
   const actualNames = declarations.map(d => d.name)
-  const rootDir = findCommon(actualNames)
+  const rootDir = findBase(actualNames)
 
   return declarations.map(({name, contents}) => ({
     name: name.slice(rootDir.length),
@@ -170,7 +170,7 @@ ${contents}
 export const getNamesMap = (declarations: TDeclarations, opts: TOptionsNormalized) => {
   const {conceal, ext, pkgName, outDir} = opts
   const actualNames = declarations.map(d => d.name)
-  const rootDir = findCommon(actualNames)
+  const rootDir = findBase(actualNames)
 
   return actualNames.reduce<Record<string, string>>((m, v) => {
     m[patchExt(v, '')] = conceal
