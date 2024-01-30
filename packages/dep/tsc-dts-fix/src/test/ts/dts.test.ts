@@ -83,6 +83,16 @@ declare module "package-name" {
       input: path.resolve(fixtures, 'empty/index.ts'),
     }))
   })
+
+  it('throws on empty broken entryPoints mapping', () => {
+    assert.throws(() => generateDts({
+      input: path.resolve(fixtures, 'name-clash/index.ts'),
+      strategy: 'bundle',
+      entryPoints: {
+        '.': './unknown.ts'
+      }
+    }))
+  })
 })
 
 describe('patchExt()', () => {

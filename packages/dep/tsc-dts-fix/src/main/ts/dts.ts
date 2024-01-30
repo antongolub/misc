@@ -149,12 +149,16 @@ export const patchModuleDeclarations = (declarations: TDeclarations, namesMap: R
 
 export const genEntryPointsDeclarations = (namesMap: Record<string, string>, opts: TOptionsNormalized) => {
   const {entryPoints, pkgName, ext} = opts
-  return Object.entries(entryPoints).map(([entry, ref]) =>
-    ({
+  return Object.entries(entryPoints).map(([entry, ref]) => {
+    const _ref = namesMap[patchExt(path.join(namesMap._root, ref), '')]
+
+    if (!_ref) throw new Error(`Entry point ${ref} not found`)
+
+    return ({
       name: path.join(pkgName, entry),
-      contents: `    export * from "${namesMap[patchExt(path.join(namesMap._root, ref), '')]}"`
+      contents: `    export * from "${_ref}"`
     })
-  )
+  })
 }
 
 export const formatModuleDeclaration = ({name, contents}: TDeclarations[number]) =>
