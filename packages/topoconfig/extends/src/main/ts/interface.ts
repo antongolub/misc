@@ -4,9 +4,10 @@ export type PopulateOpts = {
   merge?: ExtraMerger | Rules
   clone?: ExtraCloner
   extends?: ExtendsDeclaration
+  rules?: Rules
 }
 
-export type Populate = (config: any, opts?: PopulateOpts) => any
+export type Populate = (config: any, opts?: PopulateOpts | Rules) => any
 
 export type Ctx = {
   cwd: string

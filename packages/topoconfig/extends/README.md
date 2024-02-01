@@ -18,7 +18,7 @@ npm i @topoconfig/extends
 ## Usage
 ### populate
 ```ts
-import { populate }  from '@topoconfig/extends'
+import { populate } from '@topoconfig/extends'
 
 /** Imagine ../base.config.cjs contents
 module.export = {
@@ -35,22 +35,19 @@ const config = {
     a: 'a'
   }
 }
-const opts = {
-  // define prop-specific merging rules, see `extend` API below
-  merge: {
-    bar: 'merge'
-  }
+
+const result = await populate(config, {
+  bar: 'merge'
+})
+
+// returns
+{
+  foo: 'foo',
+  bar: {
+    a: 'a',
+    b: 'b'
+  } // ← bar holds both fields from the base and the current config
 }
-const result = await populate(config, opts)
-/**
- {
-   foo: 'foo',
-   bar: {
-     a: 'a',
-     b: 'b'
-   }
- }
- */
 ```
 
 The sync version is also available. But keep in mind that `.mjs` (ESM) files cannot be processed in this mode.
@@ -64,43 +61,99 @@ const result = populateSync({
     a: 'a'
   }
 }, {
-  merge: {
-    bar: 'merge'
-  }
+  bar: 'merge'
 })
 ```
 
-| Option  | Description                                                               | Default                                                             |
-|---------|---------------------------------------------------------------------------|---------------------------------------------------------------------|
-| `cwd`   | Current working directory                                                 | `process.cwd()`                                                     |
-| `load`  | Resource loader                                                           | `async (id, cwd) => (await import(path.resolve(cwd, id)))?.default` |
-| `merge` | Merge function. Smth like `Object.assign` or `deepExtend` should be ok.   | `extend` with default opts                                          |
-| `clone` | Internal clone function. Customize to handle non-JSON types like function | `v => JSON.parse(JSON.stringify(v))`                                |
-
-Shortcut: if `merge` is an object, but not a function type, it will be treated as `extend` rules preset.
-```ts
-const opts = {
-  merge: {
-    foo: 'merge',
-    bar: 'override'
-  }
-}
-```
-The config's `extends` property may hold objects, strings or string[]. The last two types will be resolved via the `load` function.
+The config's `extends` property may hold objects, strings or string[]. The last two types will be processed via the internal `load` function.
 ```ts
 const config = {
   extends: [
     '../base.config.cjs',
     {
-      // Btw, nested `extends` will be processed too
+      // Of cource, nested `extends` will be processed too
       extends: ['../../other.config.mjs']
     }
   ]
 }
 ```
 
+You can specify how to join config fields obtained from different sources.
+There are just two strategies: `merge` and `override`. The last one is the default.
+```ts
+{
+  foo: 'merge',
+  bar: 'override',
+  baz: 'merge',
+  'baz.qux': 'merge'
+}
+```
+
+To switch the default behavior use asterisk `*` as a key:
+```ts
+{
+  '*': 'merge'
+}
+```
+
+## Customization
+Options accepts join rules, but it's also suitable to override some internals:
+
+| Option  | Description                                                               | Default                                                             |
+|---------|---------------------------------------------------------------------------|---------------------------------------------------------------------|
+| `cwd`   | Current working directory                                                 | `process.cwd()`                                                     |
+| `load`  | Resource loader                                                           | `async (id, cwd) => (await import(path.resolve(cwd, id)))?.default` |
+| `merge` | Merge function. Smth like `Object.assign` or `deepExtend` should be ok.   | built-in `extend`                                                   |
+| `clone` | Internal clone function. Customize to handle non-JSON types like function | `v => JSON.parse(JSON.stringify(v))`                                |
+| `rules` | Merging rules                                                             | `{'*': 'override'}`                                                 |
+
+```ts
+const opts = {
+  cwd: '/foo/bar',
+  clone: lodash.cloneDeep,
+  rules: {
+    '*': 'merge'
+  }
+}
+```
+
+Shortcut: if the `merge` option is a plain object it will be treated as `rules`.
+```ts
+const opts = {
+  cwd: '/foo/bar',
+  merge: {
+    foo: 'merge',
+    bar: 'override'
+  }
+}
+```
+
+### Cosmiconfig?
+Definitely yes! You can use it to load configs from various formats:
+```ts
+const raw = {
+  a: 'a',
+  extends: '../config.extra.as.json'
+}
+const config = await populate(raw, {
+  load: async (id: string, cwd: string) => (await cosmiconfig('foo', {
+    searchPlaces: [id]
+  }).search(cwd))?.config
+})
+```
+Or even like:
+```ts
+const {load} = cosmiconfig('foo')
+const config = await populate(raw, {
+  load: async (id: string, cwd: string) => (await load(path.resolve(cwd, id)))?.config
+})
+```
+
+## Internals
+To simplify tweak ups some internals are exposed as separate functions.
+
 ### extend
-A configurable sources merger. Defines how exactly injected fields should be composed: `merge` or `override`. Default strategy is `override`.
+Accepts objects and merges them according to the rules.
 
 ```ts
 import { extend } from '@topoconfig/extends'
@@ -146,28 +199,18 @@ const result = extend({sources, rules})
   c: 'c'
 }
 ```
-You can apply `override` as default by setting `rules: {'*': 'override'}`
 
-### Cosmiconfig?
-Definitely yes! You can use it to load configs from various formats:
+### load
+Resource loader in two flavors: sync and async.
 ```ts
-const raw = {
-  a: 'a',
-  extends: '../config.extra.as.json'
-}
-const config = await populate(raw, {
-  load: async (id: string, cwd: string) => (await cosmiconfig('foo', {
-    searchPlaces: [id]
-  }).search(cwd))?.config
-})
+import { load, loadSync } from '@topoconfig/extends'
+
+const foo = await load('../foo.mjs', '/some/cwd/')
+const bar = loadSync('../bar.json', '/some/bar')
 ```
-Or even like:
-```ts
-const {load} = cosmiconfig('foo')
-const config = await populate(raw, {
-  load: async (id: string, cwd: string) => (await load(path.resolve(cwd, id)))?.config
-})
-```
+
+### clone
+That's just a wrapper around `JSON.parse(JSON.stringify(v))`.
 
 ## Refs
 * [humanwhocodes/config-array](https://github.com/humanwhocodes/config-array)

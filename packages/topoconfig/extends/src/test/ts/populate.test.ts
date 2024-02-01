@@ -115,7 +115,7 @@ describe('populate()', () => {
           ]
         },
         {
-          merge: {
+          rules: {
             a: 'merge',
             'a.b': 'merge'
           },

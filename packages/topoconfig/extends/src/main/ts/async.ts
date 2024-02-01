@@ -7,7 +7,7 @@ import {
   assembleValue
 } from './common.ts'
 
-const loader = async (id: string, cwd: string) => {
+export const load = async (id: string, cwd: string) => {
   const abspath = path.resolve(cwd, id)
 
   return (id.endsWith('.json')
@@ -18,7 +18,7 @@ const loader = async (id: string, cwd: string) => {
 
 export const populate = async <R = Record<any, any>>(config: any, opts: PopulateOpts = {}): Promise<R> => {
   const _config = await config
-  const _opts = normalizeOpts(opts, loader, populate)
+  const _opts = normalizeOpts(opts, load, populate)
   const _extras: any[] = await Promise.all(loadExtras(_config, _opts))
 
   return assembleValue(_config, _extras, _opts.clone, _opts.merge)
