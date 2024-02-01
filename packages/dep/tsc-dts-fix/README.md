@@ -131,6 +131,7 @@ tsc-dts-fix --strategy='merge' --pkg-name='@foo/bar'
 * [guoyunhe/bundle-dts](https://github.com/guoyunhe/bundle-dts)
 * [bundle-dts](https://www.npmjs.com/package/bundle-dts) `npm`
 * [antongolub/tsc-esm-fix](https://github.com/antongolub/tsc-esm-fix)
+* [Swatinem/rollup-plugin-dts](https://github.com/Swatinem/rollup-plugin-dts)
 
 ## License
 [MIT](./LICENSE)
