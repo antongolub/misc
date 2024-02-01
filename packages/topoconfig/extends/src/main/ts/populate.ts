@@ -14,20 +14,24 @@ import {load, loadSync} from './load.js'
 import {extend} from './extend.js'
 
 export const populate = async <R = Record<any, any>>(config: any, opts: PopulateOpts = {}): Promise<R> => {
-  const _config = await config
-  const _opts = normalizeOpts(opts, load, populate)
-  const _extras: any[] = await Promise.all(populateExtras(_config, _opts))
+  const ctx = createCtx(opts, load, populate, await config)
+  const _config = await loadConfig(ctx)
+  const extras: any[] = await Promise.all(populateExtras(_config, ctx))
 
-  return assembleValue(_config, _extras, _opts.clone, _opts.merge)
+  return assembleValue(_config, extras, ctx.clone, ctx.merge)
 }
 
 export const populateSync = <R = Record<any, any>>(config: any, opts: PopulateOpts = {}): R => {
-  const _config = config
-  const _opts = normalizeOpts(opts, loadSync, populateSync)
-  const _extras: any[] = populateExtras(_config, _opts)
+  const ctx = createCtx(opts, loadSync, populateSync, config)
+  const _config = loadConfig(ctx)
+  const extras: any[] = populateExtras(_config, ctx)
 
-  return assembleValue(_config, _extras, _opts.clone, _opts.merge)
+  return assembleValue(_config, extras, ctx.clone, ctx.merge)
 }
+
+const loadConfig = ({load, config, cwd}: Ctx) => typeof config === 'string'
+  ? load(path.basename(config), cwd)
+  : config
 
 export const clone = <T = any>(v: T) => JSON.parse(JSON.stringify(v))
 
@@ -60,15 +64,21 @@ export const populateExtra = <P extends (...args: any[]) => any>({
   })
 }
 
-export const normalizeOpts = (opts: PopulateOpts, loader: ExtraLoader, populate: Populate): Ctx => {
+export const createCtx = (opts: PopulateOpts, loader: ExtraLoader, populate: Populate, config: any): Ctx => {
   const _opts = parseOpts(opts)
+  const base = path.resolve(process.cwd(), _opts.cwd ?? '.')
+  const cwd = typeof config === 'string'
+    ? path.resolve(base, path.dirname(config))
+    : base
+
   return ({
-    cwd: process.cwd(),
     load: loader,
     clone: clone,
     ..._opts,
     merge: buildMerger(_opts.merge, _opts.rules),
-    populate
+    populate,
+    cwd,
+    config,
   })
 }
 export const parseOpts = (opts: PopulateOpts | Rules = {}): PopulateOpts =>

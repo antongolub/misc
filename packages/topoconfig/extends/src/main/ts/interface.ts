@@ -16,6 +16,7 @@ export type Ctx = {
   merge: ExtraMerger
   clone: ExtraCloner
   extends?: ExtendsDeclaration
+  config: any
 }
 
 export type ExtendsDeclaration = string | Record<any, any> | Array<string | Record<any, any>>

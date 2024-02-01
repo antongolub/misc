@@ -44,6 +44,13 @@ describe('populate()', () => {
       }
     ],
     [
+      'loads a config from a file',
+      [path.resolve(fixtures, 'extra1.json')],
+      {
+        baz: 'qux'
+      }
+    ],
+    [
       'works with cosmiconfic search API',
       [
         {

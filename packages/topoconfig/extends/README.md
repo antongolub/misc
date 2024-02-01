@@ -52,6 +52,13 @@ const result = await populate(config, {
 }
 ```
 
+If the `config` param is a string it will be treated as a path and loaded.
+```ts
+const result = await populate('tsconfig.json', {
+  compilerOptions: 'merge'
+})
+```
+
 The sync version is also available. But keep in mind that `.mjs` (ESM) files cannot be processed in this mode.
 ```ts
 import { populateSync } from '@topoconfig/extends'
@@ -135,7 +142,7 @@ Definitely yes! You can use it to load configs from various formats:
 ```ts
 const raw = {
   a: 'a',
-  extends: '../config.extra.as.json'
+  extends: '../config.extra.as.yaml'
 }
 const config = await populate(raw, {
   load: async (id: string, cwd: string) => (await cosmiconfig('foo', {
