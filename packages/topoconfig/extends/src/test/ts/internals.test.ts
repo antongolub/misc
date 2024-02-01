@@ -1,8 +1,8 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { parseOpts } from '../../main/ts/common.ts'
+import { parseOpts } from '../../main/ts/populate.ts'
 
-describe('common', () => {
+describe('internals', () => {
   it('parseOpts() detects Rules and PopulateOpts', () => {
     assert.deepEqual(
       parseOpts({foo: 'merge', bar: 'override'}),

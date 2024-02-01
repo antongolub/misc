@@ -1,4 +1,4 @@
-export { populateSync, loadSync } from './sync.ts'
-export { populate, load } from './async.ts'
-export { extend, clone } from './common.ts'
+export { load, loadSync } from './load.ts'
+export { extend } from './extend.ts'
+export { clone, populate, populateSync } from './populate.ts'
 export * from './interface.ts'

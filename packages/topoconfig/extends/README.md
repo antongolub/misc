@@ -5,7 +5,9 @@
 [![npm (scoped)](https://img.shields.io/npm/v/@topoconfig/extends/latest.svg?label=npm&color=white)](https://www.npmjs.com/package/@topoconfig/extends)
 
 ## Motivation
-Many tools provide `extends` feature for their configs, but it works a little differently in each place. For example, `tsconfig` applies deep merge to `compilerOptions`, while `prettier` concatenates `overrides` array sections, etc. So we have to implement these nuances on site every time, and it's tiring and annoying a bit. I think we could make this a little simpler.
+Many tools provide `extends` feature for their configs, but it works a little differently in each place. For example, `tsconfig` applies deep merge to `compilerOptions`, while `prettier` concatenates `overrides` array sections, etc. So we have to implement these nuances on site every time, and it's tiring and annoying a bit. I think we could make this a little simpler. Just:
+* Load resources from various formats
+* Merge them according to the rules
 
 ## Status
 Working draft
@@ -79,7 +81,7 @@ const config = {
 ```
 
 You can specify how to join config fields obtained from different sources.
-There are just two strategies: `merge` and `override`. The last one is the default.
+There are two strategies: `merge` and `override`. The last one is the default.
 ```ts
 {
   foo: 'merge',
