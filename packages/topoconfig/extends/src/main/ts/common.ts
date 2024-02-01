@@ -44,6 +44,8 @@ const extendObject = ({result, sources, prefix, rules, index}: TExtendCtx & {res
   return result
 }
 
+export const clone = <T = any>(v: T) => JSON.parse(JSON.stringify(v))
+
 export const extend = (opts: TExtendOpts) => {
   const {
     sources= [],
@@ -91,21 +93,27 @@ export const loadExtra = <P extends (...args: any[]) => any>({
   })
 }
 
-export const normalizeOpts = (opts: PopulateOpts, loader: ExtraLoader, populate: Populate): Ctx =>
-  ({
+export const normalizeOpts = (opts: PopulateOpts, loader: ExtraLoader, populate: Populate): Ctx => {
+  const _opts = parseOpts(opts)
+  return ({
     cwd: process.cwd(),
     load: loader,
-    clone: v => JSON.parse(JSON.stringify(v)),
-    ...opts,
-    merge: buildMerger(opts.merge),
+    clone: clone,
+    ..._opts,
+    merge: buildMerger(_opts.merge, _opts.rules),
     populate
   })
+}
+export const parseOpts = (opts: PopulateOpts | Rules = {}): PopulateOpts =>
+  Object.values(opts).every(v => v === 'override' || v === 'merge')
+    ? { rules: opts as Rules }
+    : opts
 
-const buildMerger = (merge?: ExtraMerger | Rules): ExtraMerger => typeof merge === 'function'
+const buildMerger = (merge?: ExtraMerger | Rules, rules?: Rules): ExtraMerger => typeof merge === 'function'
   ? merge
   : (...sources: any[]) => extend({
     sources,
-    rules: merge
+    rules: rules || merge
   })
 
 export const loadExtras = (config: any, opts: Ctx): any[] => {
