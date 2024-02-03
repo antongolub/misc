@@ -72,6 +72,11 @@ describe('populate()', () => {
       }
     ],
     [
+      'handles looped refs',
+      [path.resolve(fixtures, 'extra-looped.json')],
+      {a: 'a'}
+    ],
+    [
       'works with cosmiconfic search API',
       [
         {

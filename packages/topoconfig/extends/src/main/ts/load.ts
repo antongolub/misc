@@ -2,6 +2,8 @@ import {createRequire} from 'node:module'
 import path from 'node:path'
 import fs from 'node:fs'
 import {Ctx} from './interface.js'
+import {isString} from './util.js'
+import {dextend} from './extend.js'
 
 const _require = import.meta.url ? createRequire(import.meta.url) : require
 
@@ -22,10 +24,21 @@ export const load = async (id: string, cwd: string) => {
     : fs.promises.readFile(abspath, 'utf8')
 }
 
-export const loadResource = ({load, config, cwd, parse}: Ctx) =>
-  pipe(config, (c: any) => typeof c === 'string'
-    ? pipe(load(c, cwd), (v: any) => typeof v === 'string' ? parse(c, v) : v)
-    : c)
+export const loadResource = ({load, config, cwd, parse, cache}: Ctx) => {
+  const key = isString(config)
+    ? path.resolve(cwd, config)
+    : config
+
+  if (!cache.has(key)) {
+    const value = pipe(config, (c: any) => isString(c)
+      ? pipe(load(c, cwd), (v: any) => isString(v) ? parse(c, v) : v)
+      : c)
+    cache.set(key, value)
+    return value
+  }
+
+  return pipe(cache.get(key), dextend)
+}
 
 const pipe = (value: any, hook: (value: any) => any) =>
   typeof value?.then === 'function'

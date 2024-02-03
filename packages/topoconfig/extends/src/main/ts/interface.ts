@@ -18,6 +18,7 @@ export type Ctx = {
   clone: ExtraCloner
   parse: ExtraParser
   extends?: ExtendsDeclaration
+  cache: Map<string, any>
   config: any
 }
 

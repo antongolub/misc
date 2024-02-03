@@ -1,8 +1,7 @@
 import {Rules, TExtendCtx, TExtendOpts} from './interface.js'
+import {isObject} from './util.js'
 
 const getRule = (p: string, rules: Rules) => rules[p] || rules['*'] || 'override'
-
-const isObject = (value: any) => typeof value === 'object' && value !== null
 
 export const extend = (opts: TExtendOpts) => {
   const {
@@ -50,4 +49,9 @@ export const extendObject = ({result, sources, prefix, rules, index}: TExtendCtx
   }
 
   return result
+}
+
+export const dextend = (v: any) => {
+  delete v?.extends
+  return v
 }
