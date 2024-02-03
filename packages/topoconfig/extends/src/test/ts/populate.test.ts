@@ -26,6 +26,35 @@ describe('populate()', () => {
       }
     ],
     [
+      'multiple `extends` works',
+      [
+        {
+          a: 'a',
+          extends: ['../fixtures/extra3.mjs', '../fixtures/extra6.cjs']
+        },
+        {cwd: __dirname}
+      ],
+      {
+        a: 'a',
+        baz: 'qux',
+        foo: 'bar',
+        arr1: [3, 4],
+        arr2: ["c", "d"]
+      }
+    ],
+    [
+      'no extends - no effects',
+      [
+        {
+          a: 'a',
+        },
+        {}
+      ],
+      {
+        a: 'a',
+      }
+    ],
+    [
       'applies a custom loader if specified',
       [
         {
