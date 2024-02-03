@@ -5,11 +5,11 @@ import {Ctx} from './interface.js'
 
 const _require = import.meta.url ? createRequire(import.meta.url) : require
 
-const exts = ['.js', '.mjs', '.cjs', '']
+const exts = new Set(['.js', '.mjs', '.cjs', ''])
 
 export const loadSync = (id: string, cwd: string) => {
   const abspath = path.resolve(cwd, id)
-  return exts.includes(path.extname(id))
+  return exts.has(path.extname(id))
     ? _require(abspath)
     : fs.readFileSync(abspath, 'utf8')
 }
@@ -17,7 +17,7 @@ export const loadSync = (id: string, cwd: string) => {
 export const load = async (id: string, cwd: string) => {
   const abspath = path.resolve(cwd, id)
 
-  return exts.includes(path.extname(id))
+  return exts.has(path.extname(id))
     ? (await import(abspath))?.default
     : fs.promises.readFile(abspath, 'utf8')
 }

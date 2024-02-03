@@ -162,7 +162,7 @@ const config = await populate('tsconfig.yaml', {
 ```
 
 ### cosmiconfig
-Definitely yes! You can use it to load configs from various formats:
+Definitely yes! You can use it to [find and load configs](https://github.com/cosmiconfig/cosmiconfig) in various ways:
 ```ts
 const raw = {
   a: 'a',
@@ -174,11 +174,23 @@ const config = await populate(raw, {
   }).search(cwd))?.config
 })
 ```
-Or even like:
+
+Or like this:
 ```ts
 const {load} = cosmiconfig('foo')
 const config = await populate(raw, {
   load: async (id: string, cwd: string) => (await load(path.resolve(cwd, id)))?.config
+})
+```
+
+Or even like this:
+```ts
+import cosmiconfig from 'cosmiconfig'
+
+const config = await populate(raw, {
+  async load(f: string, cwd: string) {
+    return (await cosmiconfig('foobar').search(cwd))?.config
+  }
 })
 ```
 

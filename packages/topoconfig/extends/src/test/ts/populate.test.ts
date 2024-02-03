@@ -90,6 +90,20 @@ describe('populate()', () => {
       }
     ],
     [
+      'the shortest comsmiconfig wrapper',
+      [
+        '*.rc',
+        {
+          cwd: fixtures,
+          load: async (f: string, cwd: string) =>
+            (await cosmiconfig('foobar').search(cwd))?.config
+        },
+      ],
+      {
+        foobar: 'baz'
+      }
+    ],
+    [
       'resolves tsconfig.json',
       [
         {},
