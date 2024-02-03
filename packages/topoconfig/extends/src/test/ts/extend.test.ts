@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { extend } from '../../main/ts/extend'
+import { extend, extendArray, extendObject } from '../../main/ts/extend'
 
 describe('extend', () => {
   const cases: [string, Parameters<typeof extend>[0], any][] = [
@@ -99,5 +99,27 @@ describe('extend', () => {
     it(name, () => {
       assert.deepEqual(extend(input), expected)
     })
+  })
+})
+
+describe('extendArray()', () => {
+  it('applies `merge` strategy', () => {
+    assert.deepEqual(extendArray({
+      result: [],
+      rules: {'*': 'merge'},
+      sources: [[1,2], [3,4]],
+      prefix: '.',
+      index: {}
+    }), [1,2,3,4])
+  })
+
+  it('applies `override` strategy', () => {
+    assert.deepEqual(extendArray({
+      result: [],
+      rules: {'*': 'override'},
+      sources: [[1,2], [3,4]],
+      prefix: '.',
+      index: {}
+    }), [3,4])
   })
 })

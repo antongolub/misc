@@ -4,6 +4,7 @@ import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { populate, populateSync } from '../../main/ts/index.ts'
 import { cosmiconfig, cosmiconfigSync } from 'cosmiconfig'
+import { load as parseYaml } from 'js-yaml'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const fixtures = path.resolve(__dirname, '../fixtures')
@@ -44,6 +45,26 @@ describe('populate()', () => {
       }
     ],
     [
+      'applies a custom parser if specified',
+      [
+        {
+          a: 'a',
+          extends: '../fixtures/extra4.yaml'
+        },
+        {
+          cwd: __dirname,
+          parse: (name, contents) =>
+            (name.endsWith('.yaml') || name.endsWith('.yml'))
+              ? parseYaml(contents)
+              : {}
+        }
+      ],
+      {
+        a: 'a',
+        b: 'b'
+      }
+    ],
+    [
       'loads a config from a file',
       [path.resolve(fixtures, 'extra1.json')],
       {
@@ -60,7 +81,7 @@ describe('populate()', () => {
         {
           cwd: __dirname,
           load: async (f: string, cwd: string) =>
-            (await cosmiconfig('foo').load(path.resolve(cwd, f)))?.config
+            (await cosmiconfig('foobar').load(path.resolve(cwd, f)))?.config
         },
       ],
       {
@@ -155,6 +176,15 @@ describe('populate()', () => {
 
 describe('populateSync()', () => {
   const cases: [string, Parameters<typeof populate>, any][] = [
+    [
+      'loads a config from a file',
+      [path.resolve(fixtures, 'extra5.json'), {arr1: 'merge', arr2: 'override'}],
+      {
+        foo: 'bar',
+        arr1: [1, 2, 3, 4],
+        arr2: ['c', 'd']
+      }
+    ],
     [
       'resolves tsconfig.json',
       [

@@ -1,6 +1,7 @@
 export type PopulateOpts = {
   cwd?: string
   load?: ExtraLoader
+  parse?: ExtraParser
   merge?: ExtraMerger | Rules
   clone?: ExtraCloner
   extends?: ExtendsDeclaration
@@ -15,6 +16,7 @@ export type Ctx = {
   load: ExtraLoader
   merge: ExtraMerger
   clone: ExtraCloner
+  parse: ExtraParser
   extends?: ExtendsDeclaration
   config: any
 }
@@ -23,6 +25,7 @@ export type ExtendsDeclaration = string | Record<any, any> | Array<string | Reco
 export type ExtraLoader = (id: string, cwd: string) => any
 export type ExtraMerger = (...args: any[]) => any
 export type ExtraCloner = <T = any>(any: T) => T
+export type ExtraParser = (id: string, contents: string) => any
 
 export type ExtendStrategy = 'override' | 'merge'
 

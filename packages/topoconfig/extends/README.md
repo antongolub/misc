@@ -9,6 +9,12 @@ Many tools provide `extends` feature for their configs, but it works a little di
 * Load resources from various formats
 * Merge them according to the rules
 
+```ts
+const tsconfig = await populate('tsconfig.json', {
+  compilerOptions: 'merge'
+})
+```
+
 ## Status
 Working draft
 
@@ -106,15 +112,16 @@ To switch the default behavior use asterisk `*` as a key:
 ```
 
 ## Customization
-Options accepts join rules, but it's also suitable to override some internals:
+Options define merging rules, but it's also suitable to override some internals:
 
-| Option  | Description                                                               | Default                                                             |
-|---------|---------------------------------------------------------------------------|---------------------------------------------------------------------|
-| `cwd`   | Current working directory                                                 | `process.cwd()`                                                     |
-| `load`  | Resource loader                                                           | `async (id, cwd) => (await import(path.resolve(cwd, id)))?.default` |
-| `merge` | Merge function. Smth like `Object.assign` or `deepExtend` should be ok.   | built-in `extend`                                                   |
-| `clone` | Internal clone function. Customize to handle non-JSON types like function | `v => JSON.parse(JSON.stringify(v))`                                |
-| `rules` | Merging rules                                                             | `{'*': 'override'}`                                                 |
+| Option  | Description                                                                | Default                                                             |
+|---------|----------------------------------------------------------------------------|---------------------------------------------------------------------|
+| `cwd`   | Current working directory                                                  | `process.cwd()`                                                     |
+| `load`  | Resource loader                                                            | `async (id, cwd) => (await import(path.resolve(cwd, id)))?.default` |
+| `parse` | Parser function. Customize to handle non-std types like `.yaml` or `.toml` | `v => v`                                                            |
+| `merge` | Merge function. Smth like `Object.assign` or `deepExtend` should be ok.    | built-in `extend`                                                   |
+| `clone` | Internal clone function. Customize to handle non-JSON types like function  | `v => JSON.parse(JSON.stringify(v))`                                |
+| `rules` | Merging rules                                                              | `{'*': 'override'}`                                                 |
 
 ```ts
 const opts = {
@@ -137,12 +144,29 @@ const opts = {
 }
 ```
 
-### Cosmiconfig?
+### yaml
+No problem, `js-yaml` or `yaml-js` at your service:
+```ts
+import {load as parseYaml} from 'js-yaml'
+import {populate} from '@topoconfig/extends'
+
+const config = await populate('tsconfig.yaml', {
+  parse: (id, contents) => {
+    if (id.endsWith('.yaml') || id.endsWith('.yml')) 
+        return parseYaml(contents)
+    if (id.endsWith('.json')) 
+        return JSON.parse(contents)
+    throw new Error(`Unsupported format: ${id}`)
+  }
+})
+```
+
+### cosmiconfig
 Definitely yes! You can use it to load configs from various formats:
 ```ts
 const raw = {
   a: 'a',
-  extends: '../config.extra.as.yaml'
+  extends: '../config.extra.in.yaml'
 }
 const config = await populate(raw, {
   load: async (id: string, cwd: string) => (await cosmiconfig('foo', {
@@ -159,7 +183,7 @@ const config = await populate(raw, {
 ```
 
 ## Internals
-To simplify tweak ups some internals are exposed as separate functions.
+To simplify tweak ups some internals are exposed.
 
 ### extend
 Accepts objects and merges them according to the rules.
@@ -210,12 +234,19 @@ const result = extend({sources, rules})
 ```
 
 ### load
-Resource loader in two flavors: sync and async.
+Resource loader in two flavors: sync and async. It uses `import/require` api for the standard formats (`.json`, `.js`, `.cjs`, `.mjs`), and `fs.read` for the rest.
 ```ts
 import { load, loadSync } from '@topoconfig/extends'
 
 const foo = await load('../foo.mjs', '/some/cwd/')
 const bar = loadSync('../bar.json', '/some/bar')
+```
+
+### parse
+Applies `JSON.parse` if the file extension is `.json`, otherwise returns the input.
+```ts
+export const parse = (name: string, contents: string) =>
+  name.endsWith('.json') ? JSON.parse(contents) : contents
 ```
 
 ### clone

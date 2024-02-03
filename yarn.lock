@@ -849,6 +849,7 @@ __metadata:
     "@antongolub/infra": "workspace:*"
     "@types/node": "npm:^20.11.6"
     cosmiconfig: "npm:^9.0.0"
+    js-yaml: "npm:^4.1.0"
   languageName: unknown
   linkType: soft
 

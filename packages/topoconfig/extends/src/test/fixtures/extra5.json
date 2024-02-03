@@ -1,0 +1,5 @@
+{
+  "extends": ["./extra6.cjs"],
+  "arr1": [1, 2],
+  "arr2": ["a", "b"]
+}

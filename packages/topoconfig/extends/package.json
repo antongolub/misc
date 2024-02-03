@@ -47,6 +47,7 @@
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
     "@types/node": "^20.11.6",
-    "cosmiconfig": "^9.0.0"
+    "cosmiconfig": "^9.0.0",
+    "js-yaml": "^4.1.0"
   }
 }

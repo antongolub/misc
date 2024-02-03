@@ -20,7 +20,7 @@ export const extend = (opts: TExtendOpts) => {
     : extendObject(ctx)
 }
 
-const extendArray = ({result, sources, prefix, rules}: TExtendCtx & {result: Array<any>}) => {
+export const extendArray = ({result, sources, prefix, rules}: TExtendCtx & {result: Array<any>}) => {
   if (getRule(prefix, rules) === 'merge') {
     result.push(...sources.flat(1))
   } else {
@@ -31,7 +31,7 @@ const extendArray = ({result, sources, prefix, rules}: TExtendCtx & {result: Arr
   return result
 }
 
-const extendObject = ({result, sources, prefix, rules, index}: TExtendCtx & {result: Record<string, any>}) => {
+export const extendObject = ({result, sources, prefix, rules, index}: TExtendCtx & {result: Record<string, any>}) => {
   for (const source of sources) {
     for (const key in source) {
       const p = `${prefix ? prefix + '.' : ''}${key}`
