@@ -24,15 +24,15 @@ export const load = async (id: string, cwd: string) => {
     : fs.promises.readFile(abspath, 'utf8')
 }
 
-export const loadResource = ({load, config, cwd, parse, cache}: Ctx) => {
+export const loadResource = ({load, config, cwd, parse, cache, clone}: Ctx) => {
   const key = isString(config)
     ? path.resolve(cwd, config)
     : config
 
   if (!cache.has(key)) {
-    const value = pipe(config, (c: any) => isString(c)
+    const value = pipe(pipe(config, (c: any) => isString(c)
       ? pipe(load(c, cwd), (v: any) => isString(v) ? parse(c, v) : v)
-      : c)
+      : c), clone)
     cache.set(key, value)
     return value
   }
