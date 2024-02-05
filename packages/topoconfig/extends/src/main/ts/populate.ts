@@ -14,7 +14,7 @@ import {extend, dextend} from './extend.js'
 import {isString} from './util.js'
 
 export const populate = async <R = Record<any, any>>(config: any, opts: PopulateOpts | Rules = {}): Promise<R> => {
-  const ctx = createCtx(opts, load, populate, config)
+  const ctx = createCtx(config, opts, load, populate)
   const _config = await loadResource(ctx)
   const extras: any[] = await Promise.all(populateExtras(_config, ctx))
 
@@ -22,7 +22,7 @@ export const populate = async <R = Record<any, any>>(config: any, opts: Populate
 }
 
 export const populateSync = <R = Record<any, any>>(config: any, opts: PopulateOpts | Rules = {}): R => {
-  const ctx = createCtx(opts, loadSync, populateSync, config)
+  const ctx = createCtx(config, opts, loadSync, populateSync)
   const _config = loadResource(ctx)
   const extras: any[] = populateExtras(_config, ctx)
 
@@ -34,7 +34,7 @@ export const clone = <T = any>(v: T) => JSON.parse(JSON.stringify(v))
 export const parse = (name: string, contents: string) =>
   name.endsWith('.json') ? JSON.parse(contents) : contents
 
-export const createCtx = (opts: PopulateOpts, loader: ExtraLoader, populate: Populate, config: any): Ctx => {
+export const createCtx = (config: any, opts: PopulateOpts, loader: ExtraLoader, populate: Populate): Ctx => {
   const _opts = parseOpts(opts)
   const base = path.resolve(process.cwd(), _opts.cwd ?? '.')
   const [cwd, _config] = isString(config)
@@ -75,4 +75,3 @@ export const populateExtras = (config: any, ctx: Ctx): any[] => {
 
 export const assembleValue = (config: any, extras: any[], ctx: Ctx ) =>
   ctx.merge(dextend(config), ...extras)
-
