@@ -2,7 +2,7 @@ import {createRequire} from 'node:module'
 import path from 'node:path'
 import fs from 'node:fs'
 import {Ctx} from './interface.js'
-import {isString} from './util.js'
+import {isString, pipe} from './util.js'
 import {dextend} from './extend.js'
 
 const _require = import.meta.url ? createRequire(import.meta.url) : require
@@ -52,8 +52,3 @@ const processResource = (ctx: Ctx) => {
       (v: any) => isString(v) ? parse(config, v) : v)
     : config, clone)
 }
-
-const pipe = (value: any, hook: (value: any) => any) =>
-  typeof value?.then === 'function'
-    ? value.then(hook)
-    : hook(value)

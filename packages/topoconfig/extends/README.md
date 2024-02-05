@@ -245,6 +245,15 @@ const result = extend({sources, rules})
 }
 ```
 
+### resolve
+Utility to reveal resource paths. 
+```ts
+export const resolve = (id: string, cwd: string): string =>
+  id.startsWith('.') || path.extname(id)
+    ? path.resolve(cwd, id)
+    : id
+```
+
 ### load
 Resource loader in two flavors: sync and async. It uses `import/require` api for the standard formats (`.json`, `.js`, `.cjs`, `.mjs`), and `fs.read` for the rest.
 ```ts
