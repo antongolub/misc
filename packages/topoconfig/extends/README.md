@@ -5,9 +5,7 @@
 [![npm (scoped)](https://img.shields.io/npm/v/@topoconfig/extends/latest.svg?label=npm&color=white)](https://www.npmjs.com/package/@topoconfig/extends)
 
 ## Motivation
-Many tools provide `extends` feature for their configs, but it works a little differently in each place. For example, `tsconfig` applies deep merge to `compilerOptions`, while `prettier` concatenates `overrides` array sections, etc. So we have to implement these nuances on site every time, and it's tiring and annoying a bit. I think we could make this a little simpler. Just:
-* Load resources from various formats
-* Merge them according to the rules
+Many tools provide `extends` feature for their configs, but it works a little differently in each place. For example, `tsconfig` applies deep merge to `compilerOptions`, while `prettier` concatenates `overrides` array sections, etc. So we have to implement these nuances on site every time, and it's tiring and annoying a bit. Seems reasonable to optimize this routine:
 
 ```ts
 const tsconfig = await populate('tsconfig.json', {
@@ -94,7 +92,7 @@ const config = {
 ```
 
 You can specify how to join config fields obtained from different sources.
-There are two strategies: `merge` and `override`. The last one is the default.
+There are two strategies: `merge` and `override`. The last one is applied by default.
 ```ts
 {
   foo: 'merge',
@@ -270,6 +268,9 @@ That's just a wrapper around `JSON.parse(JSON.stringify(v))`.
 * [cosmiconfig/issues/40](https://github.com/cosmiconfig/cosmiconfig/issues/40)
 * [chrisblossom/ex-config](https://github.com/chrisblossom/ex-config)
 * [prettier/issues/3146](https://github.com/prettier/prettier/issues/3146)
+* [vite/issues/13950](https://github.com/vitejs/vite/issues/13950)
+* [bahmutov/cypress-extends](https://github.com/bahmutov/cypress-extends)
+* [eslint#how-do-overrides-work](https://eslint.org/docs/latest/use/configure/configuration-files#how-do-overrides-work)
 
 ## License
 [MIT](./LICENSE)
