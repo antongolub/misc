@@ -113,14 +113,15 @@ To switch the default behavior use asterisk `*` as a key:
 ## Customization
 Options define merging rules, but it's also suitable to override some internals:
 
-| Option  | Description                                                                | Default                                                             |
-|---------|----------------------------------------------------------------------------|---------------------------------------------------------------------|
-| `cwd`   | Current working directory                                                  | `process.cwd()`                                                     |
-| `load`  | Resource loader                                                            | `async (id, cwd) => (await import(path.resolve(cwd, id)))?.default` |
-| `parse` | Parser function. Customize to handle non-std types like `.yaml` or `.toml` | `v => v`                                                            |
-| `merge` | Merge function. Smth like `Object.assign` or `deepExtend` should be ok.    | built-in `extend`                                                   |
-| `clone` | Internal clone function. Customize to handle non-JSON types like function  | `v => JSON.parse(JSON.stringify(v))`                                |
-| `rules` | Merging rules                                                              | `{'*': 'override'}`                                                 |
+| Option    | Description                                                                | Default                                                                                   |
+|-----------|----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
+| `cwd`     | Current working directory                                                  | `process.cwd()`                                                                           |
+| `resolve` | Utility to reveal resource paths                                           | `(ref: string, cwd: string): string => ref.startsWith('.') ? path.resolve(cwd, ref): ref` |
+| `load`    | Resource loader                                                            | `async (resoved, raw, cwd) => (await import(resolved))?.default`                          |
+| `parse`   | Parser function. Customize to handle non-std types like `.yaml` or `.toml` | `v => v`                                                                                  |
+| `merge`   | Merge function. Smth like `Object.assign` or `deepExtend` should be ok.    | built-in `extend`                                                                         |
+| `clone`   | Internal clone function. Customize to handle non-JSON types like function  | `v => JSON.parse(JSON.stringify(v))`                                                      |
+| `rules`   | Merging rules                                                              | `{'*': 'override'}`                                                                       |
 
 ```ts
 const opts = {
@@ -168,7 +169,7 @@ const raw = {
   extends: '../config.extra.in.yaml'
 }
 const config = await populate(raw, {
-  load: async (id: string, cwd: string) => (await cosmiconfig('foo', {
+  load: async (_: string, id: string, cwd: string) => (await cosmiconfig('foo', {
     searchPlaces: [id]
   }).search(cwd))?.config
 })
@@ -178,7 +179,7 @@ Or like this:
 ```ts
 const {load} = cosmiconfig('foo')
 const config = await populate(raw, {
-  load: async (id: string, cwd: string) => (await load(path.resolve(cwd, id)))?.config
+  load: async (_: string, id: string, cwd: string) => (await load(path.resolve(cwd, id)))?.config
 })
 ```
 
@@ -187,7 +188,7 @@ Or even like this:
 import cosmiconfig from 'cosmiconfig'
 
 const config = await populate(raw, {
-  async load(f: string, cwd: string) {
+  async load(_: string, f: string, cwd: string) {
     return (await cosmiconfig('foobar').search(cwd))?.config
   }
 })

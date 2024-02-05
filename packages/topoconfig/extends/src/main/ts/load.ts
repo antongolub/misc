@@ -9,35 +9,38 @@ const _require = import.meta.url ? createRequire(import.meta.url) : require
 
 const exts = new Set(['.js', '.mjs', '.cjs', ''])
 
-export const loadSync = (id: string, cwd: string) => {
-  const abspath = path.resolve(cwd, id)
-  return exts.has(path.extname(id))
-    ? _require(abspath)
-    : fs.readFileSync(abspath, 'utf8')
-}
+export const loadSync = (id: string) =>
+  exts.has(path.extname(id))
+    ? _require(id)
+    : fs.readFileSync(id, 'utf8')
 
-export const load = async (id: string, cwd: string) => {
-  const abspath = path.resolve(cwd, id)
+export const load = async (id: string) =>
+  exts.has(path.extname(id))
+    ? dedefault(await import(id))
+    : fs.promises.readFile(id, 'utf8')
 
-  return exts.has(path.extname(id))
-    ? (await import(abspath))?.default
-    : fs.promises.readFile(abspath, 'utf8')
-}
+export const resolve = (id: string, cwd: string): string =>
+  id.startsWith('.') || path.extname(id)
+    ? path.resolve(cwd, id)
+    : id
 
-export const loadResource = ({load, config, cwd, parse, cache, clone}: Ctx) => {
-  const key = isString(config)
-    ? path.resolve(cwd, config)
+const dedefault = (value: any) => value?.default ?? value
+
+export const loadResource = ({load, config, cwd, parse, cache, clone, resolve}: Ctx) => {
+  const resource = isString(config)
+    ? resolve(config, cwd)
     : config
 
-  if (!cache.has(key)) {
+  if (!cache.has(resource)) {
     const value = pipe(pipe(config, (c: any) => isString(c)
-      ? pipe(load(c, cwd), (v: any) => isString(v) ? parse(c, v) : v)
+      ? pipe(load(resolve(c, cwd), c, cwd), (v: any) => isString(v) ? parse(c, v) : v)
       : c), clone)
-    cache.set(key, value)
+
+    cache.set(resource, value)
     return value
   }
 
-  return pipe(cache.get(key), dextend)
+  return pipe(cache.get(resource), dextend)
 }
 
 const pipe = (value: any, hook: (value: any) => any) =>

@@ -9,7 +9,7 @@ import {
   Populate,
 } from './interface.js'
 
-import {load, loadSync, loadResource} from './load.js'
+import {load, loadSync, loadResource, resolve} from './load.js'
 import {extend, dextend} from './extend.js'
 import {isString} from './util.js'
 
@@ -45,6 +45,7 @@ export const createCtx = (opts: PopulateOpts, loader: ExtraLoader, populate: Pop
     load: loader,
     clone: clone,
     parse: parse,
+    resolve: resolve,
     cache: new Map(),
     ..._opts,
     merge: buildMerger(_opts.merge, _opts.rules),
