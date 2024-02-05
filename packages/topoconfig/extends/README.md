@@ -283,6 +283,7 @@ That's just a wrapper around `JSON.parse(JSON.stringify(v))`.
 * [vite/issues/13950](https://github.com/vitejs/vite/issues/13950)
 * [bahmutov/cypress-extends](https://github.com/bahmutov/cypress-extends)
 * [eslint#how-do-overrides-work](https://eslint.org/docs/latest/use/configure/configuration-files#how-do-overrides-work)
+* [typedoc#extends](https://github.com/TypeStrong/typedoc/blob/eb7510b26a2a4b18cfddb76bdd0fe0d1ed2702a2/src/lib/utils/options/readers/typedoc.ts#L124)
 
 ## License
 [MIT](./LICENSE)
