@@ -270,6 +270,7 @@ That's just a wrapper around `JSON.parse(JSON.stringify(v))`.
 * [cosmiconfig/issues/40](https://github.com/cosmiconfig/cosmiconfig/issues/40)
 * [chrisblossom/ex-config](https://github.com/chrisblossom/ex-config)
 * [prettier/issues/3146](https://github.com/prettier/prettier/issues/3146)
+* [prettier/resolve-config](https://github.com/prettier/prettier/blob/main/src/config/resolve-config.js)
 * [vite/issues/13950](https://github.com/vitejs/vite/issues/13950)
 * [bahmutov/cypress-extends](https://github.com/bahmutov/cypress-extends)
 * [eslint#how-do-overrides-work](https://eslint.org/docs/latest/use/configure/configuration-files#how-do-overrides-work)

@@ -26,21 +26,31 @@ export const resolve = (id: string, cwd: string): string =>
 
 const dedefault = (value: any) => value?.default ?? value
 
-export const loadResource = ({load, config, cwd, parse, cache, clone, resolve}: Ctx) => {
+export const loadResource = (ctx: Ctx) => {
+  const {config, cwd, cache} = ctx
   const resource = isString(config)
-    ? resolve(config, cwd)
+    ? path.join(cwd, config)
     : config
 
   if (!cache.has(resource)) {
-    const value = pipe(pipe(config, (c: any) => isString(c)
-      ? pipe(load(resolve(c, cwd), c, cwd), (v: any) => isString(v) ? parse(c, v) : v)
-      : c), clone)
+    const value = processResource(ctx)
 
     cache.set(resource, value)
     return value
   }
 
   return pipe(cache.get(resource), dextend)
+}
+
+const processResource = (ctx: Ctx) => {
+  const {load, config, cwd, parse,  clone, resolve} = ctx
+
+  return pipe(isString(config)
+    ? pipe(pipe(
+        resolve(config, cwd),
+        (resolved) => load(resolved, config, cwd)),
+      (v: any) => isString(v) ? parse(config, v) : v)
+    : config, clone)
 }
 
 const pipe = (value: any, hook: (value: any) => any) =>
