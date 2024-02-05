@@ -1,7 +1,7 @@
 {
   "name": "@topoconfig/extends",
   "version": "0.0.0",
-  "description": "Flexible config extender",
+  "description": "Populates `extends` reference in configs",
   "type": "module",
   "main": "target/cjs/index.cjs",
   "exports": {
