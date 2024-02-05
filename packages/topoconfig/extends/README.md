@@ -12,6 +12,7 @@ const tsconfig = await populate('tsconfig.json', {
   compilerOptions: 'merge'
 })
 ```
+[Implementation notes](https://dev.to/antongolub/config-extends-directive-13p6)
 
 ## Status
 Working draft
