@@ -824,6 +824,7 @@ __metadata:
   resolution: "@topoconfig/cmds@workspace:packages/topoconfig/cmds"
   dependencies:
     "@antongolub/infra": "workspace:*"
+    "@topoconfig/extends": "workspace:*"
     "@types/dotenv": "npm:^8.2.0"
     "@types/ip": "npm:^1.1.3"
     "@types/js-yaml": "npm:^4.0.9"

@@ -318,5 +318,24 @@ const config = await topoconfig({
 }) // 'toposource'
 ```
 
+### `xtends`
+Populate `extends` ref in config files via [@topoconfig/extends](https://github.com/antongolub/misc/tree/master/packages/topoconfig/extends).
+```ts
+import {topoconfig} from 'topoconfig'
+import {file, xtends} from 'topoconfig/cmds'
+
+const config = await topoconfig({
+  cmds: {
+    xtends
+  },
+  data: {
+    contents: '$contents'
+  },
+  sources: {
+    contents: 'file.json > xtends'
+  }
+})
+```
+
 ## License
 [MIT](./LICENSE)
