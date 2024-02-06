@@ -9,6 +9,7 @@ describe('clone()', () => {
     ref.a.b.ref = ref
     const date = new Date()
     const regexp = /re/
+    const symbol = Symbol('foo')
     const cases = [
       {},
       [],
@@ -22,7 +23,11 @@ describe('clone()', () => {
       [() => {/* noop */}, {bar() {/* noop */}}],
       ref,
       date,
-      regexp
+      regexp,
+      symbol,
+      {
+        [symbol]: 'symbol',
+      }
     ]
 
     for (const value of cases) {
@@ -32,7 +37,8 @@ describe('clone()', () => {
     const strict = [
       () => {/* noop */},
       date,
-      regexp
+      regexp,
+      symbol,
     ]
 
     for (const value of strict) {
