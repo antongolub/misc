@@ -7,6 +7,8 @@ describe('clone()', () => {
     const ref: any = {a: {b: {c: 'c'}}}
     ref.ref = ref
     ref.a.b.ref = ref
+    const date = new Date()
+    const regexp = /re/
     const cases = [
       {},
       [],
@@ -18,11 +20,23 @@ describe('clone()', () => {
         foo() {/* noop */}
       },
       [() => {/* noop */}, {bar() {/* noop */}}],
-      ref
+      ref,
+      date,
+      regexp
     ]
 
     for (const value of cases) {
       assert.deepEqual(value, clone(value))
+    }
+
+    const strict = [
+      () => {/* noop */},
+      date,
+      regexp
+    ]
+
+    for (const value of strict) {
+      assert.equal(value, clone(value))
     }
   })
 })

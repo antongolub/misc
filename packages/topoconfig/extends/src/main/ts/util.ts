@@ -9,7 +9,7 @@ export const pipe = (value: any, hook: (value: any) => any) =>
     ? value.then(hook)
     : hook(value)
 
-const getSeed = (value: any) => isObject(value) && !isFn(value)
+const getSeed = (value: any) => isObject(value) && !isFn(value) && ![RegExp, Date, Promise].some(c => value instanceof c)
   ? Object?.setPrototypeOf(Array.isArray(value) ? [] : {}, Object?.getPrototypeOf(value))
   : undefined
 
