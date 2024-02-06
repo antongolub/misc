@@ -4,6 +4,11 @@ export const isFn = (value: any): boolean => typeof value === 'function'
 
 export const isObject = (value: any) => typeof value === 'object' && value !== null
 
+export const stripBom = (content: string): string =>
+  content.codePointAt(0) === 0xfe_ff
+    ? content.slice(1)
+    : content
+
 export const pipe = (value: any, hook: (value: any) => any) =>
   isFn(value?.then)
     ? value.then(hook)

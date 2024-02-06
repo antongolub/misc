@@ -2,7 +2,7 @@ import {createRequire} from 'node:module'
 import path from 'node:path'
 import fs from 'node:fs'
 import {Ctx} from './interface.js'
-import {isString, pipe} from './util.js'
+import {isString, pipe, stripBom} from './util.js'
 import {dextend} from './extend.js'
 
 const _require = import.meta.url ? createRequire(import.meta.url) : require
@@ -12,12 +12,12 @@ const exts = new Set(['.js', '.mjs', '.cjs', ''])
 export const loadSync = (id: string) =>
   exts.has(path.extname(id))
     ? _require(id)
-    : fs.readFileSync(id, 'utf8')
+    : stripBom(fs.readFileSync(id, 'utf8'))
 
 export const load = async (id: string) =>
   exts.has(path.extname(id))
     ? dedefault(await import(id))
-    : fs.promises.readFile(id, 'utf8')
+    : stripBom(await fs.promises.readFile(id, 'utf8'))
 
 export const resolve = (id: string, cwd: string): string =>
   id.startsWith('.') || path.extname(id)
