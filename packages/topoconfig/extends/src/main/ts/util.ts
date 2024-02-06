@@ -5,14 +5,14 @@ export const isFn = (value: any): boolean => typeof value === 'function'
 export const isObject = (value: any) => typeof value === 'object' && value !== null
 
 export const pipe = (value: any, hook: (value: any) => any) =>
-  typeof value?.then === 'function'
+  isFn(value?.then)
     ? value.then(hook)
     : hook(value)
-
 
 const getSeed = (value: any) => isObject(value) && !isFn(value)
   ? Object?.setPrototypeOf(Array.isArray(value) ? [] : {}, Object?.getPrototypeOf(value))
   : undefined
+
 export const clone = <T = any>(value: T, map = new Map(), seed = getSeed(value)): T => seed
   ? Object.entries(value as any).reduce((m: any, [k, v]) => {
     if (map.has(v)) {

@@ -1,5 +1,5 @@
 # @topoconfig/extends
-> Flexible config extender
+> Populates `extends` reference in configs
 
 [![lcov](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fantongolub%2Fmisc%2Freleases%2Fdownload%2Flcov%2Flcov-sum.json&query=%24.scopes.packages_topoconfig_extends.max&label=lcov&color=brightgreen)](https://github.com/antongolub/misc/releases/download/lcov/lcov.info)
 [![npm (scoped)](https://img.shields.io/npm/v/@topoconfig/extends/latest.svg?label=npm&color=white)](https://www.npmjs.com/package/@topoconfig/extends)
@@ -277,7 +277,7 @@ import { clone } from '@topoconfig/extends'
 
 const copy = clone({a: 'a', b() {}}) // {a: 'a', b() {}}
 ```
-If necessary, you can replace it with a more advanced implementation, such as [rfdc](https://www.npmjs.com/package/rfdc)
+If necessary, you can replace it with a more advanced implementation, such as [rfdc](https://www.npmjs.com/package/rfdc).
 
 ## Refs
 * [humanwhocodes/config-array](https://github.com/humanwhocodes/config-array)
