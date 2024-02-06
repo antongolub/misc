@@ -1,5 +1,5 @@
 # @topoconfig/extends
-> Populates `extends` reference in configs
+> Flexible config extender
 
 [![lcov](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fantongolub%2Fmisc%2Freleases%2Fdownload%2Flcov%2Flcov-sum.json&query=%24.scopes.packages_topoconfig_extends.max&label=lcov&color=brightgreen)](https://github.com/antongolub/misc/releases/download/lcov/lcov.info)
 [![npm (scoped)](https://img.shields.io/npm/v/@topoconfig/extends/latest.svg?label=npm&color=white)](https://www.npmjs.com/package/@topoconfig/extends)
@@ -113,15 +113,15 @@ To switch the default behavior use asterisk `*` as a key:
 ## Customization
 Options define merging rules, but it's also suitable to override some internals:
 
-| Option    | Description                                                                | Default                                                                                   |
-|-----------|----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
-| `cwd`     | Current working directory                                                  | `process.cwd()`                                                                           |
-| `resolve` | Utility to reveal resource paths                                           | `(ref: string, cwd: string): string => ref.startsWith('.') ? path.resolve(cwd, ref): ref` |
-| `load`    | Resource loader                                                            | `async (resoved, raw, cwd) => (await import(resolved))?.default`                          |
-| `parse`   | Parser function. Customize to handle non-std types like `.yaml` or `.toml` | `v => v`                                                                                  |
-| `merge`   | Merge function. Smth like `Object.assign` or `deepExtend` should be ok.    | built-in `extend`                                                                         |
-| `clone`   | Internal clone function. Customize to handle non-JSON types like function  | `v => JSON.parse(JSON.stringify(v))`                                                      |
-| `rules`   | Merging rules                                                              | `{'*': 'override'}`                                                                       |
+| Option    | Description                                                                | Default              |
+|-----------|----------------------------------------------------------------------------|----------------------|
+| `cwd`     | Current working directory                                                  | `process.cwd()`      |
+| `resolve` | Utility to reveal resource paths                                           | [#resolve](#resolve) |
+| `load`    | Resource loader                                                            | [#load](#load)       |
+| `parse`   | Parser function. Customize to handle non-std types like `.yaml` or `.toml` | [#parse](#parse)     |
+| `merge`   | Merge function. Smth like `Object.assign` or `deepExtend` should be ok.    | [#extend](#extend)   |
+| `clone`   | Internal clone function to handle non-JSON types like functions            | [#clone](#clone)     |
+| `rules`   | Merging rules                                                              | `{'*': 'override'}`  |
 
 ```ts
 const opts = {
@@ -246,12 +246,12 @@ const result = extend({sources, rules})
 ```
 
 ### resolve
-Utility to reveal resource paths. 
+Utility to reveal resource paths.
 ```ts
-export const resolve = (id: string, cwd: string): string =>
-  id.startsWith('.') || path.extname(id)
-    ? path.resolve(cwd, id)
-    : id
+import { resolve } from '@topoconfig/extends'
+
+const local = resolve('../foo.mjs', '/some/cwd/') // '/some/foo.mjs'
+const external = resolve('foo-pkg', '/some/cwd/') // 'foo-pkg'
 ```
 
 ### load
@@ -271,7 +271,13 @@ export const parse = (name: string, contents: string) =>
 ```
 
 ### clone
-That's just a wrapper around `JSON.parse(JSON.stringify(v))`.
+Basic `clone` implementation. 
+```ts
+import { clone } from '@topoconfig/extends'
+
+const copy = clone({a: 'a', b() {}}) // {a: 'a', b() {}}
+```
+If necessary, you can replace it with a more advanced implementation, such as [rfdc](https://www.npmjs.com/package/rfdc)
 
 ## Refs
 * [humanwhocodes/config-array](https://github.com/humanwhocodes/config-array)
@@ -283,7 +289,6 @@ That's just a wrapper around `JSON.parse(JSON.stringify(v))`.
 * [vite/issues/13950](https://github.com/vitejs/vite/issues/13950)
 * [bahmutov/cypress-extends](https://github.com/bahmutov/cypress-extends)
 * [eslint#how-do-overrides-work](https://eslint.org/docs/latest/use/configure/configuration-files#how-do-overrides-work)
-* [typedoc#extends](https://github.com/TypeStrong/typedoc/blob/eb7510b26a2a4b18cfddb76bdd0fe0d1ed2702a2/src/lib/utils/options/readers/typedoc.ts#L124)
 
 ## License
 [MIT](./LICENSE)

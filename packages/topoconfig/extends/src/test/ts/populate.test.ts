@@ -3,13 +3,30 @@ import { describe, it } from 'node:test'
 import * as path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
-import { populate, populateSync } from '../../main/ts/index.ts'
+import { populate, populateSync, parseOpts } from '../../main/ts/populate.ts'
 import { cosmiconfig, cosmiconfigSync } from 'cosmiconfig'
 import { load as parseYaml } from 'js-yaml'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const __require = createRequire(import.meta.url)
 const fixtures = path.resolve(__dirname, '../fixtures')
+
+describe('parseOpts() ', () => {
+  it('detects Rules and PopulateOpts', () => {
+    assert.deepEqual(
+      parseOpts({foo: 'merge', bar: 'override'}),
+      {rules: {foo: 'merge', bar: 'override'}}
+    )
+    assert.deepEqual(
+      parseOpts({rules: {foo: 'merge', bar: 'override'}}),
+      {rules: {foo: 'merge', bar: 'override'}}
+    )
+    assert.deepEqual(
+      parseOpts({merge: {foo: 'merge', bar: 'override'}}),
+      {merge: {foo: 'merge', bar: 'override'}}
+    )
+  })
+})
 
 describe('populate()', () => {
   const cases: [string, Parameters<typeof populate>, any][] = [

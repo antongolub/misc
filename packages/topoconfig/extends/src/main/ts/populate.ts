@@ -11,7 +11,7 @@ import {
 
 import {load, loadSync, loadResource, resolve} from './load.js'
 import {extend, dextend} from './extend.js'
-import {isString} from './util.js'
+import {isString, clone} from './util.js'
 
 export const populate = async <R = Record<any, any>>(config: any, opts: PopulateOpts | Rules = {}): Promise<R> => {
   const ctx = createCtx(config, opts, load, populate)
@@ -28,8 +28,6 @@ export const populateSync = <R = Record<any, any>>(config: any, opts: PopulateOp
 
   return assembleValue(_config, extras, ctx)
 }
-
-export const clone = <T = any>(v: T) => JSON.parse(JSON.stringify(v))
 
 export const parse = (name: string, contents: string) =>
   name.endsWith('.json') ? JSON.parse(contents) : contents

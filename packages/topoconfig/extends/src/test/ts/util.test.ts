@@ -1,0 +1,28 @@
+import * as assert from 'node:assert'
+import { describe, it } from 'node:test'
+import { clone } from '../../main/ts/util.ts'
+
+describe('clone()', () => {
+  it('makes a copy of various objects', () => {
+    const ref: any = {a: {b: {c: 'c'}}}
+    ref.ref = ref
+    ref.a.b.ref = ref
+    const cases = [
+      {},
+      [],
+      {a: 1, b: 2, c: 3},
+      1,
+      "2",
+      () => {/* noop */},
+      {
+        foo() {/* noop */}
+      },
+      [() => {/* noop */}, {bar() {/* noop */}}],
+      ref
+    ]
+
+    for (const value of cases) {
+      assert.deepEqual(value, clone(value))
+    }
+  })
+})
