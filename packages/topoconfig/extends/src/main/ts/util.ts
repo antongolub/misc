@@ -1,3 +1,5 @@
+import util from 'node:util'
+
 export const isString = (value: any): value is string => typeof value === 'string'
 
 export const isFn = (value: any): boolean => typeof value === 'function'
@@ -14,7 +16,7 @@ export const pipe = (value: any, hook: (value: any) => any) =>
     ? value.then(hook)
     : hook(value)
 
-const getSeed = (value: any) => isObject(value) && !isFn(value) && ![RegExp, Date, Promise, Map, Set, WeakMap, WeakSet].some(c => value instanceof c)
+const getSeed = (value: any) => isObject(value) && !util.types.isProxy(value) && !isFn(value) && ![RegExp, Date, Promise, Map, Set, WeakMap, WeakSet].some(c => value instanceof c)
   ? Object?.setPrototypeOf(Array.isArray(value) ? [] : {}, Object?.getPrototypeOf(value))
   : undefined
 

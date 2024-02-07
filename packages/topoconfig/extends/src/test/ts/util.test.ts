@@ -10,6 +10,7 @@ describe('clone()', () => {
     const date = new Date()
     const regexp = /re/
     const symbol = Symbol('foo')
+    const proxy = new Proxy({}, {})
     const cases = [
       {},
       [],
@@ -25,6 +26,7 @@ describe('clone()', () => {
       date,
       regexp,
       symbol,
+      proxy,
       {
         [symbol]: 'symbol',
       }
@@ -39,6 +41,7 @@ describe('clone()', () => {
       date,
       regexp,
       symbol,
+      proxy,
     ]
 
     for (const value of strict) {
