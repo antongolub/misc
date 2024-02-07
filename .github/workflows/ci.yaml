@@ -28,6 +28,13 @@ jobs:
           node-version: 20
           cache: 'yarn'
 
+      - name: Setup Bun Runtime
+        uses: antongolub/action-setup-bun@v1
+
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
       - name: Fetch deps
         run: yarn --silent --immutable
 
@@ -83,6 +90,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
+
+      - name: Setup Bun Runtime
+        uses: antongolub/action-setup-bun@v1
+
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
 
       - name: Fetch deps
         run: yarn --silent --immutable

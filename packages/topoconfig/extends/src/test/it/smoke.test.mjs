@@ -1,7 +1,7 @@
-import { populateSync } from '../../../target/esm/index.mjs'
+import { populate } from '../../../target/esm/index.mjs'
 
-const config = populateSync({
-  extends: './src/test/fixtures/extra-looped.json',
+const config = await populate({
+  extends: ['./src/test/fixtures/extra-looped.json', './src/test/fixtures/extra1.json'],
 })
 
 console.log('Smoke test: OK', config)
