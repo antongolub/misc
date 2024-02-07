@@ -6,18 +6,24 @@ import {isString, pipe, stripBom} from './util.js'
 import {dextend} from './extend.js'
 
 const _require = import.meta.url ? createRequire(import.meta.url) : require
-
-const exts = new Set(['.js', '.mjs', '.cjs', ''])
+const cjs = new Set(['.cjs', '.cts'])
+const anyjs = new Set(['', '.js', '.ts', '.mjs', '.mts', ...cjs])
 
 export const loadSync = (id: string) =>
-  exts.has(path.extname(id))
+  anyjs.has(path.extname(id))
     ? _require(id)
     : stripBom(fs.readFileSync(id, 'utf8'))
 
-export const load = async (id: string) =>
-  exts.has(path.extname(id))
+export const load = async (id: string) => {
+  const ext = path.extname(id)
+
+  // To avoid Deno `--compat` flag.
+  if (cjs.has(ext)) return _require(id)
+
+  return anyjs.has(ext)
     ? dedefault(await import(id))
     : stripBom(await fs.promises.readFile(id, 'utf8'))
+}
 
 export const resolve = (id: string, cwd: string): string =>
   id.startsWith('.') || path.extname(id)
