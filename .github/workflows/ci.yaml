@@ -90,7 +90,8 @@ jobs:
       - name: Setup Bun Runtime
         uses: antongolub/action-setup-bun@v1
 
-      - uses: denoland/setup-deno@v1
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
 
@@ -111,9 +112,16 @@ jobs:
             packages/**/target/**/*
             !packages/**/target/docs
             !packages/**/target/coverage
-  smoke:
+  pr-compat:
     needs: pr
-    runs-on: ubuntu-22.04
+    name: Compat test (Node v${{ matrix.node-version }}, OS ${{ matrix.os }})
+    strategy:
+      matrix:
+        os: [ ubuntu-22.04, windows-latest ]
+        node-version: [ 20 ]
+
+    runs-on: ${{ matrix.os }}
+
     steps:
       # https://github.com/actions/checkout/issues/552
       - name: 'PR commits + 1'
@@ -135,22 +143,18 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
 
-      - name: Log
-        run: node -e "console.log('commits=', process.env.COMMITS)"
-        env:
-          COMMITS: ${{ toJSON(github.event.pull_request.commits) }}
+#      - name: Log
+#        run: node -e "console.log('commits=', process.env.COMMITS)"
+#        env:
+#          COMMITS: ${{ toJSON(github.event.pull_request.commits) }}
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           name: target
 
-      - run: ls -R
-
       - name: Fetch deps
         run: yarn --silent --immutable
 
-      - name: Test
-        run: |
-          echo "changesetBaseRefs: [${{ github.event.pull_request.base.ref }}]" >> .yarnrc.yml
-          yarn workspaces foreach --since run test:smoke:node
+      - name: Integration test
+        run: yarn test --testCmd="yarn test:it"
