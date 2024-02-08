@@ -107,7 +107,9 @@ jobs:
           name: target
           path: |
             package.json
-            packages/**/target
+            packages/**/target/**/*
+            !packages/**/target/docs
+            !packages/**/target/coverage
   smoke:
     needs: pr
     runs-on: windows-latest
@@ -127,6 +129,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: target
+
+      - run: zip -r target.zip ./
 
       - name: Fetch deps
         run: yarn --silent --immutable
