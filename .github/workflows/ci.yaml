@@ -151,4 +151,6 @@ jobs:
         run: yarn --silent --immutable
 
       - name: Test
-        run: yarn workspaces foreach --since ${{ github.event.pull_request.base.ref }} run test:smoke:node
+        run: |
+          echo "changesetBaseRefs: [${{ github.event.pull_request.base.ref }}]" >> .yarnrc.yml
+          yarn workspaces foreach --since run test:smoke:node
