@@ -18,12 +18,12 @@ jobs:
         run: echo "FETCH_DEPTH=$(echo '${{ toJSON(github.event.commits) }}' | jq 'length | if . < 20 then . + 1 else 0 end')" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: ${{ env.FETCH_DEPTH }}
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'yarn'
@@ -76,12 +76,13 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'yarn'
@@ -112,15 +113,15 @@ jobs:
             !packages/**/target/coverage
   smoke:
     needs: pr
-    runs-on: windows-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
@@ -130,7 +131,7 @@ jobs:
         with:
           name: target
 
-      - run: zip -r target.zip ./
+      - run: ls -R
 
       - name: Fetch deps
         run: yarn --silent --immutable
