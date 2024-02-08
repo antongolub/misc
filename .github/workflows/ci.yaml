@@ -115,16 +115,30 @@ jobs:
     needs: pr
     runs-on: ubuntu-22.04
     steps:
+      # https://github.com/actions/checkout/issues/552
+      - name: 'PR commits + 1'
+        run: echo "PR_FETCH_DEPTH=$(( ${{ github.event.pull_request.commits }} + 1 ))" >> "${GITHUB_ENV}"
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: ${{ env.PR_FETCH_DEPTH }}
+
+      - name: 'Fetch the other branch with enough history for a common merge-base commit'
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.ref }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
+
+      - name: Log
+        run: node -e "console.log('commits=', process.env.COMMITS)"
+        env:
+          COMMITS: ${{ toJSON(github.event.pull_request.commits) }}
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
@@ -137,4 +151,4 @@ jobs:
         run: yarn --silent --immutable
 
       - name: Test
-        run: yarn workspaces foreach --since run test:smoke:node
+        run: yarn workspaces foreach --since ${{ github.event.pull_request.base.ref }} run test:smoke:node
