@@ -72,13 +72,8 @@ jobs:
 
   pr:
     if: github.event_name == 'pull_request'
-    name: PR (Node v${{ matrix.node-version }}, OS ${{ matrix.os }})
-    strategy:
-      matrix:
-        os: [ ubuntu-22.04 ]
-        node-version: [ 20 ]
-
-    runs-on: ${{ matrix.os }}
+    name: PR
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -88,7 +83,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20
           cache: 'yarn'
 
       - name: Setup Bun Runtime
@@ -105,3 +100,36 @@ jobs:
         run: |
           yarn warmup
           yarn build
+
+      - name: Save artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: target
+          path: |
+            package.json
+            packages/**/target
+  smoke:
+    needs: pr
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: target
+
+      - name: Fetch deps
+        run: yarn --silent --immutable
+
+      - name: Test
+        run: yarn workspaces foreach --since run test:smoke:node
