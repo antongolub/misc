@@ -4,7 +4,6 @@
 [![lcov](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fantongolub%2Fmisc%2Freleases%2Fdownload%2Flcov%2Flcov-sum.json&query=%24.scopes.packages_topoconfig_extends.max&label=lcov&color=brightgreen)](https://github.com/antongolub/misc/releases/download/lcov/lcov.info)
 [![npm (scoped)](https://img.shields.io/npm/v/@topoconfig/extends/latest.svg?label=npm&color=white)](https://www.npmjs.com/package/@topoconfig/extends)
 
-## Motivation
 Many tools provide `extends` feature for their configs, but it works a little differently in each place. For example, `tsconfig` applies deep merge to `compilerOptions`, while `prettier` concatenates `overrides` array sections, etc. So we have to implement these nuances on site every time, and it's tiring and annoying a bit. Seems reasonable to optimize this routine:
 
 ```ts
@@ -13,6 +12,12 @@ const tsconfig = await populate('tsconfig.json', {
 })
 ```
 [Implementation notes](https://dev.to/antongolub/config-extends-directive-13p6)
+
+## Key features
+* Recursive `extends` population
+* Configurable merging rules
+* Sync and async modes
+* Easy customization
 
 ## Status
 Working draft
