@@ -9,6 +9,7 @@
   "scripts": {
     "build": "exit 0",
     "test": "exit 0",
+    "run:void": "node ./scripts/void.mjs",
     "build:all": "cd $INIT_CWD && concurrently 'npm:build:*'",
     "build:esbuild": "node ./scripts/build.mjs --cwd=$INIT_CWD",
     "build:tsc": "cd $INIT_CWD && tsc --emitDeclarationOnly --outDir target/dts",
