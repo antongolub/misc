@@ -109,9 +109,11 @@ jobs:
           name: target
           path: |
             package.json
-            packages/**/target/**/*
-            !packages/**/target/docs
-            !packages/**/target/coverage
+            packages/**/target/esm/**/*
+            packages/**/target/cjs/**/*
+            packages/**/target/dts/**/*
+            packages/**/target/coverage/lcov.info
+
   pr-compat:
     needs: pr
     name: Compat test (Node v${{ matrix.node-version }}, OS ${{ matrix.os }})
