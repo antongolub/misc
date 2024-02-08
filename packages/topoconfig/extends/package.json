@@ -50,7 +50,7 @@
   "homepage": "https://github.com/antongolub/misc/tree/master/packages/topoconfig/extends",
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
-    "@types/node": "^20.11.6",
+    "@types/node": "^20.11.16",
     "cosmiconfig": "^9.0.0",
     "js-yaml": "^4.1.0"
   }

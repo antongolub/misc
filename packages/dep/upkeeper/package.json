@@ -48,12 +48,12 @@
   "homepage": "https://github.com/antongolub/misc/tree/master/packages/upkeeper",
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
-    "@types/node": "^20.11.6"
+    "@types/node": "^20.11.16"
   },
   "dependencies": {
     "dot": "^2.0.0-beta.1",
     "fast-glob": "^3.3.2",
     "minimist": "^1.2.8",
-    "semver": "^7.5.4"
+    "semver": "^7.6.0"
   }
 }
