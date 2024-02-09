@@ -11,7 +11,7 @@ import {
 } from './interface.js'
 
 import {load, loadSync, loadResource, resolve} from './load.js'
-import {extend, dextend} from './extend.js'
+import {extend, dextend, MERGE, OVERRIDE} from './extend.js'
 import {isString, clone} from './util.js'
 
 export const populate = async <R = Record<any, any>>(config: any, opts: PopulateOpts | Rules = {}): Promise<R> => {
@@ -55,7 +55,7 @@ export const createCtx = (config: any, opts: PopulateOpts, loader: ExtraLoader, 
 }
 
 export const parseOpts = (opts: PopulateOpts | Rules = {}): PopulateOpts =>
-  Object.values(opts).every(v => v === 'override' || v === 'merge')
+  Object.values(opts).every(v => v === OVERRIDE || v === MERGE)
     ? { rules: opts as Rules }
     : opts
 
