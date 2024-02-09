@@ -129,14 +129,12 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Fetch depth
-        run: echo "PR_FETCH_DEPTH=$(( ${{ github.event.pull_request.commits }} + 1 ))" >> "${GITHUB_ENV}"
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
-          fetch-depth: ${{ env.PR_FETCH_DEPTH }}
+          # TODO Handle fetch depth for windows
+          fetch-depth: 25
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
