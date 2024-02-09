@@ -59,6 +59,6 @@
   "homepage": "https://github.com/antongolub/misc/tree/master/packages/lcov-utils",
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
-    "@types/node": "^20.11.16"
+    "@types/node": "^20.11.17"
   }
 }

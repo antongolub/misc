@@ -23,7 +23,7 @@
   "devDependencies": {
     "@antongolub/git-root": "^1.5.13",
     "@semrel-extra/topo": "^1.14.1",
-    "@types/node": "^20.11.16",
+    "@types/node": "^20.11.17",
     "c8": "^9.1.0",
     "concurrently": "^8.2.2",
     "esbuild": "^0.20.0",
@@ -35,6 +35,6 @@
     "ts-node": "^10.9.2",
     "typedoc": "^0.25.7",
     "typescript": "^5.3.3",
-    "zx-bulk-release": "^2.15.0"
+    "zx-bulk-release": "^2.15.1"
   }
 }

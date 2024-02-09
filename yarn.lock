@@ -17,7 +17,7 @@ __metadata:
   resolution: "@antongolub/blank@workspace:packages/blank"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.11.16"
+    "@types/node": "npm:^20.11.17"
   languageName: unknown
   linkType: soft
 
@@ -34,7 +34,7 @@ __metadata:
   dependencies:
     "@antongolub/git-root": "npm:^1.5.13"
     "@semrel-extra/topo": "npm:^1.14.1"
-    "@types/node": "npm:^20.11.16"
+    "@types/node": "npm:^20.11.17"
     c8: "npm:^9.1.0"
     concurrently: "npm:^8.2.2"
     esbuild: "npm:^0.20.0"
@@ -46,7 +46,7 @@ __metadata:
     ts-node: "npm:^10.9.2"
     typedoc: "npm:^0.25.7"
     typescript: "npm:^5.3.3"
-    zx-bulk-release: "npm:^2.15.0"
+    zx-bulk-release: "npm:^2.15.1"
   languageName: unknown
   linkType: soft
 
@@ -506,7 +506,7 @@ __metadata:
     "@types/dotenv": "npm:^8.2.0"
     "@types/ip": "npm:^1.1.3"
     "@types/js-yaml": "npm:^4.0.9"
-    "@types/node": "npm:^20.11.16"
+    "@types/node": "npm:^20.11.17"
     ajv: "npm:^8.12.0"
     ajv-formats: "npm:^3.0.0-rc.0"
     app-root-path: "npm:^3.1.0"
@@ -526,7 +526,7 @@ __metadata:
   resolution: "@topoconfig/extends@workspace:packages/topoconfig/extends"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.11.16"
+    "@types/node": "npm:^20.11.17"
     cosmiconfig: "npm:^9.0.0"
     js-yaml: "npm:^4.1.0"
   languageName: unknown
@@ -671,12 +671,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^20.11.16":
-  version: 20.11.16
-  resolution: "@types/node@npm:20.11.16"
+"@types/node@npm:^20.11.17":
+  version: 20.11.17
+  resolution: "@types/node@npm:20.11.17"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 751f50ec5c9332b11515e82fe37c71479ac4449b711280aa3c7910edf67b1e3f5ac00041512add543f9a892096a68356406998bf02a2c809a73d176c44c28414
+  checksum: 3342df87258d1c56154bcd4b85180f48675427b235971e6e6e2e037353f5a2ae9aaa05ba5df0fe1e2d2f1022c8d856fd39056b9d7f50ea30c0ca3214137cae1d
   languageName: node
   linkType: hard
 
@@ -1505,7 +1505,7 @@ __metadata:
   resolution: "depseek@workspace:packages/dep/depseek"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.11.16"
+    "@types/node": "npm:^20.11.17"
     benchmark: "npm:^2.1.4"
     esprima: "npm:^4.0.1"
   languageName: unknown
@@ -1516,7 +1516,7 @@ __metadata:
   resolution: "depshot@workspace:packages/dep/depshot"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.11.16"
+    "@types/node": "npm:^20.11.17"
   languageName: unknown
   linkType: soft
 
@@ -1626,7 +1626,7 @@ __metadata:
   resolution: "envader@workspace:packages/env/envader"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.11.16"
+    "@types/node": "npm:^20.11.17"
   languageName: unknown
   linkType: soft
 
@@ -1635,7 +1635,7 @@ __metadata:
   resolution: "envimist@workspace:packages/env/envimist"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.11.16"
+    "@types/node": "npm:^20.11.17"
     minimist: "npm:^1.2.8"
   languageName: unknown
   linkType: soft
@@ -1755,7 +1755,7 @@ __metadata:
   dependencies:
     "@antongolub/infra": "workspace:*"
     "@topoconfig/extends": "workspace:*"
-    "@types/node": "npm:^20.11.16"
+    "@types/node": "npm:^20.11.17"
     cosmiconfig: "npm:^9.0.0"
     esbuild: "npm:>=0.20.0"
     esbuild-node-externals: "npm:^1.12.0"
@@ -1784,7 +1784,7 @@ __metadata:
   resolution: "esbuild-plugin-entry-chunks@workspace:packages/esbuild/plugin-entry-chunks"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.11.16"
+    "@types/node": "npm:^20.11.17"
     depseek: "workspace:*"
     esbuild: "npm:>=0.20.0"
   peerDependencies:
@@ -3150,7 +3150,7 @@ __metadata:
   resolution: "lcov-utils@workspace:packages/lcov-utils"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.11.16"
+    "@types/node": "npm:^20.11.17"
   languageName: unknown
   linkType: soft
 
@@ -4500,14 +4500,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tar-stream@npm:^3.1.6":
-  version: 3.1.6
-  resolution: "tar-stream@npm:3.1.6"
+"tar-stream@npm:^3.1.7":
+  version: 3.1.7
+  resolution: "tar-stream@npm:3.1.7"
   dependencies:
     b4a: "npm:^1.6.4"
     fast-fifo: "npm:^1.2.0"
     streamx: "npm:^2.15.0"
-  checksum: 2c32e0d57de778ae415357bfb126a512a384e9bfb8e234920455ad65282181a3765515bbd80392ab8e7e630158376ec7de46b18ab86a33d256a7dcc43b0648b7
+  checksum: b21a82705a72792544697c410451a4846af1f744176feb0ff11a7c3dd0896961552e3def5e1c9a6bbee4f0ae298b8252a1f4c9381e9f991553b9e4847976f05c
   languageName: node
   linkType: hard
 
@@ -4569,7 +4569,7 @@ __metadata:
   resolution: "topoconfig@workspace:packages/topoconfig/core"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.11.16"
+    "@types/node": "npm:^20.11.17"
   languageName: unknown
   linkType: soft
 
@@ -4633,7 +4633,7 @@ __metadata:
   dependencies:
     "@antongolub/infra": "workspace:*"
     "@topoconfig/extends": "workspace:*"
-    "@types/node": "npm:^20.11.16"
+    "@types/node": "npm:^20.11.17"
     depseek: "workspace:*"
     minimist: "npm:^1.2.8"
   peerDependencies:
@@ -4856,7 +4856,7 @@ __metadata:
   resolution: "upkeeper@workspace:packages/dep/upkeeper"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.11.16"
+    "@types/node": "npm:^20.11.17"
     dot: "npm:^2.0.0-beta.1"
     fast-glob: "npm:^3.3.2"
     minimist: "npm:^1.2.8"
@@ -5112,18 +5112,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zx-bulk-release@npm:^2.15.0":
-  version: 2.15.0
-  resolution: "zx-bulk-release@npm:2.15.0"
+"zx-bulk-release@npm:^2.15.1":
+  version: 2.15.1
+  resolution: "zx-bulk-release@npm:2.15.1"
   dependencies:
     "@semrel-extra/topo": "npm:^1.14.1"
     cosmiconfig: "npm:^9.0.0"
     queuefy: "npm:^1.2.1"
-    tar-stream: "npm:^3.1.6"
+    tar-stream: "npm:^3.1.7"
     zx-extra: "npm:^2.6.4"
   bin:
     zx-bulk-release: src/main/js/cli.js
-  checksum: 29659fb84ec8e3d6fe66664ce80419ad6b682dc3a0959966bac5d4448120cc4345b1733faa9456eaea41632440a944c29974e7b2d4645ef6c0c768abb9151f22
+  checksum: ff16594d3e44c0f2771b6cae6435ea1c46be94baec8a325b53d2c861f42d6ccbb30acc2ed6300ca30aa943fa45c6deb7085209bfa7052bb67a997d1649384469
   languageName: node
   linkType: hard
 
