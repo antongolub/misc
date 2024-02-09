@@ -4,7 +4,7 @@ import fs from 'node:fs'
 import url from 'node:url'
 import {Ctx} from './interface.js'
 import {isString, pipe, stripBom} from './util.js'
-import {dextend} from './extend.js'
+import {unsetExtends} from './extend.js'
 
 const _require = import.meta.url ? createRequire(import.meta.url) : require
 const cjs = new Set(['.cjs', '.cts'])
@@ -37,7 +37,7 @@ export const resolve = (id: string, cwd: string): string =>
 const dedefault = (value: any) => value?.default ?? value
 
 export const loadResource = (ctx: Ctx) => {
-  const {config, cwd, cache} = ctx
+  const {config, cwd, cache, extendKeys} = ctx
   const resource = isString(config)
     ? path.join(cwd, config)
     : config
@@ -49,7 +49,7 @@ export const loadResource = (ctx: Ctx) => {
     return value
   }
 
-  return pipe(cache.get(resource), dextend)
+  return pipe(cache.get(resource), v => unsetExtends(v, extendKeys))
 }
 
 const processResource = (ctx: Ctx) => {

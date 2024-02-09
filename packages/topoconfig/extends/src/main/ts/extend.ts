@@ -1,10 +1,7 @@
-import {Rules, TExtendCtx, TExtendOpts} from './interface.js'
+import {Rules, Strategy, TExtendCtx, TExtendOpts} from './interface.js'
 import {isObject} from './util.js'
 
-export const MERGE = 'merge'
-export const OVERRIDE = 'override'
-
-const getRule = (p: string, rules: Rules) => rules[p] || rules['*'] || OVERRIDE
+const getRule = (p: string, rules: Rules) => rules[p] || rules['*'] || Strategy.OVERRIDE
 
 export const extend = (opts: TExtendOpts) => {
   const {
@@ -23,7 +20,7 @@ export const extend = (opts: TExtendOpts) => {
 }
 
 export const extendArray = ({result, sources, prefix, rules}: TExtendCtx & {result: Array<any>}) => {
-  if (getRule(prefix, rules) === MERGE) {
+  if (getRule(prefix, rules) === Strategy.MERGE) {
     result.push(...sources.flat(1))
   } else {
     result.length = 0
@@ -40,7 +37,7 @@ export const extendObject = ({result, sources, prefix, rules, index}: TExtendCtx
       const rule = getRule(p, rules)
       const value = source[key]
 
-      result[key] = isObject(value) && rule === MERGE
+      result[key] = isObject(value) && rule === Strategy.MERGE
         ? extend({
           sources: [value],
           rules,
@@ -54,7 +51,9 @@ export const extendObject = ({result, sources, prefix, rules, index}: TExtendCtx
   return result
 }
 
-export const dextend = (v: any) => {
-  delete v?.extends
+export const unsetExtends = (v: any, extendsKeys: string[]) => {
+  for (const key of extendsKeys) {
+    delete v?.[key]
+  }
   return v
 }
