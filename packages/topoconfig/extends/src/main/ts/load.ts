@@ -1,6 +1,7 @@
 import {createRequire} from 'node:module'
 import path from 'node:path'
 import fs from 'node:fs'
+import url from 'node:url'
 import {Ctx} from './interface.js'
 import {isString, pipe, stripBom} from './util.js'
 import {dextend} from './extend.js'
@@ -20,8 +21,11 @@ export const load = async (id: string) => {
   // To avoid Deno `--compat` flag.
   if (cjs.has(ext)) return _require(id)
 
+  // https://stackoverflow.com/questions/69665780/error-err-unsupported-esm-url-scheme-only-file-and-data-urls-are-supported-by
+  const _id = id.includes(':') ? url.pathToFileURL(id).toString() : id
+
   return anyjs.has(ext)
-    ? dedefault(await import(id))
+    ? dedefault(await import(_id))
     : stripBom(await fs.promises.readFile(id, 'utf8'))
 }
 

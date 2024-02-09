@@ -25,7 +25,7 @@
     "build:js": "yarn build:esbuild",
     "build:dts": "yarn build:tsc",
     "build:docs": "yarn build:typedoc",
-    "test": "concurrently 'npm:test:*(!it)'",
+    "test": "concurrently 'npm:test:*(!smoke)' 'npm:test:smoke'",
     "test:lint": "yarn test:eslint",
     "test:unit": "yarn test:c8",
     "test:it": "yarn test:smoke:node",
