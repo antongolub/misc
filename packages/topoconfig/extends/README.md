@@ -15,9 +15,34 @@ const tsconfig = await populate('tsconfig.json', {
 
 ## Key features
 * Recursive `extends` population
+* Multiple sources support
 * Configurable merging rules
 * Sync and async modes
 * Easy customization
+* Immutability with prototype transits
+
+<details>
+<summary>Alternatives</summary>
+
+[yargs/helpers]() is the closest one, but the differences are still [noticeable](https://github.com/yargs/yargs/blob/main/lib/utils/apply-extends.ts):
+```ts
+import {applyExtends} from 'yargs/helpers'
+
+const config = applyExtends({
+  extends: './base.config.json',
+  foo: 'foo',
+  bar: {
+    a: 'a'
+  }
+}, process.cwd())
+```
+* No mjs/esm
+* No immutability
+* No mupltiple sources
+* No custom merge which is essential for some cases like arrays
+* No custom formats support
+* No async mode
+</details>
 
 ## Status
 Working draft
@@ -294,6 +319,7 @@ If necessary, you can replace it with a more advanced implementation, such as [r
 * [vite/issues/13950](https://github.com/vitejs/vite/issues/13950)
 * [bahmutov/cypress-extends](https://github.com/bahmutov/cypress-extends)
 * [eslint#how-do-overrides-work](https://eslint.org/docs/latest/use/configure/configuration-files#how-do-overrides-work)
+* [yargs/helpers/applyExtends](https://yargs.js.org/docs/#api-reference-configobject-extends-keyword)
 
 ## License
 [MIT](./LICENSE)
