@@ -1,5 +1,5 @@
 export { load, loadSync, resolve } from './load.ts'
-export { extend } from './extend.ts'
+export { extend, OVERRIDE, MERGE } from './extend.ts'
 export { parse, populate, populateSync } from './populate.ts'
 export { clone } from './util.ts'
 export * from './interface.ts'
