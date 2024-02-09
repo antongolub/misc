@@ -3,7 +3,7 @@ export type PopulateOpts = {
   load?: ExtraLoader
   resolve?: ExtraResolver
   parse?: ExtraParser
-  merge?: ExtraMerger | Rules
+  merge?: ExtraMerger
   clone?: ExtraCloner
   extends?: ExtendsDeclaration
   rules?: Rules
@@ -19,7 +19,9 @@ export type Ctx = {
   merge: ExtraMerger
   clone: ExtraCloner
   parse: ExtraParser
+  rules: Rules
   extends?: ExtendsDeclaration
+  extendKeys: string[]
   cache: Map<string, any>
   config: any
 }
@@ -31,9 +33,13 @@ export type ExtraMerger = (...args: any[]) => any
 export type ExtraCloner = <T = any>(any: T) => T
 export type ExtraParser = (id: string, contents: string) => any
 
-export type ExtendStrategy = 'override' | 'merge'
+export enum Strategy {
+  OVERRIDE = 'override',
+  MERGE = 'merge',
+  POPULATE = 'populate'
+}
 
-export type Rules = Record<string, ExtendStrategy>
+export type Rules = Record<string, Strategy | `${Strategy}`>
 
 export type TExtendCtx = {
   sources: Record<string, any>[]

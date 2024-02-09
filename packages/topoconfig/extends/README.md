@@ -14,7 +14,7 @@ const tsconfig = await populate('tsconfig.json', {
 [Implementation notes](https://dev.to/antongolub/config-extends-directive-13p6)
 
 ## Key features
-* Recursive `extends` population
+* Recursive extras population (`extends` by default).
 * Multiple sources support
 * Configurable merging rules
 * Sync and async modes
@@ -109,7 +109,7 @@ const result = populateSync({
 })
 ```
 
-The config's `extends` property may hold objects, strings or string[]. The last two types will be processed via the internal `load` function.
+The config's extra property may hold objects, strings or string[]. The last two types will be processed via the internal `load` function. Extra key defaults to `extends` but can be remapped via merging `rules`.
 ```ts
 const config = {
   extends: [
@@ -122,14 +122,16 @@ const config = {
 }
 ```
 
-You can specify how to join config fields obtained from different sources.
-There are two strategies: `merge` and `override`. The last one is applied by default.
+You can specify how to process config fields obtained from different sources.
+There are three strategies: `populate`, `merge` and `override`. The last one is applied by default.
 ```ts
 {
   foo: 'merge',
   bar: 'override',
   baz: 'merge',
-  'baz.qux': 'merge'
+  'baz.qux': 'merge',
+  extends: 'populate',
+  preset: 'populate', // now both `preset` and `extends` fields will be populated
 }
 ```
 
@@ -159,17 +161,6 @@ const opts = {
   clone: lodash.cloneDeep,
   rules: {
     '*': 'merge'
-  }
-}
-```
-
-Shortcut: if the `merge` option is a plain object it will be treated as `rules`.
-```ts
-const opts = {
-  cwd: '/foo/bar',
-  merge: {
-    foo: 'merge',
-    bar: 'override'
   }
 }
 ```

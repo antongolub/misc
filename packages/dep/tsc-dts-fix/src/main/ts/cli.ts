@@ -40,9 +40,7 @@ export const parseArgv = async (argv = process.argv.slice(2)): Promise<TOptions>
   const { tsconfig = 'tsconfig.json' } = flags
   const { compilerOptions = {} } = (await promisify(fs.exists)(tsconfig))
     ? await populate(JSON.parse(await fs.promises.readFile(tsconfig, 'utf8')), {
-      merge: {
-        compilerOptions: 'merge',
-      }
+      compilerOptions: 'merge',
     })
     : {}
 

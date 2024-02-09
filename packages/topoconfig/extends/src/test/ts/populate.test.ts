@@ -21,10 +21,6 @@ describe('parseOpts() ', () => {
       parseOpts({rules: {foo: 'merge', bar: 'override'}}),
       {rules: {foo: 'merge', bar: 'override'}}
     )
-    assert.deepEqual(
-      parseOpts({merge: {foo: 'merge', bar: 'override'}}),
-      {merge: {foo: 'merge', bar: 'override'}}
-    )
   })
 })
 
@@ -59,6 +55,20 @@ describe('populate()', () => {
         foo: 'bar',
         arr1: [3, 4],
         arr2: ["c", "d"]
+      }
+    ],
+    [
+      'aliases `preset` as `extends` directive',
+      [
+        {
+          b: 'b',
+          preset: '../fixtures/extra3.mjs'
+        },
+        {cwd: __dirname, rules: {preset: 'populate'}}
+      ],
+      {
+        b: 'b',
+        baz: 'qux'
       }
     ],
     [
@@ -181,7 +191,7 @@ describe('populate()', () => {
             searchPlaces: [id]
           }).search(cwd))?.config,
           extends: ['../../../tsconfig.json'],
-          merge: {
+          rules: {
             compilerOptions: 'merge'
           }
         }
@@ -277,7 +287,7 @@ describe('populateSync()', () => {
             searchPlaces: [id]
           }).search(cwd)?.config,
           extends: ['../../../tsconfig.json'],
-          merge: {
+          rules: {
             compilerOptions: 'merge'
           }
         }
@@ -321,7 +331,7 @@ describe('populateSync()', () => {
           ]
         },
         {
-          merge: {
+          rules: {
             a: 'merge',
             'a.b': 'merge'
           },
