@@ -1,7 +1,10 @@
 import {Rules, TExtendCtx, TExtendOpts} from './interface.js'
 import {isObject} from './util.js'
 
-const getRule = (p: string, rules: Rules) => rules[p] || rules['*'] || 'override'
+export const MERGE = 'merge'
+export const OVERRIDE = 'override'
+
+const getRule = (p: string, rules: Rules) => rules[p] || rules['*'] || OVERRIDE
 
 export const extend = (opts: TExtendOpts) => {
   const {
@@ -20,7 +23,7 @@ export const extend = (opts: TExtendOpts) => {
 }
 
 export const extendArray = ({result, sources, prefix, rules}: TExtendCtx & {result: Array<any>}) => {
-  if (getRule(prefix, rules) === 'merge') {
+  if (getRule(prefix, rules) === MERGE) {
     result.push(...sources.flat(1))
   } else {
     result.length = 0
@@ -37,7 +40,7 @@ export const extendObject = ({result, sources, prefix, rules, index}: TExtendCtx
       const rule = getRule(p, rules)
       const value = source[key]
 
-      result[key] = isObject(value) && rule === 'merge'
+      result[key] = isObject(value) && rule === MERGE
         ? extend({
           sources: [value],
           rules,
