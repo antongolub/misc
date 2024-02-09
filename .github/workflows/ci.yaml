@@ -14,7 +14,7 @@ jobs:
       packages: write
       id-token: write
     steps:
-      - name: Depth
+      - name: Fetch depth
         run: echo "FETCH_DEPTH=$(echo '${{ toJSON(github.event.commits) }}' | jq 'length | if . < 20 then . + 1 else 0 end')" >> $GITHUB_ENV
 
       - name: Checkout
@@ -75,11 +75,15 @@ jobs:
     name: PR
     runs-on: ubuntu-22.04
     steps:
+      # https://github.com/actions/checkout/issues/552
+      - name: Fetch depth
+        run: echo "PR_FETCH_DEPTH=$(( ${{ github.event.pull_request.commits }} + 1 ))" >> "${GITHUB_ENV}"
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: ${{ env.PR_FETCH_DEPTH }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -120,13 +124,12 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-22.04, windows-latest ]
-        node-version: [ 20 ]
+        node-version: [ 18, 20 ]
 
     runs-on: ${{ matrix.os }}
 
     steps:
-      # https://github.com/actions/checkout/issues/552
-      - name: 'PR commits + 1'
+      - name: Fetch depth
         run: echo "PR_FETCH_DEPTH=$(( ${{ github.event.pull_request.commits }} + 1 ))" >> "${GITHUB_ENV}"
 
       - name: Checkout
@@ -134,10 +137,6 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: ${{ env.PR_FETCH_DEPTH }}
-
-      - name: 'Fetch the other branch with enough history for a common merge-base commit'
-        run: |
-          git fetch origin ${{ github.event.pull_request.base.ref }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
