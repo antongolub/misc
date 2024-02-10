@@ -1,7 +1,7 @@
 import process from 'node:process'
 import url from 'node:url'
 import fs from 'node:fs/promises'
-import {populate} from './index.ts'
+import {populate} from './index.js'
 
 const stdout = Symbol('stdout')
 
