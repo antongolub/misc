@@ -2,7 +2,7 @@ import path from 'node:path'
 import process from 'node:process'
 
 import {Ctx, ExtraLoader, ExtraMerger, Populate, PopulateOpts, Rules, Strategy} from './interface.js'
-import {load, loadResource, loadSync, resolve} from './load.js'
+import {load, loadResource, loadSync, resolve, parse} from './load.js'
 import {unsetExtends, extend} from './extend.js'
 import {clone, isString} from './util.js'
 
@@ -21,9 +21,6 @@ export const populateSync = <R = Record<any, any>>(config: any, opts: PopulateOp
 
   return assembleValue(_config, extras, ctx)
 }
-
-export const parse = (name: string, contents: string) =>
-  name.endsWith('.json') ? JSON.parse(contents) : contents
 
 export const createCtx = (config: any, opts: PopulateOpts, loader: ExtraLoader, populate: Populate): Ctx => {
   const _opts = parseOpts(opts)
