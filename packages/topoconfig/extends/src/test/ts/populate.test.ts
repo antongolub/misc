@@ -41,6 +41,21 @@ describe('populate()', () => {
       }
     ],
     [
+      'configuration\'s own values take precedence over extras',
+      [
+        {
+          a: 'A',
+          extends: [
+            {a: 'a', b: 'b'},
+          ]
+        }
+      ],
+      {
+        a: 'A',
+        b: 'b'
+      }
+    ],
+    [
       'multiple `extends` works',
       [
         {
@@ -273,8 +288,8 @@ describe('populateSync()', () => {
       [path.resolve(fixtures, 'extra5.json'), {arr1: 'merge', arr2: 'override'}],
       {
         foo: 'bar',
-        arr1: [1, 2, 3, 4],
-        arr2: ['c', 'd']
+        arr1: [3, 4, 1, 2],
+        arr2: ['a', 'b']
       }
     ],
     [
