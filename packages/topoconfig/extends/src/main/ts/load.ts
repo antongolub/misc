@@ -6,7 +6,9 @@ import {Ctx} from './interface.js'
 import {isString, pipe, stripBom} from './util.js'
 import {unsetExtends} from './extend.js'
 
-const _require = import.meta.url ? createRequire(import.meta.url) : require
+const r = import.meta.url ? createRequire(import.meta.url) : require
+const _require = (id: string): any => r(normalizeRequirePath(id))
+const _import = (id: string) => import.meta.url ? import(normalizeImportPath(id)) : _require(id)
 const cjs = new Set(['.cjs', '.cts'])
 const anyjs = new Set(['', '.js', '.ts', '.mjs', '.mts', ...cjs])
 
@@ -21,11 +23,8 @@ export const load = async (id: string) => {
   // To avoid Deno `--compat` flag.
   if (cjs.has(ext)) return _require(id)
 
-  // https://stackoverflow.com/questions/69665780/error-err-unsupported-esm-url-scheme-only-file-and-data-urls-are-supported-by
-  const _id = id.includes(':') ? url.pathToFileURL(id).toString() : id
-
   return anyjs.has(ext)
-    ? dedefault(await import(_id))
+    ? unwrapDefault(await _import(id))
     : stripBom(await fs.promises.readFile(id, 'utf8'))
 }
 
@@ -34,7 +33,7 @@ export const resolve = (id: string, cwd: string): string =>
     ? path.resolve(cwd, id)
     : id
 
-const dedefault = (value: any) => value?.default ?? value
+const unwrapDefault = (value: any) => value?.default ?? value
 
 export const loadResource = (ctx: Ctx) => {
   const {config, cwd, cache, extendKeys} = ctx
@@ -62,3 +61,13 @@ const processResource = (ctx: Ctx) => {
       (v: any) => isString(v) ? parse(config, v) : v)
     : config, clone)
 }
+
+// https://stackoverflow.com/questions/69665780/error-err-unsupported-esm-url-scheme-only-file-and-data-urls-are-supported-by
+// `id.includes(':')` detects abs paths on windows which cannot be processed as is by the import api
+const normalizeImportPath = (id: string): string => id.startsWith('file:') || !(id.includes(':'))
+  ? id
+  : url.pathToFileURL(id).href
+
+const normalizeRequirePath = (id: string): string => id.startsWith('file:')
+  ? url.fileURLToPath(id)
+  : id
