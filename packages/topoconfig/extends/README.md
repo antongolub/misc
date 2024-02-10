@@ -42,6 +42,7 @@ const config = applyExtends({
 * No custom merge which is essential for some cases like arrays
 * No custom formats support
 * No async mode
+* No file urls support
 </details>
 
 ## Status

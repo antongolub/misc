@@ -1,5 +1,5 @@
 ## &lt;misc&gt;
-> An experiment on maintaining a multi-project monorepository
+> Experiment on maintaining a multi-project monorepository
 
 [![CI](https://github.com/antongolub/misc/actions/workflows/ci.yaml/badge.svg?branch=master)](https://github.com/antongolub/misc/actions/workflows/ci.yaml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/1e70108b3273470415c7/maintainability)](https://codeclimate.com/github/antongolub/misc/maintainability)
