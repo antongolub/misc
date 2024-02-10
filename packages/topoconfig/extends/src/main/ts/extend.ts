@@ -1,5 +1,5 @@
-import {Rules, Strategy, TExtendCtx, TExtendOpts} from './interface.ts'
-import {isObject} from './util.ts'
+import {Rules, Strategy, TExtendCtx, TExtendOpts} from './interface.js'
+import {isObject} from './util.js'
 
 const getRule = (p: string, rules: Rules) => rules[p] || rules['*'] || Strategy.OVERRIDE
 

@@ -2,9 +2,9 @@ import {createRequire} from 'node:module'
 import path from 'node:path'
 import fs from 'node:fs'
 import url from 'node:url'
-import {Ctx} from './interface.ts'
-import {isString, pipe, stripBom} from './util.ts'
-import {unsetExtends} from './extend.ts'
+import {Ctx} from './interface.js'
+import {isString, pipe, stripBom} from './util.js'
+import {unsetExtends} from './extend.js'
 
 const r = import.meta.url ? createRequire(import.meta.url) : require
 const _require = (id: string): any => r(normalizeRequirePath(id))
@@ -63,6 +63,7 @@ const processResource = (ctx: Ctx) => {
 }
 
 // https://stackoverflow.com/questions/69665780/error-err-unsupported-esm-url-scheme-only-file-and-data-urls-are-supported-by
+// https://github.com/nodejs/node/issues/31710
 // `id.includes(':')` detects abs paths on windows which cannot be processed as is by the import api
 const normalizeImportPath = (id: string): string => id.startsWith('file:') || !(id.includes(':'))
   ? id
