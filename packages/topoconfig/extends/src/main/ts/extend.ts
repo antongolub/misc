@@ -1,5 +1,5 @@
 import {Rules, Strategy, TExtendCtx, TExtendOpts} from './interface.js'
-import {isObject} from './util.js'
+import {getSeed, isObject} from './util.js'
 
 const getRule = (p: string, rules: Rules) => rules[p] || rules['*'] || Strategy.OVERRIDE
 
@@ -11,7 +11,7 @@ export const extend = (opts: TExtendOpts) => {
     index = {}
   } = opts
   const isArray = Array.isArray(index[prefix] || sources[0])
-  const result: any = (index[prefix] = index[prefix] || (isArray ? [] : {}))
+  const result: any = (index[prefix] = index[prefix] || getSeed(sources[0]))
   const ctx = {result, sources, prefix, rules, index}
 
   return isArray

@@ -4,7 +4,7 @@ export const isString = (value: any): value is string => typeof value === 'strin
 
 export const isFn = (value: any): boolean => typeof value === 'function'
 
-export const isObject = (value: any) => typeof value === 'object' && value !== null
+export const isObject = (value: any) => value !== null && typeof value === 'object'
 
 export const isCloneable = (value: any) => isObject(value) && !util.types.isProxy(value) && !isFn(value) && ![RegExp, Date, Promise, Map, Set, WeakMap, WeakSet].some(c => value instanceof c)
 
@@ -18,8 +18,8 @@ export const pipe = (value: any, hook: (value: any) => any) =>
     ? value.then(hook)
     : hook(value)
 
-const getSeed = (value: any) => isCloneable(value)
-  ? Object?.setPrototypeOf(Array.isArray(value) ? [] : {}, Object?.getPrototypeOf(value))
+export const getSeed = (value: any) => isCloneable(value)
+  ? Array.isArray(value) ? [] : Object.create(Object.getPrototypeOf(value))
   : undefined
 
 export const clone = <T = any>(value: T, map = new Map(), seed = getSeed(value)): T => seed

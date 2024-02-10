@@ -4,7 +4,7 @@ import process from 'node:process'
 import {Ctx, ExtraLoader, ExtraMerger, Populate, PopulateOpts, Rules, Strategy} from './interface.js'
 import {load, loadResource, loadSync, resolve, parse} from './load.js'
 import {unsetExtends, extend} from './extend.js'
-import {clone, isString} from './util.js'
+import {clone, isString, getSeed} from './util.js'
 
 export const populate = async <R = Record<any, any>>(config: any, opts: PopulateOpts | Rules = {}): Promise<R> => {
   const ctx = createCtx(config, opts, load, populate)
@@ -66,4 +66,4 @@ export const populateExtras = (config: any, ctx: Ctx): any[] => {
 }
 
 export const assembleValue = (config: any, extras: any[], ctx: Ctx ) =>
-  ctx.merge({}, ...extras, unsetExtends(config, ctx.extendKeys))
+  unsetExtends(ctx.merge(getSeed(config), ...extras, config), ctx.extendKeys)
