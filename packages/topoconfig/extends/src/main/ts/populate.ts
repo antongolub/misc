@@ -66,4 +66,4 @@ export const populateExtras = (config: any, ctx: Ctx): any[] => {
 }
 
 export const assembleValue = (config: any, extras: any[], ctx: Ctx ) =>
-  ctx.merge(unsetExtends(config, ctx.extendKeys), ...extras)
+  ctx.merge({}, ...extras, unsetExtends(config, ctx.extendKeys))
