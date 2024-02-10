@@ -6,6 +6,7 @@ import { createRequire } from 'node:module'
 import { populate, populateSync, parseOpts } from '../../main/ts/populate.ts'
 import { cosmiconfig, cosmiconfigSync } from 'cosmiconfig'
 import { load as parseYaml } from 'js-yaml'
+import {isCloneable} from "../../main/ts/util";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const __require = createRequire(import.meta.url)
@@ -25,6 +26,8 @@ describe('parseOpts() ', () => {
 })
 
 describe('populate()', () => {
+  class Foo {}
+  const foo = new Foo()
   const cases: [string, Parameters<typeof populate>, any][] = [
     [
       'resolves `extends` directives and injects them into the target',
@@ -53,6 +56,21 @@ describe('populate()', () => {
       {
         a: 'A',
         b: 'b'
+      }
+    ],
+    [
+      'keeps prototype',
+      [
+        foo,
+        {
+          extends: [
+            {a: 'a', b: 'b'},
+          ]
+        }
+      ],
+      {
+        a: 'a',
+        b: 'b',
       }
     ],
     [
@@ -277,6 +295,11 @@ describe('populate()', () => {
     it(name, async () => {
       const result = await populate(config, opts)
       assert.deepEqual(result, exptected)
+
+      if (typeof config !== 'string') {
+        assert.ok(result instanceof config.constructor)
+        assert.ok(result.constructor === config.constructor)
+      }
     })
   }
 })
