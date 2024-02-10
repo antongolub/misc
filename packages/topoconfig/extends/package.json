@@ -4,6 +4,9 @@
   "description": "Populates `extends` reference in configs",
   "type": "module",
   "main": "target/cjs/index.cjs",
+  "bin": {
+    "xtends": "./target/esm/cli.mjs"
+  },
   "exports": {
     ".": {
       "types": "./target/dts/index.d.ts",
@@ -22,7 +25,7 @@
   ],
   "scripts": {
     "build": "concurrently 'npm:build:*'",
-    "build:js": "yarn build:esbuild",
+    "build:js": "yarn build:esbuild --entry='./src/main/ts/index.ts:./src/main/ts/cli.ts'",
     "build:dts": "yarn build:tsc",
     "build:docs": "yarn build:typedoc",
     "test": "concurrently 'npm:test:*(!smoke)' 'npm:test:smoke'",

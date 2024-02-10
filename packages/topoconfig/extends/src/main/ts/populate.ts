@@ -1,7 +1,7 @@
 import path from 'node:path'
 import process from 'node:process'
 
-import {Ctx, ExtraLoader, ExtraMerger, Populate, PopulateOpts, Rules, Strategy} from './interface.js'
+import {Ctx, ExtraLoader, ExtraMerger, Populate, PopulateOpts, Rules, Strategy} from './interface.ts'
 import {load, loadResource, loadSync, resolve} from './load.js'
 import {unsetExtends, extend} from './extend.js'
 import {clone, isString} from './util.js'

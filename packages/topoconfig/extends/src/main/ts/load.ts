@@ -2,9 +2,9 @@ import {createRequire} from 'node:module'
 import path from 'node:path'
 import fs from 'node:fs'
 import url from 'node:url'
-import {Ctx} from './interface.js'
-import {isString, pipe, stripBom} from './util.js'
-import {unsetExtends} from './extend.js'
+import {Ctx} from './interface.ts'
+import {isString, pipe, stripBom} from './util.ts'
+import {unsetExtends} from './extend.ts'
 
 const r = import.meta.url ? createRequire(import.meta.url) : require
 const _require = (id: string): any => r(normalizeRequirePath(id))
