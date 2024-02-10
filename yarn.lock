@@ -529,6 +529,8 @@ __metadata:
     "@types/node": "npm:^20.11.17"
     cosmiconfig: "npm:^9.0.0"
     js-yaml: "npm:^4.1.0"
+  bin:
+    xtends: ./target/esm/cli.mjs
   languageName: unknown
   linkType: soft
 

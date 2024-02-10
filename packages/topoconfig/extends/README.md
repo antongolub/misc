@@ -143,6 +143,15 @@ To switch the default behavior use asterisk `*` as a key:
 }
 ```
 
+## CLI
+If you needed this, you definitely know why.
+```bash
+xtends <config.json> [<opts> [<output.json>]]
+
+xtends tsconfig.json '{"compilerOtrions": "merge"}' > resolved.json
+xtends prettier.json '{"overrides": "merge"}' resolved.json
+```
+
 ## Customization
 Options define merging rules, but it's also suitable to override some internals:
 
