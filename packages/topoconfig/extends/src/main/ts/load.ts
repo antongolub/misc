@@ -33,6 +33,9 @@ export const resolve = (id: string, cwd: string): string =>
     ? path.resolve(cwd, id)
     : id
 
+export const parse = (name: string, contents: string, ext: string) =>
+  ext === '.json' ? JSON.parse(contents) : contents
+
 const unwrapDefault = (value: any) => value?.default ?? value
 
 export const loadResource = (ctx: Ctx) => {
@@ -58,7 +61,7 @@ const processResource = (ctx: Ctx) => {
     ? pipe(pipe(
         resolve(config, cwd),
         (resolved) => load(resolved, config, cwd)),
-      (v: any) => isString(v) ? parse(config, v) : v)
+      (v: any) => isString(v) ? parse(config, v, path.extname(config)) : v)
     : config, clone)
 }
 

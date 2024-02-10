@@ -31,7 +31,7 @@ export type ExtraLoader = (resolved: string, id: string, cwd: string) => any
 export type ExtraResolver = (id: string, cwd: string) => string
 export type ExtraMerger = (...args: any[]) => any
 export type ExtraCloner = <T = any>(any: T) => T
-export type ExtraParser = (id: string, contents: string) => any
+export type ExtraParser = (id: string, contents: string, ext: string) => any
 
 export enum Strategy {
   OVERRIDE = 'override',
