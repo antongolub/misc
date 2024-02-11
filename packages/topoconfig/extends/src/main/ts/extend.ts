@@ -1,5 +1,5 @@
 import {Rules, Strategy, TExtendCtx, TExtendOpts} from './interface.js'
-import {getSeed, isObject} from './util.js'
+import {getProps, getSeed, isObject} from './util.js'
 
 const getRule = (p: string, rules: Rules) => rules[p] || rules['*'] || Strategy.OVERRIDE
 
@@ -32,10 +32,10 @@ export const extendArray = ({result, sources, prefix, rules}: TExtendCtx & {resu
 
 export const extendObject = ({result, sources, prefix, rules, index}: TExtendCtx & {result: Record<string, any>}) => {
   for (const source of sources) {
-    for (const key in source) {
-      const p = `${prefix ? prefix + '.' : ''}${key}`
+    for (const key of getProps(source)) {
+      const p = `${prefix ? prefix + '.' : ''}${key as string}`
       const rule = getRule(p, rules)
-      const value = source[key]
+      const value = source[key as string]
 
       result[key] = isObject(value) && rule === Strategy.MERGE
         ? extend({
