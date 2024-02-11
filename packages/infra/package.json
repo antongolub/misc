@@ -18,7 +18,7 @@
     "test:eslint": "cd $INIT_CWD && eslint -c src/test/lint/.eslintrc.json src",
     "test:oxlint": "cd $INIT_CWD && oxlint src",
     "test:c8": "c8 -r lcov -r text --src=$INIT_CWD -x '**/target' -x '**/src/test' -x '**/infra' --allowExternal -o $INIT_CWD/target/coverage node --loader ts-node/esm --experimental-specifier-resolution=node ./scripts/test.mjs --cwd=$INIT_CWD",
-    "bulk:topobuild": "cd $INIT_CWD && zx-bulk-release --dry-run --include-private --ignore=@antongolub/infra,@antongolub/blank"
+    "bulk:topobuild": "cd $INIT_CWD && zx-bulk-release --dry-run --include-private --ignore=@antongolub/infra,@antongolub/blank,@fixtures/config-with-extends"
   },
   "devDependencies": {
     "@antongolub/git-root": "^1.5.13",
