@@ -182,7 +182,7 @@ import {load as parseYaml} from 'js-yaml'
 import {populate} from '@topoconfig/extends'
 
 const config = await populate('tsconfig.yaml', {
-  parse: (id, contents) => {
+  parse(id, contents) {
     if (id.endsWith('.yaml') || id.endsWith('.yml')) 
         return parseYaml(contents)
     if (id.endsWith('.json')) 
@@ -218,9 +218,20 @@ Or even like this:
 ```ts
 import cosmiconfig from 'cosmiconfig'
 
-const config = await populate(raw, {
+const config = await populate('cosmiconfig:magic', {
   async load(_: string, f: string, cwd: string) {
     return (await cosmiconfig('foobar').search(cwd))?.config
+  }
+})
+```
+
+Literally, there is no limitations:
+```ts
+import cosmiconfig from 'cosmiconfig'
+
+const config = await populate('cosmiconfig:magic', {
+  resolve(_id, cwd) {
+    return cosmiconfigSync('foobar').search(cwd).filepath
   }
 })
 ```
@@ -295,10 +306,9 @@ const bar = loadSync('../bar.json', '/some/bar')
 ```
 
 ### parse
-Applies `JSON.parse` if the file extension is `.json`, otherwise returns the input.
+Applies `JSON.parse` to any input.
 ```ts
-export const parse = (name: string, contents: string) =>
-  name.endsWith('.json') ? JSON.parse(contents) : contents
+export const parse = (name: string, contents: string, ext: string) => JSON.parse(contents)
 ```
 
 ### clone
