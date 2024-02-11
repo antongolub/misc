@@ -6,7 +6,6 @@ import { createRequire } from 'node:module'
 import { populate, populateSync, parseOpts } from '../../main/ts/populate.ts'
 import { cosmiconfig, cosmiconfigSync } from 'cosmiconfig'
 import { load as parseYaml } from 'js-yaml'
-import {isCloneable} from "../../main/ts/util";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const __require = createRequire(import.meta.url)
