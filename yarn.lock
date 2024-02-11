@@ -312,6 +312,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fixtures/config-with-extends@workspace:packages/fixtures/config-with-extends":
+  version: 0.0.0-use.local
+  resolution: "@fixtures/config-with-extends@workspace:packages/fixtures/config-with-extends"
+  languageName: unknown
+  linkType: soft
+
 "@humanwhocodes/config-array@npm:^0.11.13":
   version: 0.11.13
   resolution: "@humanwhocodes/config-array@npm:0.11.13"

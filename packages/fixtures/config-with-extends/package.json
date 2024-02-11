@@ -1,0 +1,13 @@
+{
+  "name": "@fixtures/config-with-extends",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.cjs",
+  "exports": {
+    ".": {
+      "require": "./index.cjs",
+      "import": "./index.mjs"
+    }
+  }
+}
