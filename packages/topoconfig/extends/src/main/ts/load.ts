@@ -1,8 +1,10 @@
+import fs from 'node:fs'
 import {createRequire} from 'node:module'
 import path from 'node:path'
-import fs from 'node:fs'
+import process from 'node:process'
 import url from 'node:url'
-import {Ctx} from './interface.js'
+
+import {Ctx, ExtraResolver} from './interface.js'
 import {isString, pipe, stripBom} from './util.js'
 import {unsetExtends} from './extend.js'
 
@@ -12,8 +14,10 @@ const _import = (id: string) => import.meta.url ? import(normalizeImportPath(id)
 const cjs = new Set(['.cjs', '.cts'])
 const anyjs = new Set(['', '.js', '.ts', '.mjs', '.mts', ...cjs])
 
+export const parse = (name: string, contents: string, ext: string) => JSON.parse(contents)
+
 export const loadSync = (id: string) =>
-  anyjs.has(path.extname(id))
+  !isDotFile(id) && anyjs.has(path.extname(id))
     ? _require(id)
     : stripBom(fs.readFileSync(id, 'utf8'))
 
@@ -23,20 +27,35 @@ export const load = async (id: string) => {
   // To avoid Deno `--compat` flag.
   if (cjs.has(ext)) return _require(id)
 
-  return anyjs.has(ext)
+  return !isDotFile(id) && anyjs.has(ext)
     ? unwrapDefault(await _import(id))
     : stripBom(await fs.promises.readFile(id, 'utf8'))
 }
 
 export const resolve = (id: string, cwd: string): string =>
-  id.startsWith('.') || path.extname(id)
+  id.startsWith('.')
     ? path.resolve(cwd, id)
-    : id
+    : resolveExternalModulePath(id)
 
-export const parse = (name: string, contents: string, ext: string) =>
-  ext === '.json' ? JSON.parse(contents) : contents
+export const locateResource = (id: any, resolver: ExtraResolver, cwd?: string) => {
+  const base = path.resolve(process.cwd(), cwd ?? '.')
+  const def = {cwd: base, id}
 
-const unwrapDefault = (value: any) => value?.default ?? value
+  if (!isString(id)) return def
+
+  const rawPath = resolver(id, base)
+  const normalizedPath = rawPath.startsWith('file:') ? url.fileURLToPath(rawPath) : rawPath
+  const dir = path.dirname(normalizedPath)
+
+  // This happens if the resolver returns smth weird, like resources with a custom protocol.
+  // It's ok, let (custom) loader to handle this case.
+  if (dir === '.') return def
+
+  return {
+    cwd: dir,
+    id: './' + path.basename(normalizedPath)
+  }
+}
 
 export const loadResource = (ctx: Ctx) => {
   const {config, cwd, cache, extendKeys} = ctx
@@ -75,3 +94,12 @@ const normalizeImportPath = (id: string): string => id.startsWith('file:') || !(
 const normalizeRequirePath = (id: string): string => id.startsWith('file:')
   ? url.fileURLToPath(id)
   : id
+
+const resolveExternalModulePath = (id: string, resolver = import.meta?.resolve || r.resolve): string =>
+  id.includes(':') // `file:///` url or abs path on windows (c:\foo\bar)
+    ? id
+    : resolver?.(id) ?? id
+
+const unwrapDefault = (value: any) => value?.default ?? value
+
+const isDotFile = (id: string): boolean => path.basename(id)[0] === '.'

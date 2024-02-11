@@ -200,13 +200,31 @@ describe('populate()', () => {
       }
     ],
     [
-      'the shortest comsmiconfig wrapper',
+      'the shortest cosmiconfig wrapper',
       [
-        '*.rc',
+        'cosmiconfig:foobar',
         {
           cwd: fixtures,
-          load: async (_: string, f: string, cwd: string) =>
-            (await cosmiconfig('foobar').search(cwd))?.config
+          load: async (_: string, f: string, cwd: string) => {
+            console.log('cwd=', cwd)
+            return (await cosmiconfig('foobar').search(cwd))?.config
+          }
+
+        },
+      ],
+      {
+        foobar: 'baz'
+      }
+    ],
+    [
+      'cosmiconfig as resolver',
+      [
+        'cosmiconfig:foobar',
+        {
+          cwd: fixtures,
+          resolve(_id, cwd) {
+            return cosmiconfigSync('foobar').search(cwd).filepath
+          }
         },
       ],
       {

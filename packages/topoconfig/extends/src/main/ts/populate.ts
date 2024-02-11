@@ -1,10 +1,7 @@
-import path from 'node:path'
-import process from 'node:process'
-
 import {Ctx, ExtraLoader, ExtraMerger, Populate, PopulateOpts, Rules, Strategy} from './interface.js'
-import {load, loadResource, loadSync, resolve, parse} from './load.js'
+import {load, loadResource, loadSync, resolve, parse, locateResource} from './load.js'
 import {unsetExtends, extend} from './extend.js'
-import {clone, isString, getSeed} from './util.js'
+import {clone, getSeed} from './util.js'
 
 export const populate = async <R = Record<any, any>>(config: any, opts: PopulateOpts | Rules = {}): Promise<R> => {
   const ctx = createCtx(config, opts, load, populate)
@@ -24,10 +21,9 @@ export const populateSync = <R = Record<any, any>>(config: any, opts: PopulateOp
 
 export const createCtx = (config: any, opts: PopulateOpts, loader: ExtraLoader, populate: Populate): Ctx => {
   const _opts = parseOpts(opts)
-  const base = path.resolve(process.cwd(), _opts.cwd ?? '.')
-  const [cwd, _config] = isString(config)
-    ? [path.resolve(base, path.dirname(config)), path.basename(config)]
-    : [base, config]
+  const _resolve = _opts.resolve || resolve
+  const {cwd, id: _config} = locateResource(config, _resolve, _opts.cwd)
+
   const rules = _opts.rules || {}
   const _extendKeys = Object.keys(rules).filter(k => rules[k] === Strategy.POPULATE)
   const extendKeys = _extendKeys.length > 0 ? _extendKeys : ['extends']
@@ -36,9 +32,9 @@ export const createCtx = (config: any, opts: PopulateOpts, loader: ExtraLoader, 
     load: loader,
     clone: clone,
     parse: parse,
-    resolve: resolve,
     cache: new Map(),
     ..._opts,
+    resolve: _resolve,
     merge: buildMerger(_opts.merge, rules),
     rules,
     extendKeys,
