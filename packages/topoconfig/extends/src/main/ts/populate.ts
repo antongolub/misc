@@ -12,17 +12,17 @@ export const populate = async <R = Record<any, any>>(config: any, opts: Populate
 }
 
 export const populateSync = <R = Record<any, any>>(config: any, opts: PopulateOpts | Rules = {}): R => {
-  const ctx = createCtx(config, opts, loadSync, populateSync)
+  const ctx = createCtx(config, opts, loadSync, populateSync, true)
   const _config = loadResource(ctx)
   const extras: any[] = populateExtras(_config, ctx)
 
   return assembleValue(_config, extras, ctx)
 }
 
-export const createCtx = (config: any, opts: PopulateOpts, loader: ExtraLoader, populate: Populate): Ctx => {
+export const createCtx = (config: any, opts: PopulateOpts, loader: ExtraLoader, populate: Populate, sync = false): Ctx => {
   const _opts = parseOpts(opts)
   const _resolve = _opts.resolve || resolve
-  const {cwd, id: _config} = locateResource(config, _resolve, _opts.cwd)
+  const {cwd, id: _config} = locateResource(config, _resolve, _opts.cwd, sync)
 
   const rules = _opts.rules || {}
   const _extendKeys = Object.keys(rules).filter(k => rules[k] === Strategy.POPULATE)
@@ -41,6 +41,7 @@ export const createCtx = (config: any, opts: PopulateOpts, loader: ExtraLoader, 
     populate,
     cwd,
     config: _config,
+    sync,
   })
 }
 
