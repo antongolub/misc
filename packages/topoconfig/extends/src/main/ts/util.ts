@@ -22,8 +22,10 @@ export const getSeed = (value: any) => isCloneable(value)
   ? Array.isArray(value) ? [] : Object.create(Object.getPrototypeOf(value))
   : undefined
 
+export const getProps = (value: any) => [...Object.getOwnPropertyNames(value), ...Object.getOwnPropertySymbols(value)]
+
 export const clone = <T = any>(value: T, map = new Map(), seed = getSeed(value)): T => seed
-  ? [...Object.getOwnPropertyNames(value), ...Object.getOwnPropertySymbols(value)].reduce((m: any, k) => {
+  ? getProps(value).reduce((m: any, k) => {
     const v = (value as any)[k]
     if (map.has(v)) {
       m[k] = map.get(v)
