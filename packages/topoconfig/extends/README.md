@@ -24,7 +24,7 @@ const tsconfig = await populate('tsconfig.json', {
 <details>
 <summary>Alternatives</summary>
 
-[yargs/helpers]() is the closest one, but the differences are still [noticeable](https://github.com/yargs/yargs/blob/main/lib/utils/apply-extends.ts):
+[yargs/helpers](https://github.com/yargs/yargs) is the closest one, but the differences are still [noticeable](https://github.com/yargs/yargs/blob/main/lib/utils/apply-extends.ts):
 ```ts
 import {applyExtends} from 'yargs/helpers'
 
