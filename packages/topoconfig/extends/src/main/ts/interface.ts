@@ -12,6 +12,7 @@ export type PopulateOpts = {
 export type Populate = (config: any, opts?: PopulateOpts | Rules) => any
 
 export type Ctx = {
+  sync: boolean
   cwd: string
   populate: Populate
   resolve: ExtraResolver
@@ -28,7 +29,7 @@ export type Ctx = {
 
 export type ExtendsDeclaration = string | Record<any, any> | Array<string | Record<any, any>>
 export type ExtraLoader = (resolved: string, id: string, cwd: string) => any
-export type ExtraResolver = (id: string, cwd: string) => string
+export type ExtraResolver = (id: string, cwd: string, sync: boolean) => string
 export type ExtraMerger = (...args: any[]) => any
 export type ExtraCloner = <T = any>(any: T) => T
 export type ExtraParser = (id: string, contents: string, ext: string) => any

@@ -32,18 +32,18 @@ export const load = async (id: string) => {
     : stripBom(await fs.promises.readFile(id, 'utf8'))
 }
 
-export const resolve = (id: string, cwd: string): string =>
+export const resolve = (id: string, cwd: string, sync: boolean): string =>
   id.startsWith('.')
     ? path.resolve(cwd, id)
-    : resolveExternalModulePath(id)
+    : resolveExternalModulePath(id, sync)
 
-export const locateResource = (id: any, resolver: ExtraResolver, cwd?: string) => {
+export const locateResource = (id: any, resolver: ExtraResolver, cwd?: string, sync = false) => {
   const base = path.resolve(process.cwd(), cwd ?? '.')
   const def = {cwd: base, id}
 
   if (!isString(id)) return def
 
-  const rawPath = resolver(id, base)
+  const rawPath = resolver(id, base, sync)
   const normalizedPath = rawPath.startsWith('file:') ? url.fileURLToPath(rawPath) : rawPath
   const dir = path.dirname(normalizedPath)
 
@@ -74,11 +74,11 @@ export const loadResource = (ctx: Ctx) => {
 }
 
 const processResource = (ctx: Ctx) => {
-  const {load, config, cwd, parse,  clone, resolve} = ctx
+  const {load, config, cwd, parse,  clone, resolve, sync} = ctx
 
   return pipe(isString(config)
     ? pipe(pipe(
-        resolve(config, cwd),
+        resolve(config, cwd, sync),
         (resolved) => load(resolved, config, cwd)),
       (v: any) => isString(v) ? parse(config, v, path.extname(config)) : v)
     : config, clone)
@@ -95,10 +95,9 @@ const normalizeRequirePath = (id: string): string => id.startsWith('file:')
   ? url.fileURLToPath(id)
   : id
 
-const resolveExternalModulePath = (id: string, resolver = import.meta?.resolve || r.resolve): string =>
-  id.includes(':') // `file:///` url or abs path on windows (c:\foo\bar)
+const resolveExternalModulePath = (id: string, sync: boolean): string => id.includes(':') // `file:///` url or abs path on windows (c:\foo\bar)
     ? id
-    : resolver?.(id) ?? id
+    : (!sync && import.meta?.resolve || r.resolve)(id) ?? id
 
 const unwrapDefault = (value: any) => value?.default ?? value
 
