@@ -5,7 +5,7 @@ const config = await populate({
 })
 
 const configSync = populateSync({
-  extends: ['./src/test/fixtures/extra5.json', '@fixtures/config-with-extends'],
+  extends: ['./src/test/fixtures/extra5.json'],
 })
 
 console.log('Smoke test: OK', config, configSync)

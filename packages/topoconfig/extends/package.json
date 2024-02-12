@@ -34,7 +34,7 @@
     "test:it": "yarn test:smoke:node",
     "test:smoke": "concurrently 'npm:test:smoke:*'",
     "test:smoke:node": "node ./src/test/it/smoke.test.mjs",
-    "test:smoke:deno": "deno run --import-map='./src/test/fixtures/import_map.json' --allow-read ./src/test/it/smoke.test.mjs",
+    "test:smoke:deno": "yarn build:denomap @fixtures/config-with-extends ./import-map.json && deno run --import-map='./import-map.json' --allow-read ./src/test/it/smoke.test.mjs",
     "test:smoke:bun": "bun ./src/test/it/smoke.test.mjs",
     "publish:draft": "yarn build && npm publish --no-git-tag-version --tag draft"
   },
