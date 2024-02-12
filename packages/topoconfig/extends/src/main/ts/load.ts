@@ -4,7 +4,7 @@ import path from 'node:path'
 import process from 'node:process'
 import url from 'node:url'
 
-import {Ctx, ExtraResolver} from './interface.js'
+import {Ctx, ExtraLoader, ExtraParser, ExtraResolver, HelperCtx} from './interface.js'
 import {isString, pipe, stripBom} from './util.js'
 import {unsetExtends} from './extend.js'
 
@@ -14,14 +14,14 @@ const _import = (id: string) => import.meta.url ? import(normalizeImportPath(id)
 const cjs = new Set(['.cjs', '.cts'])
 const anyjs = new Set(['', '.js', '.ts', '.mjs', '.mts', ...cjs])
 
-export const parse = (name: string, contents: string, ext: string) => JSON.parse(contents)
+export const parse: ExtraParser = ({contents}) => JSON.parse(contents)
 
-export const loadSync = (id: string) =>
+export const loadSync: ExtraLoader = ({resolved: id}) =>
   !isDotFile(id) && anyjs.has(path.extname(id))
     ? _require(id)
     : stripBom(fs.readFileSync(id, 'utf8'))
 
-export const load = async (id: string) => {
+export const load: ExtraLoader = async ({resolved: id}) => {
   const ext = path.extname(id)
 
   // To avoid Deno `--compat` flag.
@@ -32,18 +32,18 @@ export const load = async (id: string) => {
     : stripBom(await fs.promises.readFile(id, 'utf8'))
 }
 
-export const resolve = (id: string, cwd: string, sync: boolean): string =>
+export const resolve: ExtraResolver = ({id, cwd, sync}) =>
   id.startsWith('.')
     ? path.resolve(cwd, id)
     : resolveExternalModulePath(id, sync)
 
 export const locateResource = (id: any, resolver: ExtraResolver, cwd?: string, sync = false) => {
   const base = path.resolve(process.cwd(), cwd ?? '.')
-  const def = {cwd: base, id}
+  const def: HelperCtx = {cwd: base, id, sync}
 
   if (!isString(id)) return def
 
-  const rawPath = resolver(id, base, sync)
+  const rawPath = resolver(def)
   const normalizedPath = rawPath.startsWith('file:') ? url.fileURLToPath(rawPath) : rawPath
   const dir = path.dirname(normalizedPath)
 
@@ -75,12 +75,13 @@ export const loadResource = (ctx: Ctx) => {
 
 const processResource = (ctx: Ctx) => {
   const {load, config, cwd, parse,  clone, resolve, sync} = ctx
+  const hctx: HelperCtx = {id: config, cwd, sync}
 
   return pipe(isString(config)
     ? pipe(pipe(
-        resolve(config, cwd, sync),
-        (resolved) => load(resolved, config, cwd)),
-      (v: any) => isString(v) ? parse(config, v, path.extname(config)) : v)
+        resolve(hctx),
+        (resolved) => load({resolved, ...hctx})),
+      (contents: any) => isString(contents) ? parse({...hctx, contents, ext: path.extname(config)}) : contents)
     : config, clone)
 }
 
