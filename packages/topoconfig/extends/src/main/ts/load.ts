@@ -95,9 +95,23 @@ const normalizeRequirePath = (id: string): string => id.startsWith('file:')
   ? url.fileURLToPath(id)
   : id
 
-const resolveExternalModulePath = (id: string, sync: boolean): string => id.includes(':') // `file:///` url or abs path on windows (c:\foo\bar)
+const resolveExternalModulePath = (id: string, sync: boolean): string => {
+  const resolver = sync
+      ? r.resolve
+     // bun import meta resolver is async
+     // https://github.com/oven-sh/bun/blob/f88855da4fc30fac90391c079cd9bbf734ef35b2/test/js/bun/resolve/resolve-test.js#L61
+      : ((import.meta as any).resolveSync ?? import.meta.resolve)?.bind(import.meta) || r.resolve
+
+  // Deno requires import-map to enable external module refs:
+  // https://stackoverflow.com/questions/71071630/deno-relative-path-issue
+  // https://stackoverflow.com/questions/74905332/how-to-use-import-map-with-deno
+  // https://github.com/denoland/deno/issues/7997
+  // https://github.com/denoland/deno/issues/18474
+
+  return id.includes(':') // `file:///` url or abs path on windows (c:\foo\bar)
     ? id
-    : (!sync && import.meta?.resolve || r.resolve)(id) ?? id
+    : resolver(id) ?? id
+}
 
 const unwrapDefault = (value: any) => value?.default ?? value
 
