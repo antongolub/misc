@@ -183,12 +183,12 @@ import {load as parseYaml} from 'js-yaml'
 import {populate} from '@topoconfig/extends'
 
 const config = await populate('tsconfig.yaml', {
-  parse(id, contents) {
-    if (id.endsWith('.yaml') || id.endsWith('.yml')) 
+  parse({id, contents, ext}) {
+    if (ext === '.yaml' || ext === '.yml') 
         return parseYaml(contents)
-    if (id.endsWith('.json')) 
+    if (ext === '.json') 
         return JSON.parse(contents)
-    throw new Error(`Unsupported format: ${id}`)
+    throw new Error(`Unsupported format: ${ext}`)
   }
 })
 ```
@@ -201,7 +201,7 @@ const raw = {
   extends: '../config.extra.in.yaml'
 }
 const config = await populate(raw, {
-  load: async (_: string, id: string, cwd: string) => (await cosmiconfig('foo', {
+  load: async ({id, cwd}) => (await cosmiconfig('foo', {
     searchPlaces: [id]
   }).search(cwd))?.config
 })
@@ -211,7 +211,7 @@ Or like this:
 ```ts
 const {load} = cosmiconfig('foo')
 const config = await populate(raw, {
-  load: async (_: string, id: string, cwd: string) => (await load(path.resolve(cwd, id)))?.config
+  load: async ({id, cwd}) => (await load(path.resolve(cwd, id)))?.config
 })
 ```
 
@@ -220,7 +220,7 @@ Or even like this:
 import cosmiconfig from 'cosmiconfig'
 
 const config = await populate('cosmiconfig:magic', {
-  async load(_: string, f: string, cwd: string) {
+  async load({cwd}) {
     return (await cosmiconfig('foobar').search(cwd))?.config
   }
 })
@@ -231,7 +231,7 @@ Literally, there is no limitations:
 import cosmiconfig from 'cosmiconfig'
 
 const config = await populate('cosmiconfig:magic', {
-  resolve(_id, cwd) {
+  resolve({cwd}) {
     return cosmiconfigSync('foobar').search(cwd).filepath
   }
 })
@@ -293,8 +293,8 @@ Utility to reveal resource paths.
 ```ts
 import { resolve } from '@topoconfig/extends'
 
-const local = resolve('../foo.mjs', '/some/cwd/') // '/some/foo.mjs'
-const external = resolve('foo-pkg', '/some/cwd/') // 'foo-pkg'
+const local = resolve({id: '../foo.mjs', cwd: '/some/cwd/'}) // '/some/foo.mjs'
+const external = resolve({id: 'foo-pkg', cwd: '/some/cwd/'}) // 'foo-pkg'
 ```
 
 ### load
@@ -302,14 +302,14 @@ Resource loader in two flavors: sync and async. It uses `import/require` api for
 ```ts
 import { load, loadSync } from '@topoconfig/extends'
 
-const foo = await load('../foo.mjs', '/some/cwd/')
-const bar = loadSync('../bar.json', '/some/bar')
+const foo = await load({resolved: '/some/cwd/foo.mjs'})
+const bar = loadSync({resolved: '/some/bar/bar.json'})
 ```
 
 ### parse
 Applies `JSON.parse` to any input.
 ```ts
-export const parse = (name: string, contents: string, ext: string) => JSON.parse(contents)
+export const parse = ({contents}: {id: string, contents: string, ext: string}) => JSON.parse(contents)
 ```
 
 ### clone

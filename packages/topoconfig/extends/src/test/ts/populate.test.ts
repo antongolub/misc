@@ -153,7 +153,7 @@ describe('populate()', () => {
         },
         {
           cwd: __dirname,
-          load: async (resolved, id: string, cwd: string) => (await cosmiconfig('foo', {
+          load: async ({id, cwd}) => (await cosmiconfig('foo', {
             searchPlaces: [id]
           }).search(cwd))?.config
         }
@@ -172,8 +172,8 @@ describe('populate()', () => {
         },
         {
           cwd: __dirname,
-          parse: (name, contents) =>
-            (name.endsWith('.yaml') || name.endsWith('.yml'))
+          parse: ({id, contents}) =>
+            (id.endsWith('.yaml') || id.endsWith('.yml'))
               ? parseYaml(contents)
               : {}
         }
@@ -204,8 +204,8 @@ describe('populate()', () => {
         },
         {
           cwd: __dirname,
-          load: async (f: string, cwd: string) =>
-            (await cosmiconfig('foobar').load(path.resolve(cwd, f)))?.config
+          load: async ({id, cwd}) =>
+            (await cosmiconfig('foobar').load(path.resolve(cwd, id)))?.config
         },
       ],
       {
@@ -219,11 +219,9 @@ describe('populate()', () => {
         'cosmiconfig:foobar',
         {
           cwd: fixtures,
-          load: async (_: string, f: string, cwd: string) => {
-            console.log('cwd=', cwd)
+          async load ({cwd}){
             return (await cosmiconfig('foobar').search(cwd))?.config
           }
-
         },
       ],
       {
@@ -236,7 +234,7 @@ describe('populate()', () => {
         'cosmiconfig:foobar',
         {
           cwd: fixtures,
-          resolve(_id, cwd) {
+          resolve({cwd}) {
             return cosmiconfigSync('foobar').search(cwd).filepath
           }
         },
@@ -251,7 +249,7 @@ describe('populate()', () => {
         {},
         {
           cwd: __dirname,
-          load: async (_: string, id: string, cwd: string) => (await cosmiconfig('foo', {
+          load: async ({id, cwd}) => (await cosmiconfig('foo', {
             searchPlaces: [id]
           }).search(cwd))?.config,
           extends: ['../../../tsconfig.json'],
@@ -352,7 +350,7 @@ describe('populateSync()', () => {
         {},
         {
           cwd: __dirname,
-          load: (_: string, id: string, cwd: string) => cosmiconfigSync('foo', {
+          load: ({id, cwd}) => cosmiconfigSync('foo', {
             searchPlaces: [id]
           }).search(cwd)?.config,
           extends: ['../../../tsconfig.json'],
