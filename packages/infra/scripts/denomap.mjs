@@ -1,9 +1,27 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
-const [cwd, refs, output] = process.argv.slice(2)
+import minimist from 'minimist'
 
-const importMap = refs.split(',').reduce((m, v) => {
-  m[v] = import.meta.resolve(v)
+const {cwd, deps, output} = minimist(process.argv.slice(2), {
+  default: {
+    output: 'import-map.json',
+    cwd: process.cwd()
+  },
+  string: ['cwd', 'deps', 'output']
+})
+
+const pkgJson = JSON.parse(await fs.readFile(path.resolve(cwd, 'package.json'), 'utf8'))
+const _deps = deps
+    ? deps.split(',')
+    : ['dependencies', 'devDependencies'].flatMap(scope => Object.keys(pkgJson[scope] || {}))
+
+const importMap = _deps.reduce((m, v) => {
+  try {
+    m[v] = import.meta.resolve(v)
+  } catch (e) {
+    console.warn(`${v} module path is not resolved`)
+  }
+
   return m
 }, {})
 
@@ -11,10 +29,4 @@ const contents = JSON.stringify({
   imports: importMap
 }, null ,2)
 
-console.log('denomap', contents)
-
-if (output) {
-  await fs.writeFile(path.resolve(cwd, output), contents)
-} else {
-  console.log(importMap)
-}
+await fs.writeFile(path.resolve(cwd, output), contents)

@@ -108,12 +108,9 @@ const resolveExternalModulePath = (id: string, sync: boolean): string => {
   // https://github.com/denoland/deno/issues/7997
   // https://github.com/denoland/deno/issues/18474
 
-  const result = id.includes(':') // `file:///` url or abs path on windows (c:\foo\bar)
+  return id.includes(':') // `file:///` url or abs path on windows (c:\foo\bar)
     ? id
     : resolver(id) ?? id
-
-  console.log('resolveExternalModulePath', id, result)
-  return result
 }
 
 const unwrapDefault = (value: any) => value?.default ?? value
