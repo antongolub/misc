@@ -1,5 +1,0 @@
-{
-  "imports": {
-    "@fixtures/config-with-extends": "../../../../../../node_modules/@fixtures/config-with-extends/index.mjs"
-  }
-}
