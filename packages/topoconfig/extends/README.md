@@ -20,6 +20,7 @@ const tsconfig = await populate('tsconfig.json', {
 * Sync and async modes
 * Easy customization
 * Immutability with prototype transits
+* Nodejs, Deno & Bun support 
 
 <details>
 <summary>Alternatives</summary>
