@@ -111,6 +111,19 @@ describe('stringify()', () => {
     ],
     [
       {
+        file: 'config.json',
+        kind: 'github',
+        repo: {
+          owner: 'owner',
+          name: 'repo'
+        },
+        rev: 'master'
+      },
+      {format: 'github', omitDefaults: true, defaults: {rev: 'master'}},
+      'owner/repo',
+    ],
+    [
+      {
         file: 'foo/bar.yaml',
         kind: 'foo' as any,
         repo: {

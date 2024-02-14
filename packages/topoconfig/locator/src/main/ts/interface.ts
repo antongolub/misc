@@ -13,16 +13,19 @@ export type TReference = {
   rev?: string // branch, tag, commit, version
 }
 
+type TDefaults = {
+  file?: string
+  ext?: string
+  rev?: string
+}
+
 export type TParseOpts = {
-  defaults?: {
-    repo?: TRepo
-    file?: string
-    ext?: string
-    rev?: string
-  }
+  defaults?: TDefaults
 }
 
 export type TStringifyOpts = {
   format?: 'renovate' | 'github'
+  omitDefaults?: boolean
+  defaults?: TDefaults
 }
 
