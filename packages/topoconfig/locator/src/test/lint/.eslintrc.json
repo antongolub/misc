@@ -1,4 +1,11 @@
 {
   "extends": ["eslint-config-qiwi"],
-  "rules": {}
+  "overrides": [
+    {
+      "files": ["src/test/ts/index.test.ts"],
+      "rules": {
+        "sonarjs/no-duplicate-string": "off"
+      }
+    }
+  ]
 }
