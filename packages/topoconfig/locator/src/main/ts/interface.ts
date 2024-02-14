@@ -23,6 +23,6 @@ export type TParseOpts = {
 }
 
 export type TStringifyOpts = {
-  format?: 'renovate'
+  format?: 'renovate' | 'github'
 }
 
