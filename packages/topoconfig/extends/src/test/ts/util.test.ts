@@ -48,4 +48,22 @@ describe('clone()', () => {
       assert.equal(value, clone(value))
     }
   })
+
+  it('applies a hook if provided', () => {
+    const ref: any = {a: {b: {c: 'c'}}, foo: 'foo'}
+    const modified = clone(ref, (v, k, p, root) => {
+      if (k === 'foo') {
+        return 'bar'
+      }
+      if (k === 'b') {
+        return {c: 'd'}
+      }
+      if (p === 'a.b.c') {
+        return v.toUpperCase() + root.foo
+      }
+      return v
+    })
+
+    assert.deepEqual(modified, {a: {b: {c: 'Dfoo'}}, foo: 'bar'})
+  })
 })
