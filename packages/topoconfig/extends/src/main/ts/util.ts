@@ -24,16 +24,36 @@ export const getSeed = (value: any) => isCloneable(value)
 
 export const getProps = (value: any) => [...Object.getOwnPropertyNames(value), ...Object.getOwnPropertySymbols(value)]
 
-export const clone = <T = any>(value: T, map = new Map(), seed = getSeed(value)): T => seed
+export const clone = <T = any>(value: T, vmap?: CloneCtx<T>['vmap']): T =>
+  _clone<T>({value, vmap})
+
+type CloneCtx<T> = {
+  value: T
+  memo?: Map<any, any>
+  seed?: any
+  vmap?: (value: any, key: string | symbol, prefix: string, root: any) => any
+  prefix?: string
+  root?: any
+}
+
+export const _clone = <T = any>({
+  value,
+  memo = new Map(),
+  seed = getSeed(value),
+  vmap = v => v,
+  prefix = '',
+  root = value
+}: CloneCtx<T>): T => seed
   ? getProps(value).reduce((m: any, k) => {
-    const v = (value as any)[k]
-    if (map.has(v)) {
-      m[k] = map.get(v)
+    const p = `${prefix}${k.toString()}`
+    const v = vmap((value as any)[k], k, p, root)
+    if (memo.has(v)) {
+      m[k] = memo.get(v)
     } else {
       const _seed = getSeed(v)
       if (_seed) {
-        map.set(v, _seed)
-        clone(v, map, _seed)
+        memo.set(v, _seed)
+        _clone({value: v, memo, seed: _seed, vmap, prefix: `${p}.`, root})
         m[k] = _seed
       } else {
         m[k] = v
