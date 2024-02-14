@@ -541,6 +541,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@topoconfig/locator@workspace:packages/topoconfig/locator":
+  version: 0.0.0-use.local
+  resolution: "@topoconfig/locator@workspace:packages/topoconfig/locator"
+  dependencies:
+    "@antongolub/infra": "workspace:*"
+    "@types/node": "npm:^20.11.17"
+  languageName: unknown
+  linkType: soft
+
 "@tsconfig/node10@npm:^1.0.7":
   version: 1.0.9
   resolution: "@tsconfig/node10@npm:1.0.9"
