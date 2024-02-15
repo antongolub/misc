@@ -20,7 +20,7 @@
 | [@antongolub/infra](./packages/infra) | Repo infra assets |  |  |
 | [@topoconfig/cmds](./packages/topoconfig/cmds) | Topoconfig basic cmds preset | [![npm (scoped)](https://img.shields.io/npm/v/@topoconfig/cmds/latest.svg?label=&color=white)](https://www.npmjs.com/package/@topoconfig/cmds) | W |
 | [@topoconfig/extends](./packages/topoconfig/extends) | Populates `extends` reference in configs | [![npm (scoped)](https://img.shields.io/npm/v/@topoconfig/extends/latest.svg?label=&color=white)](https://www.npmjs.com/package/@topoconfig/extends) | W |
-| [@topoconfig/locator](./packages/topoconfig/locator) | Reads and formats shareable configuration refs |  | C |
+| [@topoconfig/locator](./packages/topoconfig/locator) | Reads and formats shareable configuration refs | [![npm (scoped)](https://img.shields.io/npm/v/@topoconfig/locator/latest.svg?label=&color=white)](https://www.npmjs.com/package/@topoconfig/locator) | C |
 | [depseek](./packages/dep/depseek) | Seeks for dependency references in JS/TS code | [![npm (scoped)](https://img.shields.io/npm/v/depseek/latest.svg?label=&color=white)](https://www.npmjs.com/package/depseek) | W |
 | [depshot](./packages/dep/depshot) | Gathers deps snapshot by analyzing sources | [![npm (scoped)](https://img.shields.io/npm/v/depshot/latest.svg?label=&color=white)](https://www.npmjs.com/package/depshot) | B |
 | [envader](./packages/env/envader) | Occupies env vars for data storage | [![npm (scoped)](https://img.shields.io/npm/v/envader/latest.svg?label=&color=white)](https://www.npmjs.com/package/envader) | C |
