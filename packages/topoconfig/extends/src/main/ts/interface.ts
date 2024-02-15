@@ -37,7 +37,7 @@ export type ExtendsDeclaration = string | Record<any, any> | Array<string | Reco
 export type ExtraLoader = (ctx: HelperCtx & {resolved: string}) => any
 export type ExtraResolver = (ctx: HelperCtx) => string
 export type ExtraMerger = (...args: any[]) => any
-export type ExtraCloner = <T = any>(any: T) => T
+export type ExtraCloner = <T = any>(any: T, opts?: TCloneOpts<T>) => T
 export type ExtraParser = (ctx: HelperCtx & {contents: string, ext: string}) => any
 
 export enum Strategy {
@@ -57,3 +57,23 @@ export type TExtendCtx = {
 }
 
 export type TExtendOpts = Partial<TExtendCtx>
+
+export type TVmapCtx = {
+  value: any
+  key: string | symbol
+  prefix: string
+  root: any
+  cwd: string
+  id?: string
+}
+
+export type TCloneCtx<T> = Partial<HelperCtx> & {
+  value: T
+  memo?: Map<any, any>
+  seed?: any
+  vmap?: (ctx: TVmapCtx) => any
+  prefix?: string
+  root?: any
+}
+
+export type TCloneOpts<T> = Pick<TCloneCtx<T>, 'vmap' | 'cwd' | 'id'>

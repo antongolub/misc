@@ -51,7 +51,7 @@ describe('clone()', () => {
 
   it('applies a hook if provided', () => {
     const ref: any = {a: {b: {c: 'c'}}, foo: 'foo'}
-    const modified = clone(ref, (v, k, p, root) => {
+    const modified = clone(ref, { vmap({value: v, key: k, prefix: p, root}) {
       if (k === 'foo') {
         return 'bar'
       }
@@ -62,7 +62,7 @@ describe('clone()', () => {
         return v.toUpperCase() + root.foo
       }
       return v
-    })
+    }})
 
     assert.deepEqual(modified, {a: {b: {c: 'Dfoo'}}, foo: 'bar'})
   })

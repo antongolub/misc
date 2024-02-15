@@ -82,7 +82,7 @@ const processResource = (ctx: Ctx) => {
         resolve(hctx),
         (resolved) => load({resolved, ...hctx})),
       (contents: any) => isString(contents) ? parse({...hctx, contents, ext: path.extname(config)}) : contents)
-    : config, clone)
+    : config, (c) => clone(c, hctx))
 }
 
 // https://stackoverflow.com/questions/69665780/error-err-unsupported-esm-url-scheme-only-file-and-data-urls-are-supported-by
