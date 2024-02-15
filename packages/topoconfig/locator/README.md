@@ -1,17 +1,24 @@
 # @topoconfig/locator
 > Reads and formats shareable configuration refs
 
-There are many ways to share configuration between projects:
-* local
+<details>
+<summary>There are many ways to point a shared config.</summary>
+
+* locally
+  * file (fs, infra assets)
+  * env vars
   * deps (libs, packages)
-  * files (via fs, infra assets)
-* remote-hosted
+* remote
+  * db / kv store
+  * config service (like consul, vault)
   * repositories (standardized API like github, gitlab)
   * custom URIs
     * http(s)
     * git+ssh
+</details>
 
-[URI](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) seem to be a perfect way to represent any kind of references, but sometimes it looks too verbose, and custom formats are used instead.
+
+[URI](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) seems ideal for representing any kind references, but sometimes it looks too verbose, and custom formats are used instead.
 This lib is aimed to handle some of these:
   * [renovate-like](https://docs.renovatebot.com/config-presets/#github) `github>abc/foo:xyz`
   * [gh-actions-like](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsuses) `actions/setup-node@v4`
