@@ -15,9 +15,15 @@ const tsconfig = await populate('tsconfig.json', {
 Moreover, now you can resolve a given config just as like `tsc`, but also do it _properly_, taking into account [ts/issues/56436](https://github.com/microsoft/TypeScript/issues/56436):
 ```ts
 const tsconfig = await populate('tsconfig.json', {
-  compilerOptions: 'merge',
-  'compilerOptions.paths': 'merge',
-  'compilerOptions.typeRoots': 'merge'
+  rules: {
+    compilerOptions: 'merge',
+    'compilerOptions.paths': 'merge',
+    'compilerOptions.typeRoots': 'merge'
+  },
+  vmap({value, prefix}) {
+    
+    return value
+  }
 })
 ```
 
@@ -174,6 +180,7 @@ Options define merging rules, but it's also suitable to override some internals:
 | `parse`   | Parser function. Customize to handle non-std types like `.yaml` or `.toml` | [#parse](#parse)     |
 | `merge`   | Merge function. Smth like `Object.assign` or `deepExtend` should be ok.    | [#extend](#extend)   |
 | `clone`   | Internal clone function to handle non-JSON types like functions            | [#clone](#clone)     |
+| `vmap`    | Value transformer                                                          | [#vmap](#vmap)       |
 | `rules`   | Merging rules                                                              | `{'*': 'override'}`  |
 
 ```ts
@@ -330,6 +337,12 @@ import { clone } from '@topoconfig/extends'
 const copy = clone({a: 'a', b() {}}) // {a: 'a', b() {}}
 ```
 If necessary, you can replace it with a more advanced implementation, such as [rfdc](https://www.npmjs.com/package/rfdc).
+
+### vmap
+Value transformer. It's a good place to apply some custom logic like fields initialization. Default implementation is `identity`.
+```ts
+const vmap = ({value}) => value
+```
 
 ## Refs
 * [humanwhocodes/config-array](https://github.com/humanwhocodes/config-array)
