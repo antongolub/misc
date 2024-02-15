@@ -1,7 +1,7 @@
 import {TCtx, TLoad, TMerge, TPopulate, TPopulateOpts, TRules, TStrategy} from './interface.js'
 import {load, loadResource, loadSync, resolve, parse, locateResource} from './load.js'
 import {unsetExtends, extend} from './extend.js'
-import {clone, getSeed} from './util.js'
+import {clone, getSeed, vmap} from './util.js'
 
 export const populate = async <R = Record<any, any>>(config: any, opts: TPopulateOpts | TRules = {}): Promise<R> => {
   const ctx = createCtx(config, opts, load, populate)
@@ -36,8 +36,9 @@ export const createCtx = (config: any, opts: TPopulateOpts, loader: TLoad, popul
 
   return ({
     load: loader,
-    clone: clone,
-    parse: parse,
+    clone,
+    parse,
+    vmap,
     cache: new Map(),
     root: cwd,
     ..._opts,

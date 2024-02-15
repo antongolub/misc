@@ -1,13 +1,14 @@
 export type TPopulateOpts = {
   cwd?:     string
+  extends?: TExtendsDeclaration
+  rules?:   TRules
   root?:    string
   load?:    TLoad
   resolve?: TResolve
   parse?:   TParse
   merge?:   TMerge
   clone?:   TClone
-  extends?: TExtendsDeclaration
-  rules?:   TRules
+  vmap?:    TVmap
 }
 
 export type TPopulate = (config: any, opts?: TPopulateOpts | TRules) => any
@@ -22,6 +23,7 @@ export type TCtx = {
   merge:    TMerge
   clone:    TClone
   parse:    TParse
+  vmap?:    TVmap
   rules:    TRules
   extends?: TExtendsDeclaration
   extendKeys: string[]
@@ -42,6 +44,7 @@ export type TResolve =  (ctx: HelperCtx) => string
 export type TMerge =    (...args: any[]) => any
 export type TClone =    <T = any>(any: T, opts?: TCloneOpts<T>) => T
 export type TParse =    (ctx: HelperCtx & {contents: string, ext: string}) => any
+export type TVmap =     (ctx: TVmapCtx) => any
 
 export enum TStrategy {
   OVERRIDE =  'override',
@@ -75,7 +78,7 @@ export type TCloneCtx<T> = Partial<HelperCtx> & {
   value:      T
   memo?:      Map<any, any>
   seed?:      any
-  vmap?:      (ctx: TVmapCtx) => any
+  vmap?:      TVmap
   prefix?:    string
   resource?:  any
 }

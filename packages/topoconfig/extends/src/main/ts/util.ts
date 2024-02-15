@@ -1,5 +1,5 @@
 import util from 'node:util'
-import {TCloneCtx, TCloneOpts} from './interface.js'
+import {TClone, TCloneCtx, TCloneOpts, TVmap} from './interface.js'
 
 export const isString = (value: any): value is string => typeof value === 'string'
 
@@ -25,14 +25,18 @@ export const getSeed = (value: any) => isCloneable(value)
 
 export const getProps = (value: any) => [...Object.getOwnPropertyNames(value), ...Object.getOwnPropertySymbols(value)]
 
-export const clone = <T = any>(value: T, {vmap, cwd, id}: TCloneOpts<T> = {}): T =>
-  _clone<T>({value, cwd, vmap, id})
+export const clone: TClone = <T = any>(value: T, {vmap, cwd, root, id}: TCloneOpts<T> = {}): T =>
+  _clone<T>({value, cwd, vmap, root, id})
+
+const _vmap: TVmap = ({value}) => value
+
+export const vmap = _vmap
 
 export const _clone = <T = any>({
   value,
   memo =      new Map(),
   seed =      getSeed(value),
-  vmap =      ({value}) => value,
+  vmap =      _vmap,
   prefix =    '',
   resource =  value,
   cwd =       process.cwd(),
