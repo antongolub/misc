@@ -11,6 +11,7 @@ export type TReference = {
   file: string
   repo?: TRepo
   rev?: string // branch, tag, commit, version
+  defaults?: TDefaults // attached defaults
 }
 
 type TDefaults = {
@@ -26,6 +27,7 @@ export type TParseOpts = {
 export type TStringifyOpts = {
   format?: 'renovate' | 'github'
   omitDefaults?: boolean
+  short?: boolean // omit defaults alias
   defaults?: TDefaults
 }
 

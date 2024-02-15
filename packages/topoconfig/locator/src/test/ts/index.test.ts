@@ -1,12 +1,13 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
 import { parse, stringify, resolve } from '../../main/ts'
-import {TReference, TStringifyOpts} from '../../main/ts/interface'
+import {TParseOpts, TReference, TStringifyOpts} from '../../main/ts/interface'
 
 describe('parse()', () => {
-  const cases: [string, TReference | Error][] = [
+  const cases: [string, TParseOpts | undefined, TReference | Error][] = [
     [
       'github>qiwi/.github',
+      undefined,
       {
         file: 'config.json',
         kind: 'github',
@@ -19,6 +20,7 @@ describe('parse()', () => {
     ],
     [
       'github>owner/repo:foo/bar.yaml#v1.0.0',
+      undefined,
       {
         file: 'foo/bar.yaml',
         kind: 'github',
@@ -31,6 +33,7 @@ describe('parse()', () => {
     ],
     [
       'owner/repo',
+      undefined,
       {
         file: 'config.json',
         kind: 'github',
@@ -43,6 +46,7 @@ describe('parse()', () => {
     ],
     [
       'owner/repo:foo/bar/baz.yaml@beta',
+      undefined,
       {
         file: 'foo/bar/baz.yaml',
         kind: 'github',
@@ -54,16 +58,35 @@ describe('parse()', () => {
       }
     ],
     [
+      'owner/repo',
+      {
+        defaults: {
+          file: 'foo/bar/baz.yaml',
+          rev: 'dev'
+        }
+      },
+      {
+        file: 'foo/bar/baz.yaml',
+        kind: 'github',
+        repo: {
+          owner: 'owner',
+          name: 'repo'
+        },
+        rev: 'dev'
+      }
+    ],
+    [
       'unknown>owner/repo',
+      undefined,
       new Error('unsupported ref: unknown>owner/repo')
     ]
   ]
 
-  for (const [input, expected] of cases) {
+  for (const [input, opts, expected] of cases) {
     it(input, () =>
       expected instanceof Error
-        ? assert.throws(() => parse(input))
-        : assert.deepEqual(parse(input), expected)
+        ? assert.throws(() => parse(input, opts))
+        : assert.deepEqual(parse(input, opts), expected)
     )
   }
 })

@@ -93,6 +93,13 @@ const rnvtlike = stringify(ref)   // github>qiwi/.github:my-config.yaml#master
 const ghlike = stringify(ref, {   // qiwi/.github:my-config.yaml@master
   format: 'github'
 })
+const shortened = stringify(ref, { // qiwi/.github
+  short: true,                     // omits defaults from the output
+  defautls: {                      // overrides the lib defaults
+    file: 'my-config.yaml',
+    rev: 'master'
+  }
+})
 ```
 
 ### resolve

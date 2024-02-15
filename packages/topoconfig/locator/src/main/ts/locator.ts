@@ -11,25 +11,25 @@ export const parse = (input: string, opts: TParseOpts = {}): TReference => {
 
   if (!proposal) throw new Error(`unsupported ref: ${input}`)
 
-  return {
+  return Object.defineProperty({
     ...defaults,
     ...proposal
-  }
+  }, 'defaults', {value: defaults, enumerable: false})
 }
 
-const inj = (prefix = '', value?: string, def?: string, omit?: boolean) =>
+const part = (prefix = '', value?: string, def?: string, omit?: boolean) =>
   value && (omit ? value !== def : true)
     ? prefix + value
     : ''
-export const stringify = ({repo, kind, file, rev}: TReference, {format = 'renovate', defaults, omitDefaults: o}: TStringifyOpts = {}) => {
-  const d = {...defaultDefaults, ...defaults}
+export const stringify = ({repo, kind, file, rev, defaults: _d}: TReference, {format = 'renovate', defaults, short, omitDefaults: o = short}: TStringifyOpts = {}) => {
+  const d = {...defaultDefaults, _d,...defaults}
   if (format === 'renovate') {
     if (!['github', 'gitlab', 'gitea'].includes(kind)) throw new Error(`unsupported kind: ${kind}`)
-    return `${kind}>${repo?.owner}/${repo?.name}${inj(':', file, d.file, o)}${inj('#', rev, d.rev, o)}`
+    return `${kind}>${repo?.owner}/${repo?.name}${part(':', file, d.file, o)}${part('#', rev, d.rev, o)}`
   }
 
   if (format === 'github')
-    return `${repo?.owner}/${repo?.name}${inj(':', file, d.file, o)}${inj('@', rev, d.rev, o)}`
+    return `${repo?.owner}/${repo?.name}${part(':', file, d.file, o)}${part('@', rev, d.rev, o)}`
 
   throw new Error(`unsupported format: ${format}`)
 }
