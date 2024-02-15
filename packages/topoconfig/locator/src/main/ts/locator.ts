@@ -34,8 +34,8 @@ export const stringify = ({repo, kind, file, rev}: TReference, {format = 'renova
   throw new Error(`unsupported format: ${format}`)
 }
 
-export const resolve = (ref: TReference | string) => {
-  const {repo, kind, file, rev} = typeof ref === 'string' ? parse(ref) : ref
+export const resolve = (ref: TReference | string, opts?: TParseOpts) => {
+  const {repo, kind, file, rev} = typeof ref === 'string' ? parse(ref, opts) : ref
   if (kind === 'github')
     return `https://raw.githubusercontent.com/${repo?.owner}/${repo?.name}/${rev}/${file}`
 
