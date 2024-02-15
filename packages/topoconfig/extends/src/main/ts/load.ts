@@ -4,7 +4,7 @@ import path from 'node:path'
 import process from 'node:process'
 import url from 'node:url'
 
-import {Ctx, ExtraLoader, ExtraParser, ExtraResolver, HelperCtx} from './interface.js'
+import {TCtx, TLoad, TParse, TResolve, HelperCtx} from './interface.js'
 import {isString, pipe, stripBom} from './util.js'
 import {unsetExtends} from './extend.js'
 
@@ -14,14 +14,14 @@ const _import = (id: string) => import.meta.url ? import(normalizeImportPath(id)
 const cjs = new Set(['.cjs', '.cts'])
 const anyjs = new Set(['', '.js', '.ts', '.mjs', '.mts', ...cjs])
 
-export const parse: ExtraParser = ({contents}) => JSON.parse(contents)
+export const parse: TParse = ({contents}) => JSON.parse(contents)
 
-export const loadSync: ExtraLoader = ({resolved: id}) =>
+export const loadSync: TLoad = ({resolved: id}) =>
   !isDotFile(id) && anyjs.has(path.extname(id))
     ? _require(id)
     : stripBom(fs.readFileSync(id, 'utf8'))
 
-export const load: ExtraLoader = async ({resolved: id}) => {
+export const load: TLoad = async ({resolved: id}) => {
   const ext = path.extname(id)
 
   // To avoid Deno `--compat` flag.
@@ -32,18 +32,18 @@ export const load: ExtraLoader = async ({resolved: id}) => {
     : stripBom(await fs.promises.readFile(id, 'utf8'))
 }
 
-export const resolve: ExtraResolver = ({id, cwd, sync}) =>
+export const resolve: TResolve = ({id, cwd, sync}) =>
   id.startsWith('.')
     ? path.resolve(cwd, id)
     : resolveExternalModulePath(id, sync)
 
-export const locateResource = (id: any, resolver: ExtraResolver, cwd?: string, sync = false) => {
+export const locateResource = ({cwd, root, id, sync, resolve}: Partial<HelperCtx> & {resolve: TResolve, id: string, sync: boolean}): HelperCtx => {
   const base = path.resolve(process.cwd(), cwd ?? '.')
-  const def: HelperCtx = {cwd: base, id, sync}
+  const def: HelperCtx = {cwd: base, root: root || base, id, sync}
 
   if (!isString(id)) return def
 
-  const rawPath = resolver(def)
+  const rawPath = resolve(def)
   const normalizedPath = rawPath.startsWith('file:') ? url.fileURLToPath(rawPath) : rawPath
   const dir = path.dirname(normalizedPath)
 
@@ -52,12 +52,14 @@ export const locateResource = (id: any, resolver: ExtraResolver, cwd?: string, s
   if (dir === '.') return def
 
   return {
+    id: './' + path.basename(normalizedPath),
     cwd: dir,
-    id: './' + path.basename(normalizedPath)
+    root: root || dir,
+    sync
   }
 }
 
-export const loadResource = (ctx: Ctx) => {
+export const loadResource = (ctx: TCtx) => {
   const {config, cwd, cache, extendKeys} = ctx
   const resource = isString(config)
     ? path.join(cwd, config)
@@ -73,9 +75,9 @@ export const loadResource = (ctx: Ctx) => {
   return pipe(cache.get(resource), v => unsetExtends(v, extendKeys))
 }
 
-const processResource = (ctx: Ctx) => {
-  const {load, config, cwd, parse,  clone, resolve, sync} = ctx
-  const hctx: HelperCtx = {id: config, cwd, sync}
+const processResource = (ctx: TCtx) => {
+  const {load, config, cwd, parse,  clone, resolve, sync, root} = ctx
+  const hctx: HelperCtx = {id: config, root, cwd, sync}
 
   return pipe(isString(config)
     ? pipe(pipe(

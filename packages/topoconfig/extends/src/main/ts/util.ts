@@ -30,12 +30,13 @@ export const clone = <T = any>(value: T, {vmap, cwd, id}: TCloneOpts<T> = {}): T
 
 export const _clone = <T = any>({
   value,
-  memo = new Map(),
-  seed = getSeed(value),
-  vmap = ({value}) => value,
-  prefix = '',
-  root = value,
-  cwd = process.cwd(),
+  memo =      new Map(),
+  seed =      getSeed(value),
+  vmap =      ({value}) => value,
+  prefix =    '',
+  resource =  value,
+  cwd =       process.cwd(),
+  root =      cwd,
   id
 }: TCloneCtx<T>): T => seed
   ? getProps(value).reduce((m: any, k) => {
@@ -44,9 +45,10 @@ export const _clone = <T = any>({
       value: (value as any)[k],
       key: k,
       prefix: p,
-      root,
+      resource,
+      id,
       cwd,
-      id
+      root
     })
     if (memo.has(v)) {
       m[k] = memo.get(v)
@@ -54,7 +56,7 @@ export const _clone = <T = any>({
       const _seed = getSeed(v)
       if (_seed) {
         memo.set(v, _seed)
-        _clone({value: v, memo, seed: _seed, vmap, prefix: `${p}.`, root, cwd, id})
+        _clone({value: v, memo, seed: _seed, vmap, prefix: `${p}.`, resource, cwd, id})
         m[k] = _seed
       } else {
         m[k] = v
