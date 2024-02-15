@@ -51,7 +51,7 @@ describe('clone()', () => {
 
   it('applies a hook if provided', () => {
     const ref: any = {a: {b: {c: 'c'}}, foo: 'foo'}
-    const modified = clone(ref, { vmap({value: v, key: k, prefix: p, root}) {
+    const modified = clone(ref, { vmap({value: v, key: k, prefix: p, resource}) {
       if (k === 'foo') {
         return 'bar'
       }
@@ -59,7 +59,7 @@ describe('clone()', () => {
         return {c: 'd'}
       }
       if (p === 'a.b.c') {
-        return v.toUpperCase() + root.foo
+        return v.toUpperCase() + resource.foo
       }
       return v
     }})
