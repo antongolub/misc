@@ -1,6 +1,9 @@
 # @topoconfig/locator
 > Reads and formats shareable configuration refs
 
+[![lcov](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fantongolub%2Fmisc%2Freleases%2Fdownload%2Flcov%2Flcov-sum.json&query=%24.scopes.packages_topoconfig_locator.max&label=lcov&color=brightgreen)](https://github.com/antongolub/misc/releases/download/lcov/lcov.info)
+[![npm (scoped)](https://img.shields.io/npm/v/@topoconfig/locator/latest.svg?label=npm&color=white)](https://www.npmjs.com/package/@topoconfig/locator)
+
 <details>
 <summary>There are many ways to point a shared config.</summary>
 
@@ -16,7 +19,6 @@
     * http(s)
     * git+ssh
 </details>
-
 
 [URI](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) seems ideal for representing any kind references, but sometimes it looks too verbose, and custom formats are used instead.
 This lib is aimed to handle some of these:
