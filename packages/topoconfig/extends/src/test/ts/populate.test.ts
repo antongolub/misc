@@ -22,6 +22,11 @@ describe('parseOpts() ', () => {
       parseOpts({rules: {foo: 'merge', bar: 'override'}}),
       {rules: {foo: 'merge', bar: 'override'}}
     )
+    assert.deepEqual(
+      // @ts-expect-error TS2322
+      parseOpts({foo: 'merge', bar: 'override', baz: 'unknown'}),
+      {foo: 'merge', bar: 'override', baz: 'unknown'}
+    )
   })
 })
 
