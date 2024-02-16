@@ -55,7 +55,7 @@ const config = applyExtends({
 ```
 * No mjs/esm
 * No immutability
-* No mupltiple sources
+* No multiple sources
 * No custom merge which is essential for some cases like arrays
 * No custom formats support
 * No async mode
@@ -179,14 +179,14 @@ Options define merging rules, but it's also suitable to override some internals:
 | `load`    | Resource loader                                                            | [#load](#load)       |
 | `parse`   | Parser function. Customize to handle non-std types like `.yaml` or `.toml` | [#parse](#parse)     |
 | `merge`   | Merge function. Smth like `Object.assign` or `deepExtend` should be ok.    | [#extend](#extend)   |
-| `clone`   | Internal clone function to handle non-JSON types like functions            | [#clone](#clone)     |
+| `prepare` | Handler to prepocess data: transform, validate, clone, etc.                | [#prepare](#prepare) |
 | `vmap`    | Value transformer                                                          | [#vmap](#vmap)       |
 | `rules`   | Merging rules                                                              | `{'*': 'override'}`  |
 
 ```ts
 const opts = {
   cwd: '/foo/bar',
-  clone: lodash.cloneDeep,
+  prepare: lodash.cloneDeep,
   rules: {
     '*': 'merge'
   }
@@ -329,12 +329,11 @@ Applies `JSON.parse` to any input.
 export const parse = ({contents}: {id: string, contents: string, ext: string}) => JSON.parse(contents)
 ```
 
-### clone
-Basic `clone` implementation. 
+### prepare
+Defaults to internal clone function.
 ```ts
-import { clone } from '@topoconfig/extends'
-
-const copy = clone({a: 'a', b() {}}) // {a: 'a', b() {}}
+import { prepare } from '@topoconfig/extends'
+const copy = prepare({a: 'a', b() {}}) // {a: 'a', b() {}}
 ```
 If necessary, you can replace it with a more advanced implementation, such as [rfdc](https://www.npmjs.com/package/rfdc).
 
