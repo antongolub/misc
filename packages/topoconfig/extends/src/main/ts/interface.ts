@@ -50,7 +50,8 @@ export enum TStrategy {
   OVERRIDE =  'override',
   MERGE =     'merge',
   POPULATE =  'populate',
-  IGNORE =    'ignore'
+  IGNORE =    'ignore',
+  REBASE =    'rebase',
 }
 
 export type TRules = Record<string, TStrategy | `${TStrategy}`>

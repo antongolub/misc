@@ -15,21 +15,12 @@ const tsconfig = await populate('tsconfig.json', {
 Moreover, now you can resolve a given config just as like `tsc`, but also do it _properly_, taking into account [ts/issues/56436](https://github.com/microsoft/TypeScript/issues/56436):
 ```ts
 const tsconfig = await populate('tsconfig.json', {
-  rules: {
-    compilerOptions: 'merge',
-    'compilerOptions.paths': 'merge',
-    'compilerOptions.typeRoots': 'merge'
-  },
-  vmap({value, cwd, root, prefix, key}) {
-    if (cwd !== root && (
-      prefix === 'compilerOptions.outDir' ||
-      prefix.startsWith('compilerOptions.typeRoots.') ||
-      /^compilerOptions\.paths\.[^.]+\./.test(prefix))
-    ) {
-      return path.join(path.relative(root, cwd), value)
-    }
-    return value
-  }
+  compilerOptions:               'merge',
+  'compilerOptions.paths':       'merge',
+  'compilerOptions.typeRoots':   'merge',
+  'compilerOptions.typeRoots.*': 'rebase',
+  'compilerOptions.outDir':      'rebase',
+  'compilerOptions.paths.*.*':   'rebase'
 })
 ```
 
@@ -147,16 +138,19 @@ const config = {
 ```
 
 You can specify how to process config fields obtained from different sources.
-There are just four strategies: `populate`, `ignore`, `merge` and `override`. The last one is applied by default.
+There are just five strategies: `populate`, `ignore`, `merge` and `override`. The last one is applied by default.
 ```ts
 {
-  foo: 'merge',
-  bar: 'override',
-  baz: 'merge',
-  'baz.qux': 'merge',
-  cwd: 'ignore',       // do not capture the `cwd` field from the source
-  extends: 'populate',
-  preset: 'populate',  // now both `preset` and `extends` fields will be populated
+  foo:      'merge',
+  bar:      'override',
+  baz:      'merge',
+  'baz.qu': 'merge',
+  cwd:      'ignore',    // do not capture the `cwd` field from the source
+  extends:  'populate',
+  preset:   'populate',  // now both `preset` and `extends` fields will be populated
+  'compilerOptions.typeRoots.*': 'rebase',  // to handle the value as a relative path and resolve it from the root / entry point cwd.
+  'compilerOptions.outDir':      'rebase',
+  'compilerOptions.paths.*.*':   'rebase'
 }
 ```
 
@@ -186,8 +180,8 @@ Options define merging rules, but it's also suitable to override some internals:
 | `load`    | Resource loader                                                            | [#load](#load)       |
 | `parse`   | Parser function. Customize to handle non-std types like `.yaml` or `.toml` | [#parse](#parse)     |
 | `merge`   | Merge function. Smth like `Object.assign` or `deepExtend` should be ok.    | [#extend](#extend)   |
-| `prepare` | Handler to prepocess data: transform, validate, clone, etc.                | [#prepare](#prepare) |
-| `vmap`    | Value transformer                                                          | [#vmap](#vmap)       |
+| `prepare` | Handler to preprocess data: initialize, validate, clone, etc.              | [#prepare](#prepare) |
+| `vmap`    | Value transformer.                                                         | [#vmap](#vmap)       |
 | `rules`   | Merging rules                                                              | `{'*': 'override'}`  |
 
 ```ts
@@ -337,7 +331,7 @@ export const parse = ({contents}: {id: string, contents: string, ext: string}) =
 ```
 
 ### prepare
-Defaults to internal clone function.
+Defaults to internal clone function to ensure immutability.
 ```ts
 import { prepare } from '@topoconfig/extends'
 const copy = prepare({a: 'a', b() {}}) // {a: 'a', b() {}}

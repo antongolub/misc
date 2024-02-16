@@ -1,8 +1,9 @@
-import {TCtx, TLoad, TMerge, TPopulate, TPopulateOpts, TRules, TStrategy} from './interface.js'
+import {TCtx, TLoad, TMerge, TPopulate, TPopulateOpts, TRules, TStrategy, TVmap} from './interface.js'
 import {load, loadResource, loadSync, resolve, parse, locateResource} from './load.js'
-import {unsetExtends, extend} from './extend.js'
-import {prepare, vmap} from './prepare.js'
+import {unsetExtends, extend, getRule} from './extend.js'
+import {prepare} from './prepare.js'
 import {getSeed} from './util.js'
+import path from "node:path";
 
 export const populate = async <R = Record<any, any>>(config: any, opts: TPopulateOpts | TRules = {}): Promise<R> => {
   const ctx = createCtx(config, opts, load, populate)
@@ -39,12 +40,12 @@ export const createCtx = (config: any, opts: TPopulateOpts, loader: TLoad, popul
     load: loader,
     prepare,
     parse,
-    vmap,
     cache: new Map(),
     resolve: _resolve,
     ..._opts,
     root,
-    merge: buildMerger(_opts.merge, rules),
+    merge: buildMerge(_opts.merge, rules),
+    vmap: buildVmap(_opts.vmap, rules),
     rules,
     extendKeys,
     populate,
@@ -59,12 +60,19 @@ export const parseOpts = (opts: TPopulateOpts | TRules = {}): TPopulateOpts =>
     ? { rules: opts as TRules }
     : opts
 
-const buildMerger = (merge?: TMerge | TRules, rules?: TRules): TMerge => typeof merge === 'function'
+const buildMerge = (merge?: TMerge, rules?: TRules): TMerge => typeof merge === 'function'
   ? merge
   : (...sources: any[]) => extend({
     sources,
     rules
   })
+
+const buildVmap = (vmap?: TVmap, rules: TRules = {}): TVmap => typeof vmap === 'function'
+  ? vmap
+  : ({value, cwd, root, prefix}) =>
+    cwd !== root && getRule(prefix, rules) === TStrategy.REBASE
+      ? path.join(path.relative(root, cwd), value)
+      : value
 
 export const populateExtras = (config: any, ctx: TCtx): any[] => {
   const extras = [...new Set([ctx.extendKeys.map(k => config?.[k]), ctx.extends].flat(2).filter(Boolean))]
