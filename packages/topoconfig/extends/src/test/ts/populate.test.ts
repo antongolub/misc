@@ -1,6 +1,7 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
 import * as path from 'node:path'
+import * as fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
 import { populate, populateSync, parseOpts } from '../../main/ts/populate.ts'
@@ -317,6 +318,28 @@ describe('populate()', () => {
           c: 'C'
         }
       }
+    ],
+    [
+      'applies both rules and vmap',
+      ['./tsconfig.json', {
+        cwd: path.resolve(fixtures, 'ts-issue-56436/project1'),
+        rules: {
+          compilerOptions: 'merge',
+          'compilerOptions.paths': 'merge',
+          'compilerOptions.typeRoots': 'merge'
+        },
+        vmap({value, cwd, root, prefix, key}) {
+          if (cwd !== root && (
+            prefix === 'compilerOptions.outDir' ||
+            prefix.startsWith('compilerOptions.typeRoots.') ||
+            /^compilerOptions\.paths\.[^.]+\./.test(prefix))
+          ) {
+            return path.join(path.relative(root, cwd), value)
+          }
+          return value
+        }
+      }],
+      JSON.parse(fs.readFileSync(path.resolve(fixtures, 'ts-issue-56436/project1/resolved.json'), 'utf8'))
     ]
   ];
 

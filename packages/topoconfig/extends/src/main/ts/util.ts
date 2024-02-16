@@ -23,4 +23,7 @@ export const getSeed = (value: any) => isCloneable(value)
   ? Array.isArray(value) ? [] : Object.create(Object.getPrototypeOf(value))
   : undefined
 
-export const getProps = (value: any) => [...Object.getOwnPropertyNames(value), ...Object.getOwnPropertySymbols(value)]
+export const getProps = (value: any) => [
+  ...(Array.isArray(value) ? Object.keys : Object.getOwnPropertyNames)(value),
+  ...Object.getOwnPropertySymbols(value)
+]

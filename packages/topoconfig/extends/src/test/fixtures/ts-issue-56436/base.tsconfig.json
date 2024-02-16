@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@libs/*": ["libs/*"],
+      "@project1/*": ["project1/*"]
+    },
+    "typeRoots": ["node_modules/@types"],
+    "outDir": "dist"
+  }
+}
