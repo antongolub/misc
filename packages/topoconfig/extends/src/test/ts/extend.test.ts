@@ -92,7 +92,32 @@ describe('extend', () => {
       [
         {foo: 'bar'}, {baz: 'qux'}
       ]
-    ]
+    ],
+    [
+      'recognizes `ignore` strategy',
+      {
+        sources: [
+          {a: {b: {foo: 'foo'}}},
+          {a: {b: {bar: 'bar'}, c: 'c'}, d: 'd'},
+          {a: {b: {baz: 'baz'}, c: 'C'}, d: 'D'},
+        ],
+        rules: {
+          a: 'merge',
+          'a.b': 'merge',
+          d: 'ignore'
+        }
+      },
+      {
+        a: {
+          b: {
+            foo: 'foo',
+            bar: 'bar',
+            baz: 'baz'
+          },
+          c: 'C'
+        }
+      }
+    ],
   ];
 
   cases.forEach(([name, input, expected]) => {
