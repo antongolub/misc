@@ -28,14 +28,14 @@ describe('cli', () => {
 
     await run(
       [
-        path.resolve(fixtures, 'extra1.json'),
+        path.resolve(fixtures, 'mixed/extra1.json'),
         '{}',
       ],
       exit
     )
     await run(
       [
-        path.resolve(fixtures, 'extra1.json'),
+        path.resolve(fixtures, 'mixed/extra1.json'),
         '{}',
         output
       ],

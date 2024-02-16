@@ -10,7 +10,7 @@ describe('mjs bundle', () => {
   it('populate()works', async () => {
     assert.deepEqual(await populate({
         a: 'a',
-        extends: '../fixtures/extra3.mjs'
+        extends: '../fixtures/mixed/extra3.mjs'
       },
       {cwd: __dirname}), {
       a: 'a',

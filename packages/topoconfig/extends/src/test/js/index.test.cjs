@@ -6,7 +6,7 @@ describe('cjs bundle', () => {
   it('populate() works', async () => {
     assert.deepEqual(await populate({
         a: 'a',
-        extends: '../fixtures/extra6.cjs'
+        extends: '../fixtures/mixed/extra6.cjs'
       },
       {cwd: __dirname}), {
       a: 'a',
