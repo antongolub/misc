@@ -1,9 +1,9 @@
+import path from 'node:path'
 import {TCtx, TLoad, TMerge, TPopulate, TPopulateOpts, TRules, TStrategy, TVmap} from './interface.js'
 import {load, loadResource, loadSync, resolve, parse, locateResource} from './load.js'
 import {unsetExtends, extend, getRule} from './extend.js'
 import {prepare} from './prepare.js'
 import {getSeed} from './util.js'
-import path from "node:path";
 
 export const populate = async <R = Record<any, any>>(config: any, opts: TPopulateOpts | TRules = {}): Promise<R> => {
   const ctx = createCtx(config, opts, load, populate)
@@ -74,10 +74,10 @@ const buildVmap = (vmap?: TVmap, rules: TRules = {}): TVmap => typeof vmap === '
       ? path.join(path.relative(root, cwd), value)
       : value
 
-export const populateExtras = (config: any, ctx: TCtx): any[] => {
-  const extras = [...new Set([ctx.extendKeys.map(k => config?.[k]), ctx.extends].flat(2).filter(Boolean))]
-  return extras.map(extra => ctx.populate(extra, {...ctx, extends: undefined}))
-}
+export const populateExtras = (config: any, ctx: TCtx): any[] =>
+  [...new Set([ctx.extendKeys.map(k => config?.[k]), ctx.extends].flat(2))]
+    .filter(Boolean)
+    .map(extra => ctx.populate(extra, {...ctx, extends: undefined}))
 
 export const assembleValue = (config: any, extras: any[], ctx: TCtx ) =>
   unsetExtends(ctx.merge(getSeed(config), ...extras, config), ctx.extendKeys)
