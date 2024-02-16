@@ -1,5 +1,5 @@
-import {TPrepareCtx, TPrepareOpts, TPrepare, TVmap} from "./interface.js";
-import {getProps, getSeed} from "./util.js";
+import {TPrepareCtx, TPrepareOpts, TPrepare, TVmap} from './interface.js'
+import {getProps, getSeed} from './util.js'
 
 export const prepare: TPrepare = <T = any>(value: T, {vmap, cwd, root, id}: TPrepareOpts<T> = {}): T =>
   _clone<T>({value, cwd, vmap, root, id})
@@ -36,7 +36,17 @@ export const _clone = <T = any>({
       const _seed = getSeed(v)
       if (_seed) {
         memo.set(v, _seed)
-        _clone({value: v, memo, seed: _seed, vmap, prefix: `${p}.`, resource, cwd, id})
+        _clone({
+          value: v,
+          seed: _seed,
+          prefix: `${p}.`,
+          memo,
+          vmap,
+          resource,
+          cwd,
+          id,
+          root
+        })
         m[k] = _seed
       } else {
         m[k] = v

@@ -27,7 +27,7 @@ export const createCtx = (config: any, opts: TPopulateOpts, loader: TLoad, popul
   const extendKeys = _extendKeys.length > 0 ? _extendKeys : ['extends']
 
   const _resolve = _opts.resolve || resolve
-  const {cwd, id: _config} = locateResource({
+  const {cwd, id: _config, root} = locateResource({
     id: config,
     resolve: _resolve,
     cwd: _opts.cwd,
@@ -41,9 +41,9 @@ export const createCtx = (config: any, opts: TPopulateOpts, loader: TLoad, popul
     parse,
     vmap,
     cache: new Map(),
-    root: cwd,
-    ..._opts,
     resolve: _resolve,
+    ..._opts,
+    root,
     merge: buildMerger(_opts.merge, rules),
     rules,
     extendKeys,
