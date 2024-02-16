@@ -20,8 +20,14 @@ const tsconfig = await populate('tsconfig.json', {
     'compilerOptions.paths': 'merge',
     'compilerOptions.typeRoots': 'merge'
   },
-  vmap({value, prefix}) {
-    
+  vmap({value, cwd, root, prefix, key}) {
+    if (cwd !== root && (
+      prefix === 'compilerOptions.outDir' ||
+      prefix.startsWith('compilerOptions.typeRoots.') ||
+      /^compilerOptions\.paths\.[^.]+\./.test(prefix))
+    ) {
+      return path.join(path.relative(root, cwd), value)
+    }
     return value
   }
 })
@@ -141,15 +147,16 @@ const config = {
 ```
 
 You can specify how to process config fields obtained from different sources.
-There are three strategies: `populate`, `merge` and `override`. The last one is applied by default.
+There are just four strategies: `populate`, `ignore`, `merge` and `override`. The last one is applied by default.
 ```ts
 {
   foo: 'merge',
   bar: 'override',
   baz: 'merge',
   'baz.qux': 'merge',
+  cwd: 'ignore',       // do not capture the `cwd` field from the source
   extends: 'populate',
-  preset: 'populate', // now both `preset` and `extends` fields will be populated
+  preset: 'populate',  // now both `preset` and `extends` fields will be populated
 }
 ```
 

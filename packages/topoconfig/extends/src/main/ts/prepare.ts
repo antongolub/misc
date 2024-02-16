@@ -10,14 +10,14 @@ export const vmap = _vmap
 
 export const _clone = <T = any>({
   value,
+  id,
+  cwd =       process.cwd(),
+  root =      cwd,
+  resource =  value,
   memo =      new Map(),
   seed =      getSeed(value),
   vmap =      _vmap,
-  prefix =    '',
-  resource =  value,
-  cwd =       process.cwd(),
-  root =      cwd,
-  id
+  prefix =    ''
 }: TPrepareCtx<T>): T => seed
   ? getProps(value).reduce((m: any, k) => {
     const p = `${prefix}${k.toString()}`

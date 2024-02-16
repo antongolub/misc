@@ -49,7 +49,8 @@ export type TVmap =     (ctx: TVmapCtx) => any
 export enum TStrategy {
   OVERRIDE =  'override',
   MERGE =     'merge',
-  POPULATE =  'populate'
+  POPULATE =  'populate',
+  IGNORE =    'ignore'
 }
 
 export type TRules = Record<string, TStrategy | `${TStrategy}`>
