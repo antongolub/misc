@@ -1,9 +1,9 @@
 import path from 'node:path'
 import {TCtx, TLoad, TMerge, TPopulate, TPopulateOpts, TRules, TStrategy, TVmap} from './interface.js'
 import {load, loadResource, loadSync, resolve, parse, locateResource} from './load.js'
-import {unsetExtends, extend, getRule} from './extend.js'
+import {extend, getRule} from './extend.js'
 import {prepare} from './prepare.js'
-import {getSeed} from './util.js'
+import {getSeed, unsetKeys} from './util.js'
 
 export const populate = async <R = Record<any, any>>(config: any, opts: TPopulateOpts | TRules = {}): Promise<R> => {
   const ctx = createCtx(config, opts, load, populate)
@@ -80,4 +80,4 @@ export const populateExtras = (config: any, ctx: TCtx): any[] =>
     .map(extra => ctx.populate(extra, {...ctx, extends: undefined}))
 
 export const assembleValue = (config: any, extras: any[], ctx: TCtx ) =>
-  unsetExtends(ctx.merge(getSeed(config), ...extras, config), ctx.extendKeys)
+  unsetKeys(ctx.merge(getSeed(config), ...extras, config), ctx.extendKeys)

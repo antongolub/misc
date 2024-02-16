@@ -5,8 +5,7 @@ import process from 'node:process'
 import url from 'node:url'
 
 import {TCtx, TLoad, TParse, TResolve, HelperCtx} from './interface.js'
-import {isString, pipe, stripBom} from './util.js'
-import {unsetExtends} from './extend.js'
+import {isString, pipe, stripBom, unsetKeys} from './util.js'
 
 const r = import.meta.url ? createRequire(import.meta.url) : require
 const _require = (id: string): any => r(normalizeRequirePath(id))
@@ -72,7 +71,7 @@ export const loadResource = (ctx: TCtx) => {
     return value
   }
 
-  return pipe(cache.get(resource), v => unsetExtends(v, extendKeys))
+  return pipe(cache.get(resource), v => unsetKeys(v, extendKeys))
 }
 
 const processResource = (ctx: TCtx) => {

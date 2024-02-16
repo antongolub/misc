@@ -42,3 +42,10 @@ export const match = (input: string, pattern: string) => {
 
   return false
 }
+
+export const unsetKeys = (v: any, keys: string[]) => {
+  for (const key of keys) {
+    delete v?.[key]
+  }
+  return v
+}

@@ -11,11 +11,10 @@ export const extend = (opts: TExtendOpts) => {
     prefix = '',
     index = {}
   } = opts
-  const isArray = Array.isArray(index[prefix] || sources[0])
   const result: any = (index[prefix] = index[prefix] || getSeed(sources[0]))
   const ctx = {result, sources, prefix, rules, index}
 
-  return isArray
+  return Array.isArray(result)
     ? extendArray(ctx)
     : extendObject(ctx)
 }
@@ -54,11 +53,4 @@ export const extendObject = ({result, sources, prefix, rules, index}: TExtendCtx
   }
 
   return result
-}
-
-export const unsetExtends = (v: any, extendsKeys: string[]) => {
-  for (const key of extendsKeys) {
-    delete v?.[key]
-  }
-  return v
 }
