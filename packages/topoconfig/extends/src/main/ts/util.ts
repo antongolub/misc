@@ -3,11 +3,16 @@ import {TPrepare, TPrepareCtx, TPrepareOpts, TVmap} from './interface.js'
 
 export const isString = (value: any): value is string => typeof value === 'string'
 
-export const isFn = (value: any): boolean => typeof value === 'function'
+// eslint-disable-next-line @typescript-eslint/ban-types
+export const isFn = (value: any): value is Function => typeof value === 'function'
 
 export const isObject = (value: any) => value !== null && typeof value === 'object'
 
-export const isCloneable = (value: any) => isObject(value) && !util.types.isProxy(value) && !isFn(value) && ![RegExp, Date, Promise, Map, Set, WeakMap, WeakSet].some(c => value instanceof c)
+export const isCloneable = (value: any) =>
+  isObject(value) &&
+  !util.types.isProxy(value) &&
+  !isFn(value) &&
+  ![RegExp, Date, Promise, Map, Set, WeakMap, WeakSet].some(c => value instanceof c)
 
 export const stripBom = (content: string): string =>
   content.codePointAt(0) === 0xfe_ff

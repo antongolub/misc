@@ -3,7 +3,7 @@ import {TCtx, TLoad, TMerge, TPopulate, TPopulateOpts, TRules, TStrategy, TVmap}
 import {load, loadResource, loadSync, resolve, parse, locateResource} from './load.js'
 import {extend, getRule} from './extend.js'
 import {prepare} from './prepare.js'
-import {getSeed, unsetKeys} from './util.js'
+import {getSeed, isFn, unsetKeys} from './util.js'
 
 export const populate = async <R = Record<any, any>>(config: any, opts: TPopulateOpts | TRules = {}): Promise<R> => {
   const ctx = createCtx(config, opts, load, populate)
@@ -55,19 +55,20 @@ export const createCtx = (config: any, opts: TPopulateOpts, loader: TLoad, popul
   })
 }
 
+const anyStrategy = Object.values(TStrategy)
 export const parseOpts = (opts: TPopulateOpts | TRules = {}): TPopulateOpts =>
-  Object.values(opts).every(v => v === TStrategy.OVERRIDE || v === TStrategy.MERGE || v === TStrategy.POPULATE)
+  Object.values(opts).every(v => anyStrategy.includes(v as TStrategy))
     ? { rules: opts as TRules }
     : opts
 
-const buildMerge = (merge?: TMerge, rules?: TRules): TMerge => typeof merge === 'function'
+const buildMerge = (merge?: TMerge, rules?: TRules): TMerge => isFn(merge)
   ? merge
   : (...sources: any[]) => extend({
     sources,
     rules
   })
 
-const buildVmap = (vmap?: TVmap, rules: TRules = {}): TVmap => typeof vmap === 'function'
+const buildVmap = (vmap?: TVmap, rules: TRules = {}): TVmap => isFn(vmap)
   ? vmap
   : ({value, cwd, root, prefix}) =>
     cwd !== root && getRule(prefix, rules) === TStrategy.REBASE
