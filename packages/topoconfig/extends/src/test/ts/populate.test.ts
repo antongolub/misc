@@ -340,6 +340,21 @@ describe('populate()', () => {
         }
       }],
       JSON.parse(fs.readFileSync(path.resolve(fixtures, 'ts-issue-56436/project1/resolved.json'), 'utf8'))
+    ],
+    [
+      'applies rebase strategy',
+      ['./tsconfig.json', {
+        cwd: path.resolve(fixtures, 'ts-issue-56436/project1'),
+        rules: {
+          compilerOptions: 'merge',
+          'compilerOptions.paths': 'merge',
+          'compilerOptions.typeRoots': 'merge',
+          'compilerOptions.typeRoots.*': 'rebase',
+          'compilerOptions.outDir': 'rebase',
+          'compilerOptions.paths.*.*': 'rebase'
+        },
+      }],
+      JSON.parse(fs.readFileSync(path.resolve(fixtures, 'ts-issue-56436/project1/resolved.json'), 'utf8'))
     ]
   ];
 

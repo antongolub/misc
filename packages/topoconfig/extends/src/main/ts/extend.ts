@@ -1,7 +1,8 @@
 import {TRules, TStrategy, TExtendCtx, TExtendOpts} from './interface.js'
-import {getProps, getSeed, isObject} from './util.js'
+import {getProps, getSeed, isObject, match} from './util.js'
 
-const getRule = (p: string, rules: TRules) => rules[p] || rules['*'] || TStrategy.OVERRIDE
+export const getRule = (p: string, rules: TRules) =>
+  rules[Object.keys(rules).find(k => match(p, k)) as string] || rules['*'] || TStrategy.OVERRIDE
 
 export const extend = (opts: TExtendOpts) => {
   const {

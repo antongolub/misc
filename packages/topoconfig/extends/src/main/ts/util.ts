@@ -27,3 +27,18 @@ export const getProps = (value: any) => [
   ...(Array.isArray(value) ? Object.keys : Object.getOwnPropertyNames)(value),
   ...Object.getOwnPropertySymbols(value)
 ]
+
+export const match = (input: string, pattern: string) => {
+  if (pattern === input || pattern === '*') return true
+  if (pattern[0] === '^') return new RegExp(pattern).test(input)
+  if (pattern.includes('*') || pattern.includes('?')) {
+    return new RegExp('^' + pattern
+      .replaceAll('.', '\\.')
+      .replaceAll('?', '.')
+      .replaceAll('**', '.+')
+      .replaceAll('*', '[^.]+')
+    + '$').test(input)
+  }
+
+  return false
+}
