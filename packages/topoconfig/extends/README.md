@@ -30,10 +30,12 @@ const tsconfig = await populate('tsconfig.json', {
 * Recursive extras population (`extends` by default).
 * Multiple sources support
 * Configurable merging rules
+  * prop/pattern-specific declarations
+  * 5 built-in strategies: `populate`, `ignore`, `merge`, `override`, `rebase`
 * Sync and async modes
-* Easy customization
 * Immutability with prototype transits
-* Nodejs, Deno & Bun support 
+* Easy customization (opinionated)
+* Nodejs, Deno & Bun support
 
 <details>
 <summary>Alternatives</summary>
