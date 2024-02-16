@@ -7,8 +7,9 @@ import {
   extend,
   loadSync,
   load,
-  clone,
-  resolve
+  prepare,
+  resolve,
+  vmap
 } from '../../main/ts'
 
 describe('index', () => {
@@ -19,7 +20,8 @@ describe('index', () => {
     assert.equal(typeof load, 'function')
     assert.equal(typeof loadSync, 'function')
     assert.equal(typeof extend, 'function')
-    assert.equal(typeof clone, 'function')
+    assert.equal(typeof prepare, 'function')
     assert.equal(typeof resolve, 'function')
+    assert.equal(typeof vmap, 'function')
   })
 })

@@ -7,7 +7,7 @@ export type TPopulateOpts = {
   resolve?: TResolve
   parse?:   TParse
   merge?:   TMerge
-  clone?:   TClone
+  prepare?: TPrepare
   vmap?:    TVmap
 }
 
@@ -21,7 +21,7 @@ export type TCtx = {
   resolve:  TResolve
   load:     TLoad
   merge:    TMerge
-  clone:    TClone
+  prepare:  TPrepare
   parse:    TParse
   vmap?:    TVmap
   rules:    TRules
@@ -42,7 +42,7 @@ export type TExtendsDeclaration =  string | Record<any, any> | Array<string | Re
 export type TLoad =     (ctx: HelperCtx & {resolved: string}) => any
 export type TResolve =  (ctx: HelperCtx) => string
 export type TMerge =    (...args: any[]) => any
-export type TClone =    <T = any>(any: T, opts?: TCloneOpts<T>) => T
+export type TPrepare =  <T = any>(any: T, opts?: TPrepareOpts<T>) => T
 export type TParse =    (ctx: HelperCtx & {contents: string, ext: string}) => any
 export type TVmap =     (ctx: TVmapCtx) => any
 
@@ -74,7 +74,7 @@ export type TVmapCtx = {
   id?:      string
 }
 
-export type TCloneCtx<T> = Partial<HelperCtx> & {
+export type TPrepareCtx<T> = Partial<HelperCtx> & {
   value:      T
   memo?:      Map<any, any>
   seed?:      any
@@ -83,4 +83,4 @@ export type TCloneCtx<T> = Partial<HelperCtx> & {
   resource?:  any
 }
 
-export type TCloneOpts<T> = Pick<TCloneCtx<T>, 'vmap' | 'cwd' | 'id' | 'root'>
+export type TPrepareOpts<T> = Pick<TPrepareCtx<T>, 'vmap' | 'cwd' | 'id' | 'root'>

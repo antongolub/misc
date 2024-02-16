@@ -1,8 +1,8 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { clone } from '../../main/ts/util.ts'
+import { prepare } from '../../main/ts/prepare.ts'
 
-describe('clone()', () => {
+describe('prepare()', () => {
   it('makes a copy of various objects', () => {
     const ref: any = {a: {b: {c: 'c'}}}
     ref.ref = ref
@@ -33,7 +33,7 @@ describe('clone()', () => {
     ]
 
     for (const value of cases) {
-      assert.deepEqual(value, clone(value))
+      assert.deepEqual(value, prepare(value))
     }
 
     const strict = [
@@ -45,13 +45,13 @@ describe('clone()', () => {
     ]
 
     for (const value of strict) {
-      assert.equal(value, clone(value))
+      assert.equal(value, prepare(value))
     }
   })
 
   it('applies a hook if provided', () => {
     const ref: any = {a: {b: {c: 'c'}}, foo: 'foo'}
-    const modified = clone(ref, { vmap({value: v, key: k, prefix: p, resource}) {
+    const modified = prepare(ref, { vmap({value: v, key: k, prefix: p, resource}) {
       if (k === 'foo') {
         return 'bar'
       }
