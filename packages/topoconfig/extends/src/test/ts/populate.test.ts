@@ -33,7 +33,7 @@ describe('populate()', () => {
       [
         {
           a: 'a',
-          extends: '../fixtures/extra3.mjs'
+          extends: '../fixtures/mixed/extra3.mjs'
         },
         {cwd: __dirname}
       ],
@@ -77,7 +77,7 @@ describe('populate()', () => {
       [
         {
           a: 'a',
-          extends: ['../fixtures/extra3.mjs', '../fixtures/extra6.cjs']
+          extends: ['../fixtures/mixed/extra3.mjs', '../fixtures/mixed/extra6.cjs']
         },
         {cwd: __dirname}
       ],
@@ -94,7 +94,7 @@ describe('populate()', () => {
       [
         {
           b: 'b',
-          preset: '../fixtures/extra3.mjs'
+          preset: '../fixtures/mixed/extra3.mjs'
         },
         {cwd: __dirname, rules: {preset: 'populate'}}
       ],
@@ -149,7 +149,7 @@ describe('populate()', () => {
       [
         {
           a: 'a',
-          extends: '../fixtures/extra1.json'
+          extends: '../fixtures/mixed/extra1.json'
         },
         {
           cwd: __dirname,
@@ -168,7 +168,7 @@ describe('populate()', () => {
       [
         {
           a: 'a',
-          extends: '../fixtures/extra4.yaml'
+          extends: '../fixtures/mixed/extra4.yaml'
         },
         {
           cwd: __dirname,
@@ -185,14 +185,14 @@ describe('populate()', () => {
     ],
     [
       'loads a config from a file',
-      [path.resolve(fixtures, 'extra1.json')],
+      [path.resolve(fixtures, 'mixed/extra1.json')],
       {
         baz: 'qux'
       }
     ],
     [
       'handles looped refs',
-      [path.resolve(fixtures, 'extra-looped.json')],
+      [path.resolve(fixtures, 'mixed/extra-looped.json')],
       {a: 'a'}
     ],
     [
@@ -200,7 +200,7 @@ describe('populate()', () => {
       [
         {
           a: 'a',
-          extends: '../fixtures/extra1.json'
+          extends: '../fixtures/mixed/extra1.json'
         },
         {
           cwd: __dirname,
@@ -218,7 +218,7 @@ describe('populate()', () => {
       [
         'cosmiconfig:foobar',
         {
-          cwd: fixtures,
+          cwd: path.resolve(fixtures, 'mixed'),
           async load ({cwd}){
             return (await cosmiconfig('foobar').search(cwd))?.config
           }
@@ -233,7 +233,7 @@ describe('populate()', () => {
       [
         'cosmiconfig:foobar',
         {
-          cwd: fixtures,
+          cwd: path.resolve(fixtures, 'mixed'),
           resolve({cwd}) {
             return cosmiconfigSync('foobar').search(cwd).filepath
           }
@@ -337,7 +337,7 @@ describe('populateSync()', () => {
   const cases: [string, Parameters<typeof populate>, any][] = [
     [
       'loads a config from a file',
-      [path.resolve(fixtures, 'extra5.json'), {arr1: 'merge', arr2: 'override'}],
+      [path.resolve(fixtures, 'mixed/extra5.json'), {arr1: 'merge', arr2: 'override'}],
       {
         foo: 'bar',
         arr1: [3, 4, 1, 2],
