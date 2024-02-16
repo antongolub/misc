@@ -357,6 +357,7 @@ const vmap = ({value}) => value
 * [bahmutov/cypress-extends](https://github.com/bahmutov/cypress-extends)
 * [eslint#how-do-overrides-work](https://eslint.org/docs/latest/use/configure/configuration-files#how-do-overrides-work)
 * [yargs/helpers/applyExtends](https://yargs.js.org/docs/#api-reference-configobject-extends-keyword)
+* [kolodny/immutability-helper](https://github.com/kolodny/immutability-helper)
 
 ## License
 [MIT](./LICENSE)
