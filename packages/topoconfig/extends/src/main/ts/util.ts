@@ -1,5 +1,4 @@
 import util from 'node:util'
-import {TPrepare, TPrepareCtx, TPrepareOpts, TVmap} from './interface.js'
 
 export const isString = (value: any): value is string => typeof value === 'string'
 
