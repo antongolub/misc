@@ -4,7 +4,7 @@ import path from 'node:path'
 import process from 'node:process'
 import url from 'node:url'
 
-import {TCtx, TLoad, TParse, TResolve, HelperCtx} from './interface.js'
+import {TCtx, TLoad, TParse, TResolve, THelperCtx} from './interface.js'
 import {isString, pipe, stripBom, unsetKeys} from './util.js'
 
 const r = import.meta.url ? createRequire(import.meta.url) : require
@@ -36,9 +36,9 @@ export const resolve: TResolve = ({id, cwd, sync}) =>
     ? path.resolve(cwd, id)
     : resolveExternalModulePath(id, sync)
 
-export const locateResource = ({cwd, root, id, sync, resolve}: Partial<HelperCtx> & {resolve: TResolve, id: string, sync: boolean}): HelperCtx => {
+export const locateResource = ({cwd, root, id, sync, resolve}: Partial<THelperCtx> & {resolve: TResolve, id: string, sync: boolean}): THelperCtx => {
   const base = path.resolve(process.cwd(), cwd ?? '.')
-  const def: HelperCtx = {cwd: base, root: root || base, id, sync}
+  const def: THelperCtx = {cwd: base, root: root || base, id, sync}
 
   if (!isString(id)) return def
 
@@ -76,7 +76,7 @@ export const loadResource = (ctx: TCtx) => {
 
 const processResource = (ctx: TCtx) => {
   const {load, config, cwd, parse, prepare, resolve, vmap, sync, root} = ctx
-  const hctx: HelperCtx = {id: config, root, cwd, sync}
+  const hctx: THelperCtx = {id: config, root, cwd, sync}
 
   return pipe(isString(config)
     ? pipe(pipe(

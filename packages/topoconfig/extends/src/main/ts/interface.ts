@@ -31,7 +31,7 @@ export type TCtx = {
   config:   any
 }
 
-export type HelperCtx = {
+export type THelperCtx = {
   id:   string
   cwd:  string
   root: string
@@ -39,11 +39,11 @@ export type HelperCtx = {
 }
 
 export type TExtendsDeclaration =  string | Record<any, any> | Array<string | Record<any, any>>
-export type TLoad =     (ctx: HelperCtx & {resolved: string}) => any
-export type TResolve =  (ctx: HelperCtx) => string
+export type TLoad =     (ctx: THelperCtx & {resolved: string}) => any
+export type TResolve =  (ctx: THelperCtx) => string
 export type TMerge =    (...args: any[]) => any
 export type TPrepare =  <T = any>(any: T, opts?: TPrepareOpts<T>) => T
-export type TParse =    (ctx: HelperCtx & {contents: string, ext: string}) => any
+export type TParse =    (ctx: THelperCtx & {contents: string, ext: string}) => any
 export type TVmap =     (ctx: TVmapCtx) => any
 
 export enum TStrategy {
@@ -76,7 +76,7 @@ export type TVmapCtx = {
   id?:      string
 }
 
-export type TPrepareCtx<T> = Partial<HelperCtx> & {
+export type TPrepareCtx<T> = Partial<THelperCtx> & {
   value:      T
   memo?:      Map<any, any>
   seed?:      any
