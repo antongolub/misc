@@ -34,7 +34,7 @@ const tsconfig = await populate('tsconfig.json', {
   * 5 built-in strategies: `populate`, `ignore`, `merge`, `override`, `rebase`
 * Sync and async modes
 * Immutability with prototype transits
-* Easy customization (opinionated)
+* Easy customization
 * Nodejs, Deno & Bun support
 
 <details>
