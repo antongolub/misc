@@ -79,11 +79,18 @@ const processResource = (ctx: TCtx) => {
   const hctx: THelperCtx = {id: config, root, cwd, sync}
 
   return pipe(isString(config)
-    ? pipe(pipe(
-        resolve(hctx),
-        (resolved) => load({resolved, ...hctx})),
-      (contents: any) => isString(contents) ? parse({...hctx, contents, ext: path.extname(config)}) : contents)
-    : config, (c) => prepare(c, {...hctx, vmap}))
+    ? pipe(
+        pipe(
+          resolve(hctx),
+          resolved => load({resolved, ...hctx})
+        ),
+        contents => isString(contents)
+          ? parse({...hctx, contents, ext: path.extname(config)})
+          : contents
+    )
+    : config,
+    c => prepare(c, {...hctx, vmap})
+  )
 }
 
 // https://stackoverflow.com/questions/69665780/error-err-unsupported-esm-url-scheme-only-file-and-data-urls-are-supported-by
