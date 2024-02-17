@@ -358,6 +358,7 @@ const vmap = ({value}) => value
 * [eslint#how-do-overrides-work](https://eslint.org/docs/latest/use/configure/configuration-files#how-do-overrides-work)
 * [yargs/helpers/applyExtends](https://yargs.js.org/docs/#api-reference-configobject-extends-keyword)
 * [kolodny/immutability-helper](https://github.com/kolodny/immutability-helper)
+* [stylelint#augmentConfig](https://github.com/stylelint/stylelint/blob/f44de2e414b9e70cba3477e50c67e41ad97b0375/lib/augmentConfig.mjs#L171)
 
 ## License
 [MIT](./LICENSE)
