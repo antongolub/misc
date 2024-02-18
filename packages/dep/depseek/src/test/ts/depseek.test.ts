@@ -29,6 +29,9 @@ describe('depseek()', () => {
 
   const cpy = await import('cpy')
   const { pick } = require("lodash") //  @4.17.15
+  const { omit } = require  (  
+  'underscore'  )
+  const fs = require('fs')
   `
 
     const stream = new Duplex()
@@ -36,7 +39,7 @@ describe('depseek()', () => {
     stream.push(null)
 
     const chunks = await depseek(stream, { comments: true })
-
+console.log('!!!', chunks)
     assert.deepEqual(chunks, [
       { type: 'dep', value: 'a', index: 12 },
       { type: 'comment', value: ' @1.0.0', index: 18 },
@@ -71,7 +74,9 @@ describe('depseek()', () => {
       { type: 'comment', value: ' @^4.0.0-beta.0', index: 596 },
       { type: 'dep', value: 'cpy', index: 641 },
       { type: 'dep', value: 'lodash', index: 675 },
-      { type: 'comment', value: '  @4.17.15', index: 686 }
+      { type: 'comment', value: '  @4.17.15', index: 686 },
+      { type: 'dep', value: 'underscore', index: 732 },
+      { type: 'dep', value: 'fs', index: 769 },
     ])
   })
 
