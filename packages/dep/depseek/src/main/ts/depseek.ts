@@ -15,14 +15,14 @@ export type TOpts = Partial<TOptsNormalized>
 
 type TPseudoReadable = { read: (size: number) => string | null }
 
-const re = /((\.{3}|\s|[!%&(*+,/:;<=>?[^{|}~-]|^)(require\(|import\(?)|\sfrom)\s*$/
-const isDep = (proposal: string) => !!proposal && re.test(proposal)
+const depRe = /((\.{3}|\s|[!%&(*+,/:;<=>?[^{|}~-]|^)(require\s?\(\s?|import\s?\(?\s?)|\sfrom)\s?$/
+const isDep = (proposal: string) => !!proposal && depRe.test(proposal)
+const isSpace = (value: string) => value === ' ' || value === '\n' || value === '\t'
 const normalizeOpts = (opts?: TOpts): TOptsNormalized => ({
   bufferSize: 1000,
   comments: false,
   ...opts
 })
-
 export const depseek = (stream: Readable | string, opts?: TOpts): Promise<TCodeRef[]> => new Promise((resolve, reject) => {
   if (typeof stream === 'string') {
     return resolve(depseekSync(stream, opts))
@@ -81,7 +81,9 @@ const extract = (readable: TPseudoReadable, _opts?: TOpts): TCodeRef[] => {
     while (j < len) {
       const char = chunk[j]
       if (c === q) {
-        if (char === '\n') token = ''
+        if (isSpace(char)) {
+          if (!isSpace(prev)) token += char
+        }
         else if (char === '"' || char === "'" || char === '`') q = char
         else if (prev === '/' && (char === '/' || char === '*')) c = char
         else token += char
@@ -95,9 +97,12 @@ const extract = (readable: TPseudoReadable, _opts?: TOpts): TCodeRef[] => {
       } else if (q === null) {
         if ((c === '/' && char === '\n') || (c === '*' && prev === '*' && char === '/')) {
           commentValue = c === '*' ? commentBlock.slice(0, -1) : commentBlock
-          if (commentValue && opts.comments) pushRef('comment', commentValue, i - commentValue.length)
+          if (commentValue && opts.comments) {
+            pushRef('comment', commentValue, i - commentValue.length)
+          }
           commentBlock = ''
-          token = ''
+          // Do not reset token, let comments separate others meaningful statements
+          // token = ''
           c = null
         } else if (opts.comments) commentBlock += char
       }
