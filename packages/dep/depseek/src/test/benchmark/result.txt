@@ -1,0 +1,4 @@
+depseek x 97,729 ops/sec ±0.24% (89 runs sampled)
+zx-parse-deps x 81,939 ops/sec ±0.46% (90 runs sampled)
+esprima x 89,095 ops/sec ±0.65% (89 runs sampled)
+deps-regex x 39,893 ops/sec ±0.13% (89 runs sampled)

@@ -97,9 +97,7 @@ const extract = (readable: TPseudoReadable, _opts?: TOpts): TCodeRef[] => {
       } else if (q === null) {
         if ((c === '/' && char === '\n') || (c === '*' && prev === '*' && char === '/')) {
           commentValue = c === '*' ? commentBlock.slice(0, -1) : commentBlock
-          if (commentValue && opts.comments) {
-            pushRef('comment', commentValue, i - commentValue.length)
-          }
+          if (commentValue && opts.comments) pushRef('comment', commentValue, i - commentValue.length)
           commentBlock = ''
           // Do not reset token, let comments separate others meaningful statements
           // token = ''
