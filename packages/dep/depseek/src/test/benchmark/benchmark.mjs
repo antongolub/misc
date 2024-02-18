@@ -1,7 +1,8 @@
 import Benchmark from 'benchmark'
 import { depseek } from '../../../target/esm/index.mjs'
-import { parseDeps } from './zx-deps.mjs'
-import { getDeps } from './esprima.mjs'
+import { getDeps as esprimaGetDeps } from './esprima.mjs'
+import { getDeps as depsregexGetDeps } from './deps-regex.mjs'
+import { parseDeps as zxGetDeps } from './zx-deps.mjs'
 
 const suite = new Benchmark.Suite
 const input = `
@@ -42,14 +43,21 @@ suite
   .add('zx-parse-deps', {
     defer: true,
     fn: async (deferred) => {
-      await parseDeps(input)
+      await zxGetDeps(input)
       deferred.resolve()
     }
   })
   .add('esprima', {
     defer: true,
     fn: async(deferred) =>{
-      await getDeps(input)
+      await esprimaGetDeps(input)
+      deferred.resolve()
+    }
+  })
+  .add('deps-regex', {
+    defer: true,
+    fn: async(deferred) =>{
+      await depsregexGetDeps(input)
       deferred.resolve()
     }
   })

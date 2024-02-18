@@ -1518,6 +1518,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"deps-regex@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "deps-regex@npm:0.2.0"
+  checksum: d8eeb89727037f2ae680a619f8eefbc8475d21c3d5273e2bbcb9838aabd1c93fd9e011f51bcda5bd65f042921c1bc156119d9a8a2f3539aa4009950b8f9c79b3
+  languageName: node
+  linkType: hard
+
 "depseek@workspace:*, depseek@workspace:packages/dep/depseek":
   version: 0.0.0-use.local
   resolution: "depseek@workspace:packages/dep/depseek"
@@ -1525,6 +1532,7 @@ __metadata:
     "@antongolub/infra": "workspace:*"
     "@types/node": "npm:^20.11.17"
     benchmark: "npm:^2.1.4"
+    deps-regex: "npm:^0.2.0"
     esprima: "npm:^4.0.1"
   languageName: unknown
   linkType: soft
