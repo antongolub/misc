@@ -33,6 +33,13 @@ const input = `
 
 // add tests
 suite
+  .add('deps-regex', {
+    defer: true,
+    fn: async(deferred) =>{
+      await depsregexGetDeps(input)
+      deferred.resolve()
+    }
+  })
   .add('depseek', {
     defer: true,
     fn: async (deferred) => {
@@ -51,13 +58,6 @@ suite
     defer: true,
     fn: async(deferred) =>{
       await esprimaGetDeps(input)
-      deferred.resolve()
-    }
-  })
-  .add('deps-regex', {
-    defer: true,
-    fn: async(deferred) =>{
-      await depsregexGetDeps(input)
       deferred.resolve()
     }
   })

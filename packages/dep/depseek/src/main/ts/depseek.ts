@@ -9,18 +9,26 @@ export type TCodeRef = {
 export type TOptsNormalized = {
   comments: boolean
   bufferSize: number
+  re: RegExp
 }
 
 export type TOpts = Partial<TOptsNormalized>
 
 type TPseudoReadable = { read: (size: number) => string | null }
 
-const depRe = /((\.{3}|\s|[!%&(*+,/:;<=>?[^{|}~-]|^)(require\s?(\.resolve\s?)?\(\s?|import\s?\(?\s?)|\sfrom)\s?$/
-const isDep = (proposal: string) => !!proposal && depRe.test(proposal)
+export const fullRe =           /((\.{3}|\s|[!%&(*+,/:;<=>?[^{|}~-]|^)(require\s?(\.\s?resolve\s?)?\(\s?|import\s?\(?\s?)|\sfrom)\s?$/
+export const importRe =         /((\.{3}|\s|[!%&(*+,/:;<=>?[^{|}~-]|^)import\s?\(?\s?|\sfrom)\s?$/
+export const importRequireRe =  /((\.{3}|\s|[!%&(*+,/:;<=>?[^{|}~-]|^)(require\s?\(\s?|import\s?\(?\s?)|\sfrom)\s?$/
+export const requireRe =        /((\.{3}|\s|[!%&(*+,/:;<=>?[^{|}~-]|^)(require\s?\(\s?))\s?$/
+export const requireResolveRe = /((\.{3}|\s|[!%&(*+,/:;<=>?[^{|}~-]|^)(require\s?(\.\s?resolve\s?)?\(\s?))\s?$/
+
+const isDep = (proposal: string, re: RegExp) => !!proposal && re.test(proposal)
+
 const isSpace = (value: string) => value === ' ' || value === '\n' || value === '\t'
 const normalizeOpts = (opts?: TOpts): TOptsNormalized => ({
   bufferSize: 1000,
   comments: false,
+  re: importRequireRe,
   ...opts
 })
 export const depseek = (stream: Readable | string, opts?: TOpts): Promise<TCodeRef[]> => new Promise((resolve, reject) => {
@@ -60,7 +68,7 @@ const readify = (input: string): TPseudoReadable => {
 }
 
 const extract = (readable: TPseudoReadable, _opts?: TOpts): TCodeRef[] => {
-  const opts = normalizeOpts(_opts)
+  const {re, comments, bufferSize} = normalizeOpts(_opts)
   const refs: TCodeRef[] = []
   const pushRef = (type: string, value: string, index: number) => refs.push({ type, value, index })
 
@@ -74,7 +82,7 @@ const extract = (readable: TPseudoReadable, _opts?: TOpts): TCodeRef[] => {
   let commentBlock = ''
   let commentValue = ''
 
-  while (null !== (chunk = readable.read(opts.bufferSize))) {
+  while (null !== (chunk = readable.read(bufferSize))) {
     const len = chunk.length
     let j = 0
 
@@ -89,20 +97,19 @@ const extract = (readable: TPseudoReadable, _opts?: TOpts): TCodeRef[] => {
         else token += char
       } else if (c === null) {
         if (q === char && prev !== '\\') {
-          if (strLiteral && isDep(token.slice(-25))) pushRef('dep', strLiteral, i - strLiteral.length)
+          if (strLiteral && isDep(token.slice(-19), re)) pushRef('dep', strLiteral, i - strLiteral.length)
           strLiteral = ''
-          console.log('token!!!', token)
           token = ''
           q = null
         } else strLiteral += char
       } else if (q === null) {
         if ((c === '/' && char === '\n') || (c === '*' && prev === '*' && char === '/')) {
           commentValue = c === '*' ? commentBlock.slice(0, -1) : commentBlock
-          if (commentValue && opts.comments) pushRef('comment', commentValue, i - commentValue.length)
+          if (commentValue && comments) pushRef('comment', commentValue, i - commentValue.length)
           commentBlock = ''
           token = token.slice(0,-1)
           c = null
-        } else if (opts.comments) commentBlock += char
+        } else if (comments) commentBlock += char
       }
 
       prev = char

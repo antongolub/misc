@@ -1,7 +1,7 @@
 import * as assert from 'node:assert'
 import {Duplex} from 'node:stream'
 import { describe, it } from 'node:test'
-import { depseek, patchRefs } from '../../main/ts'
+import { depseek, fullRe, patchRefs } from '../../main/ts'
 
 describe('depseek()', () => {
   it('searches for deps and comments', async () => {
@@ -35,15 +35,15 @@ describe('depseek()', () => {
   const { omit } = require  (  
   'underscore'  )
   const fs = require('fs')
-  require.resolve('test')
+  require .    resolve( 'test')
   `
 
     const stream = new Duplex()
     stream.push(input)
     stream.push(null)
 
-    const chunks = await depseek(stream, { comments: true })
-console.log(chunks)
+    const chunks = await depseek(stream, { comments: true, re: fullRe })
+
     assert.deepEqual(chunks, [
       { type: 'dep', value: 'a', index: 12 },
       { type: 'comment', value: ' @1.0.0', index: 18 },
@@ -85,7 +85,7 @@ console.log(chunks)
       { type: 'comment', value: '  @4.17.15', index: 800 },
       { type: 'dep', value: 'underscore', index: 846 },
       { type: 'dep', value: 'fs', index: 883 },
-      { type: 'dep', value: 'test', index: 907 }
+      { type: 'dep', value: 'test', index: 913 }
     ])
   })
 
