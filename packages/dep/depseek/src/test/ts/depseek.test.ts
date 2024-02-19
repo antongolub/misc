@@ -26,12 +26,16 @@ describe('depseek()', () => {
   import baz from "baz" //    @^2.0
   import qux from "@qux/pkg/entry" //    @^3.0
   import {api as alias} from "qux/entry/index.js" // @^4.0.0-beta.0
-
+  
+  import ( /* webpackChunkName: 'chunk' */ 'optimist')
+  require ( /* webpackChunkName: 'chunk' */ 'minimist')
   const cpy = await import('cpy')
+
   const { pick } = require("lodash") //  @4.17.15
   const { omit } = require  (  
   'underscore'  )
   const fs = require('fs')
+  require.resolve('test')
   `
 
     const stream = new Duplex()
@@ -39,7 +43,7 @@ describe('depseek()', () => {
     stream.push(null)
 
     const chunks = await depseek(stream, { comments: true })
-console.log('!!!', chunks)
+console.log(chunks)
     assert.deepEqual(chunks, [
       { type: 'dep', value: 'a', index: 12 },
       { type: 'comment', value: ' @1.0.0', index: 18 },
@@ -72,11 +76,16 @@ console.log('!!!', chunks)
       { type: 'comment', value: '    @^3.0', index: 534 },
       { type: 'dep', value: 'qux/entry/index.js', index: 574 },
       { type: 'comment', value: ' @^4.0.0-beta.0', index: 596 },
-      { type: 'dep', value: 'cpy', index: 641 },
-      { type: 'dep', value: 'lodash', index: 675 },
-      { type: 'comment', value: '  @4.17.15', index: 686 },
-      { type: 'dep', value: 'underscore', index: 732 },
-      { type: 'dep', value: 'fs', index: 769 },
+      { type: 'comment', value: " webpackChunkName: 'chunk' ", index: 629 },
+      { type: 'dep', value: 'optimist', index: 659 },
+      { type: 'comment', value: " webpackChunkName: 'chunk' ", index: 685 },
+      { type: 'dep', value: 'minimist', index: 715 },
+      { type: 'dep', value: 'cpy', index: 754 },
+      { type: 'dep', value: 'lodash', index: 789 },
+      { type: 'comment', value: '  @4.17.15', index: 800 },
+      { type: 'dep', value: 'underscore', index: 846 },
+      { type: 'dep', value: 'fs', index: 883 },
+      { type: 'dep', value: 'test', index: 907 }
     ])
   })
 

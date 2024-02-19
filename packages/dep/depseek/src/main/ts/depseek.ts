@@ -15,7 +15,7 @@ export type TOpts = Partial<TOptsNormalized>
 
 type TPseudoReadable = { read: (size: number) => string | null }
 
-const depRe = /((\.{3}|\s|[!%&(*+,/:;<=>?[^{|}~-]|^)(require\s?\(\s?|import\s?\(?\s?)|\sfrom)\s?$/
+const depRe = /((\.{3}|\s|[!%&(*+,/:;<=>?[^{|}~-]|^)(require\s?(\.resolve\s?)?\(\s?|import\s?\(?\s?)|\sfrom)\s?$/
 const isDep = (proposal: string) => !!proposal && depRe.test(proposal)
 const isSpace = (value: string) => value === ' ' || value === '\n' || value === '\t'
 const normalizeOpts = (opts?: TOpts): TOptsNormalized => ({
@@ -89,8 +89,9 @@ const extract = (readable: TPseudoReadable, _opts?: TOpts): TCodeRef[] => {
         else token += char
       } else if (c === null) {
         if (q === char && prev !== '\\') {
-          if (strLiteral && isDep(token.slice(-15))) pushRef('dep', strLiteral, i - strLiteral.length)
+          if (strLiteral && isDep(token.slice(-25))) pushRef('dep', strLiteral, i - strLiteral.length)
           strLiteral = ''
+          console.log('token!!!', token)
           token = ''
           q = null
         } else strLiteral += char
@@ -99,8 +100,7 @@ const extract = (readable: TPseudoReadable, _opts?: TOpts): TCodeRef[] => {
           commentValue = c === '*' ? commentBlock.slice(0, -1) : commentBlock
           if (commentValue && opts.comments) pushRef('comment', commentValue, i - commentValue.length)
           commentBlock = ''
-          // Do not reset token, let comments separate others meaningful statements
-          // token = ''
+          token = token.slice(0,-1)
           c = null
         } else if (opts.comments) commentBlock += char
       }
