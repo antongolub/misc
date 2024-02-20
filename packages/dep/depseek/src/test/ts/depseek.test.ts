@@ -102,6 +102,7 @@ const bar = require('bar')          /* @1 */
 const baar = {...require('baar')}   /* @2 */
 const baaar = rrequire('baaar')     /* @3 */
 const baz = (await import('baz')).default
+require 'foo'
 `
     const stream = new Duplex()
     stream.push(input)
