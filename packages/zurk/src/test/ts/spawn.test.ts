@@ -39,7 +39,7 @@ describe('invoke()', () => {
       cmd: 'jq',
       args: ['-r', '.name'],
       callback(err, result) {
-        err ? reject(err) : resolve(result.stdout)
+        err ? reject(err) : resolve(result._stdout)
       }
     })
 
