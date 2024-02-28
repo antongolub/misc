@@ -1,24 +1,16 @@
-import cp, {StdioNull, StdioPipe} from 'node:child_process'
+import cp from 'node:child_process'
 import { Readable, Stream, Writable } from 'node:stream'
 import { noop } from './util.js'
 
-export type IO = StdioPipe | StdioNull
-
-export type TSpawnStdio = [
-  stdin: IO,
-  stdout: IO,
-  stderr: IO
-]
-
-export type TSpawnResult = Partial<{
+export type TSpawnResult = {
   _stderr:  string
   _stdout:  string
-  stderr:   Stream
-  stdout:   Stream
+  stderr:   Writable
+  stdout:   Writable
   status:   number | null
   signal:   string | null
   duration: number
-}>
+}
 
 export type TSpawnCtx = Partial<Omit<TSpawnCtxNormalized, 'child'>> & {
   cmd:      string
@@ -40,6 +32,8 @@ export type TSpawnCtxNormalized = {
   callback:   (err: any, result: TSpawnResult & {error?: any, child?: TChild}) => void
   onStdout:   (data: string | Buffer) => void
   onStderr:   (data: string | Buffer) => void
+  stdout:     Writable
+  stderr:     Writable
   child?:     TChild
 }
 
@@ -53,6 +47,8 @@ export const normalizeCtx = (ctx: TSpawnCtx): TSpawnCtxNormalized => ({
   callback:   noop,
   onStdout:   noop,
   onStderr:   noop,
+  stdout:     new VoidWritable(),
+  stderr:     new VoidWritable(),
   ...ctx,
   stdio:      ['pipe', 'pipe', 'pipe'],
 })
@@ -68,32 +64,32 @@ export const processInput = (child: TChild, input?: TInput | null) => {
   }
 }
 
-export const readableFrom = (data: string | Buffer) => {
-  const stream = new Readable()
-  stream.push(data)
-  stream.push(null)
-  return stream
+export class VoidWritable extends Writable {
+  _write(chunk: any, _: string, cb: (err?: Error) => void) {
+    this.emit('data', chunk)
+    cb()
+  }
 }
 
 export const invoke = (ctx: TSpawnCtx): TSpawnCtxNormalized => {
   const now = Date.now()
   const c = normalizeCtx(ctx)
-  const stderr = new Writable()
-  const stdout = new Writable()
 
   try {
     if (c.sync) {
       const opts = { ...c.spawnOpts, stdio: c.stdio, input: c.input as string | Buffer }
       const result = c.spawnSync(c.cmd, c.args, opts)
 
+      c.stdout.write(result.stdout)
+      c.stderr.write(result.stderr)
       c.onStdout(result.stdout)
       c.onStderr(result.stderr)
       c.callback(null, {
         ...result,
         _stdout:  result.stdout.toString(),
         _stderr:  result.stderr.toString(),
-        stdout:   readableFrom(result.stdout),
-        stderr:   readableFrom(result.stderr),
+        stdout:   c.stdout,
+        stderr:   c.stderr,
         duration: Date.now() - now
       })
 
@@ -108,8 +104,8 @@ export const invoke = (ctx: TSpawnCtx): TSpawnCtxNormalized => {
         c.child = child
         processInput(child, c.input)
 
-        child.stdout.on('data', (d) => { _stdout.push(d.toString()); c.onStdout(d) })
-        child.stderr.on('data', (d) => { _stderr.push(d.toString()); c.onStderr(d) })
+        child.stdout.pipe(c.stdout).on('data', (d) => { _stdout.push(d.toString()); c.onStdout(d) })
+        child.stderr.pipe(c.stderr).on('data', (d) => { _stderr.push(d.toString()); c.onStderr(d) })
         child.on('error', (e) => error = e)
         child.on('exit', (code) => status = code)
         child.on('close', () => {
@@ -118,8 +114,8 @@ export const invoke = (ctx: TSpawnCtx): TSpawnCtxNormalized => {
             status,
             _stdout:  _stdout.join(''),
             _stderr:  _stderr.join(''),
-            stdout:   child.stdout,
-            stderr:   child.stderr,
+            stdout:   c.stdout,
+            stderr:   c.stderr,
             signal:   child.signalCode,
             child,
             duration: Date.now() - now
@@ -132,8 +128,14 @@ export const invoke = (ctx: TSpawnCtx): TSpawnCtxNormalized => {
       error,
       {
         error,
+        status:   null,
+        signal:   null,
+        _stdout:  '',
+        _stderr:  '',
+        stdout:   c.stdout,
+        stderr:   c.stderr,
         duration: Date.now() - now
-      }
+      } as TSpawnResult
     )
   }
 

@@ -1,33 +1,64 @@
-import {invoke, TSpawnResult, readableFrom} from './spawn.js'
+import {invoke, TSpawnCtxNormalized, TSpawnResult, VoidWritable} from './spawn.js'
 
-export const zurk = (...chunks: string[]): Promise<ZurkResponse> => new Proxy(new Promise<ZurkResponse>((resolve, reject) => {
-  const ctx = invoke({
+// https://stackoverflow.com/questions/47423241/replace-fields-types-in-interfaces-to-promises
+type Promisified<T> = {
+  [K in keyof T]: T[K] extends (...args: any) => infer R ?
+    (...args: Parameters<T[K]>) => Promise<R> :
+    Promise<T>;
+}
+
+type ZurkPromise = Promise<ZurkResponse> & Promisified<ZurkResponse> & Pick<TSpawnCtxNormalized, 'stdout' | 'stderr'>
+
+export const zurk = (...chunks: string[]): ZurkPromise => {
+  let ctx: TSpawnCtxNormalized
+
+  return new Proxy(new Promise<ZurkResponse>((resolve, reject) => {
+    ctx = invoke({
+      cmd: chunks[0],
+      args: chunks.slice(1),
+      callback(err, data) {
+        err ? reject(err) : resolve(new ZurkResponse(data))
+      }
+    })
+  }), {
+    get(target: Promise<ZurkResponse>, p: string | symbol, receiver: any): any {
+      if (p === 'then') return target.then.bind(target)
+      if (p === 'catch') return target.catch.bind(target)
+      if (p === 'finally') return target.finally.bind(target)
+
+      if (p === 'stdout') return ctx.stdout
+      if (p === 'stderr') return ctx.stderr
+
+      return target.then(v => Reflect.get(v, p, receiver))
+    }
+  }) as ZurkPromise
+}
+
+export const zurkSync = (...chunks: string[]): ZurkResponse => {
+  let response = new ZurkResponse()
+
+  invoke({
+    sync: true,
     cmd: chunks[0],
     args: chunks.slice(1),
     callback(err, data) {
-      err ? reject(err) : resolve(new ZurkResponse(data))
+      response = new ZurkResponse(data)
     }
   })
-}), {
-  get(target: Promise<ZurkResponse>, p: string | symbol, receiver: any): any {
-    if (p === 'then') return target.then.bind(target)
-    if (p === 'catch') return target.catch.bind(target)
-    if (p === 'finally') return target.finally.bind(target)
 
-    return target.then(v => Reflect.get(v, p, receiver))
-  }
-})
+  return response as ZurkResponse
+}
 
 export class ZurkResponse implements TSpawnResult {
   error = null
   _stderr =  ''
   _stdout =  ''
-  stderr = readableFrom('')
-  stdout = readableFrom('')
+  stderr = new VoidWritable()
+  stdout = new VoidWritable()
   status = null
   signal = null
   duration = 0
-  constructor(result: TSpawnResult) {
+  constructor(result?: Partial<TSpawnResult>) {
     Object.assign(this, result)
   }
 }

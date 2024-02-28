@@ -6,8 +6,7 @@ describe('zurk()', () => {
   it('parses template literal', async () => {
     const result = zurk('echo', 'foo')
 
-    // _@ts-ignore
-    // console.log(await result._stdout, await result.duration)
+    console.log(await result._stdout, await result.duration)
     // assert.equal(zurk('echo', 'foo'), undefined)
   })
 })
