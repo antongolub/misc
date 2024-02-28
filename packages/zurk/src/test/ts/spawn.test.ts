@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import {invoke, TSpawnCtx, TSpawnResult} from '../../main/ts/spawn'
+import {invoke, normalizeCtx, TSpawnCtx, TSpawnResult} from '../../main/ts/spawn'
 import {makeDeferred} from '../../main/ts/util'
 
 describe('invoke()', () => {
@@ -45,5 +45,21 @@ describe('invoke()', () => {
 
     const name = await promise
     assert.equal(name.trim(), 'world')
+  })
+})
+
+describe('normalizeCtx()', () => {
+  it('normalizes ctx', () => {
+    const cwds = ['a', 'b', 'c']
+    const ctx = {
+      cmd: 'foo',
+      get cwd () {
+        return cwds.shift() || process.cwd()
+      },
+    }
+    const normalized = normalizeCtx(ctx)
+    assert.equal(normalized.cwd, 'a')
+    assert.equal(normalized.cwd, 'b')
+    assert.equal(normalized.cwd, 'c')
   })
 })

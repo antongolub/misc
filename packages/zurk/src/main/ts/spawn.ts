@@ -3,6 +3,7 @@ import { Readable, Stream, Writable } from 'node:stream'
 import { noop } from './util.js'
 
 export type TSpawnResult = {
+  error?:   any,
   _stderr:  string
   _stdout:  string
   stderr:   Writable
@@ -21,11 +22,13 @@ export type TChild = ReturnType<typeof cp.spawn>
 export type TInput = string | Buffer | Readable
 
 export type TSpawnCtxNormalized = {
+  cwd:        string
   cmd:        string
   sync:       boolean
   args:       ReadonlyArray<string>
   input:      TInput | null
   stdio:      ['pipe', 'pipe', 'pipe']
+  shell:      string | true | undefined
   spawn:      typeof cp.spawn
   spawnSync:  typeof cp.spawnSync
   spawnOpts:  Record<string, any>
@@ -37,10 +40,13 @@ export type TSpawnCtxNormalized = {
   child?:     TChild
 }
 
-export const normalizeCtx = (ctx: TSpawnCtx): TSpawnCtxNormalized => ({
+export const normalizeCtx = (ctx: TSpawnCtx): TSpawnCtxNormalized => Object.defineProperties({
+  cmd:        '',
+  cwd:        process.cwd(),
   sync:       false,
   args:       [],
   input:      null,
+  shell:      true,
   spawn:      cp.spawn,
   spawnSync:  cp.spawnSync,
   spawnOpts:  {},
@@ -49,9 +55,8 @@ export const normalizeCtx = (ctx: TSpawnCtx): TSpawnCtxNormalized => ({
   onStderr:   noop,
   stdout:     new VoidWritable(),
   stderr:     new VoidWritable(),
-  ...ctx,
-  stdio:      ['pipe', 'pipe', 'pipe'],
-})
+  stdio:      ['pipe', 'pipe', 'pipe']
+}, Object.getOwnPropertyDescriptors(ctx))
 
 export const processInput = (child: TChild, input?: TInput | null) => {
   if (input && child.stdin && !child.stdin.destroyed) {
@@ -71,13 +76,22 @@ export class VoidWritable extends Writable {
   }
 }
 
+export const buildSpawnOpts = ({spawnOpts, stdio, cwd, shell, input}: TSpawnCtxNormalized) => ({
+  ...spawnOpts,
+  cwd,
+  stdio,
+  shell,
+  input: input as string | Buffer,
+  windowsHide: true
+})
+
 export const invoke = (ctx: TSpawnCtx): TSpawnCtxNormalized => {
   const now = Date.now()
   const c = normalizeCtx(ctx)
 
   try {
     if (c.sync) {
-      const opts = { ...c.spawnOpts, stdio: c.stdio, input: c.input as string | Buffer }
+      const opts = buildSpawnOpts(c)
       const result = c.spawnSync(c.cmd, c.args, opts)
 
       c.stdout.write(result.stdout)
@@ -97,7 +111,7 @@ export const invoke = (ctx: TSpawnCtx): TSpawnCtxNormalized => {
       setImmediate(() => {
         let error: any = null
         let status: number | null = null
-        const opts = { ...c.spawnOpts, stdio: c.stdio }
+        const opts = buildSpawnOpts(c)
         const _stderr: string[] = []
         const _stdout: string[] = []
         const child = c.spawn(c.cmd, c.args, opts)
@@ -135,7 +149,7 @@ export const invoke = (ctx: TSpawnCtx): TSpawnCtxNormalized => {
         stdout:   c.stdout,
         stderr:   c.stderr,
         duration: Date.now() - now
-      } as TSpawnResult
+      }
     )
   }
 
