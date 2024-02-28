@@ -1,29 +1,30 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import {invoke, normalizeCtx, TSpawnCtx, TSpawnResult} from '../../main/ts/spawn'
-import {makeDeferred} from '../../main/ts/util'
+import { TSpawnCtx, TSpawnResult } from '../../main/ts/interface.js'
+import { invoke, normalizeCtx } from '../../main/ts/spawn.js'
+import { makeDeferred } from '../../main/ts/util.js'
 
 describe('invoke()', () => {
   it('calls a given cmd', async () => {
     const results = []
-    const callback: TSpawnCtx['callback'] = (_err, result) => results.push(result._stdout)
+    const callback: TSpawnCtx['callback'] = (_err, result) => results.push(result.stdout)
     const { promise, resolve, reject } = makeDeferred<TSpawnResult>()
 
-    invoke({
+    invoke(normalizeCtx({
       sync: true,
       cmd: 'echo',
       args: ['hello'],
       callback
-    })
+    }))
 
-    invoke({
+    invoke(normalizeCtx({
       sync: false,
       cmd: 'echo',
       args: ['world'],
       callback(err, result) {
         err ? reject(err) : resolve(result)
       }
-    })
+    }))
 
     await promise.then((result) => callback(null, result))
 
@@ -33,15 +34,15 @@ describe('invoke()', () => {
   it('supports stdin injection', async () => {
     const {promise, resolve, reject} = makeDeferred<string>()
     const input = '{"name": "world"}'
-    invoke({
+    invoke(normalizeCtx({
       sync: false,
       input,
       cmd: 'jq',
       args: ['-r', '.name'],
       callback(err, result) {
-        err ? reject(err) : resolve(result._stdout)
+        err ? reject(err) : resolve(result.stdout)
       }
-    })
+    }))
 
     const name = await promise
     assert.equal(name.trim(), 'world')

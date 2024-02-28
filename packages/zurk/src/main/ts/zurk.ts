@@ -1,64 +1,64 @@
-import {invoke, TSpawnCtxNormalized, TSpawnResult, VoidWritable} from './spawn.js'
+import { TSpawnCtx, TSpawnCtxNormalized, TSpawnResult, Promisified } from './interface.js'
+import { invoke, normalizeCtx, VoidWritable } from './spawn.js'
 
-// https://stackoverflow.com/questions/47423241/replace-fields-types-in-interfaces-to-promises
-type Promisified<T> = {
-  [K in keyof T]: T[K] extends (...args: any) => infer R ?
-    (...args: Parameters<T[K]>) => Promise<R> :
-    Promise<T>;
-}
+export type ZurkPromise = Promise<Zurk> & Promisified<Zurk> & Pick<TSpawnCtxNormalized, 'stdout' | 'stderr'>
 
-type ZurkPromise = Promise<ZurkResponse> & Promisified<ZurkResponse> & Pick<TSpawnCtxNormalized, 'stdout' | 'stderr'>
+export type TZurkOptions = Omit<TSpawnCtx, 'callback'>
 
-export const zurk = (...chunks: string[]): ZurkPromise => {
+export const zurk = <T extends TZurkOptions = TZurkOptions, R = T['sync'] extends true ? Zurk : ZurkPromise>(opts: T): R =>
+  (opts.sync ? zurkSync(opts) : zurkAsync(opts)) as R
+
+export const zurkAsync = (opts: TZurkOptions): ZurkPromise => {
   let ctx: TSpawnCtxNormalized
 
-  return new Proxy(new Promise<ZurkResponse>((resolve, reject) => {
-    ctx = invoke({
-      cmd: chunks[0],
-      args: chunks.slice(1),
+  return new Proxy(new Promise<Zurk>((resolve, reject) => {
+    const ctx = normalizeCtx(opts, {
+      sync: false,
       callback(err, data) {
-        err ? reject(err) : resolve(new ZurkResponse(data))
+        err ? reject(err) : resolve(new Zurk(data))
       }
     })
+
+    invoke(ctx)
   }), {
-    get(target: Promise<ZurkResponse>, p: string | symbol, receiver: any): any {
+    get(target: Promise<Zurk>, p: string | symbol, receiver: any): any {
       if (p === 'then') return target.then.bind(target)
       if (p === 'catch') return target.catch.bind(target)
       if (p === 'finally') return target.finally.bind(target)
 
-      if (p === 'stdout') return ctx.stdout
-      if (p === 'stderr') return ctx.stderr
+      if (p === '_stdout') return ctx.stdout
+      if (p === '_stderr') return ctx.stderr
 
       return target.then(v => Reflect.get(v, p, receiver))
     }
   }) as ZurkPromise
 }
 
-export const zurkSync = (...chunks: string[]): ZurkResponse => {
-  let response = new ZurkResponse()
-
-  invoke({
+export const zurkSync = (opts: TZurkOptions): Zurk => {
+  let response = new Zurk()
+  const ctx = normalizeCtx(opts, {
     sync: true,
-    cmd: chunks[0],
-    args: chunks.slice(1),
     callback(err, data) {
-      response = new ZurkResponse(data)
+      response = new Zurk(data)
     }
   })
 
-  return response as ZurkResponse
+  invoke(ctx)
+
+  return response as Zurk
 }
 
-export class ZurkResponse implements TSpawnResult {
+export class Zurk implements TSpawnResult {
   error = null
-  _stderr =  ''
-  _stdout =  ''
-  stderr = new VoidWritable()
-  stdout = new VoidWritable()
+  stderr =  ''
+  stdout =  ''
+  _stderr = new VoidWritable()
+  _stdout = new VoidWritable()
   status = null
   signal = null
   duration = 0
   constructor(result?: Partial<TSpawnResult>) {
     Object.assign(this, result)
   }
+  toString() { return this.stdout }
 }

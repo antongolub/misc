@@ -1,51 +1,15 @@
 import cp from 'node:child_process'
-import { Readable, Stream, Writable } from 'node:stream'
+import { Stream, Writable } from 'node:stream'
 import { noop } from './util.js'
+import type { TChild, TInput, TSpawnCtx, TSpawnCtxNormalized } from './interface.js'
 
-export type TSpawnResult = {
-  error?:   any,
-  _stderr:  string
-  _stdout:  string
-  stderr:   Writable
-  stdout:   Writable
-  status:   number | null
-  signal:   string | null
-  duration: number
-}
-
-export type TSpawnCtx = Partial<Omit<TSpawnCtxNormalized, 'child'>> & {
-  cmd:      string
-}
-
-export type TChild = ReturnType<typeof cp.spawn>
-
-export type TInput = string | Buffer | Readable
-
-export type TSpawnCtxNormalized = {
-  cwd:        string
-  cmd:        string
-  sync:       boolean
-  args:       ReadonlyArray<string>
-  input:      TInput | null
-  stdio:      ['pipe', 'pipe', 'pipe']
-  shell:      string | true | undefined
-  spawn:      typeof cp.spawn
-  spawnSync:  typeof cp.spawnSync
-  spawnOpts:  Record<string, any>
-  callback:   (err: any, result: TSpawnResult & {error?: any, child?: TChild}) => void
-  onStdout:   (data: string | Buffer) => void
-  onStderr:   (data: string | Buffer) => void
-  stdout:     Writable
-  stderr:     Writable
-  child?:     TChild
-}
-
-export const normalizeCtx = (ctx: TSpawnCtx): TSpawnCtxNormalized => Object.defineProperties({
+export const normalizeCtx = (...ctxs: TSpawnCtx[]): TSpawnCtxNormalized => Object.defineProperties({
   cmd:        '',
   cwd:        process.cwd(),
   sync:       false,
   args:       [],
   input:      null,
+  env:        process.env,
   shell:      true,
   spawn:      cp.spawn,
   spawnSync:  cp.spawnSync,
@@ -56,7 +20,7 @@ export const normalizeCtx = (ctx: TSpawnCtx): TSpawnCtxNormalized => Object.defi
   stdout:     new VoidWritable(),
   stderr:     new VoidWritable(),
   stdio:      ['pipe', 'pipe', 'pipe']
-}, Object.getOwnPropertyDescriptors(ctx))
+}, ctxs.reduce<Record<string, any>>((m: TSpawnCtx, ctx) => ({...m, ...Object.getOwnPropertyDescriptors(ctx)}), {}))
 
 export const processInput = (child: TChild, input?: TInput | null) => {
   if (input && child.stdin && !child.stdin.destroyed) {
@@ -76,8 +40,9 @@ export class VoidWritable extends Writable {
   }
 }
 
-export const buildSpawnOpts = ({spawnOpts, stdio, cwd, shell, input}: TSpawnCtxNormalized) => ({
+export const buildSpawnOpts = ({spawnOpts, stdio, cwd, shell, input, env}: TSpawnCtxNormalized) => ({
   ...spawnOpts,
+  env,
   cwd,
   stdio,
   shell,
@@ -85,9 +50,8 @@ export const buildSpawnOpts = ({spawnOpts, stdio, cwd, shell, input}: TSpawnCtxN
   windowsHide: true
 })
 
-export const invoke = (ctx: TSpawnCtx): TSpawnCtxNormalized => {
+export const invoke = (c: TSpawnCtxNormalized): TSpawnCtxNormalized => {
   const now = Date.now()
-  const c = normalizeCtx(ctx)
 
   try {
     if (c.sync) {
@@ -100,10 +64,10 @@ export const invoke = (ctx: TSpawnCtx): TSpawnCtxNormalized => {
       c.onStderr(result.stderr)
       c.callback(null, {
         ...result,
-        _stdout:  result.stdout.toString(),
-        _stderr:  result.stderr.toString(),
-        stdout:   c.stdout,
-        stderr:   c.stderr,
+        stdout:   result.stdout.toString(),
+        stderr:   result.stderr.toString(),
+        _stdout:  c.stdout,
+        _stderr:  c.stderr,
         duration: Date.now() - now
       })
 
@@ -112,24 +76,24 @@ export const invoke = (ctx: TSpawnCtx): TSpawnCtxNormalized => {
         let error: any = null
         let status: number | null = null
         const opts = buildSpawnOpts(c)
-        const _stderr: string[] = []
-        const _stdout: string[] = []
+        const stderr: string[] = []
+        const stdout: string[] = []
         const child = c.spawn(c.cmd, c.args, opts)
         c.child = child
         processInput(child, c.input)
 
-        child.stdout.pipe(c.stdout).on('data', (d) => { _stdout.push(d.toString()); c.onStdout(d) })
-        child.stderr.pipe(c.stderr).on('data', (d) => { _stderr.push(d.toString()); c.onStderr(d) })
+        child.stdout.pipe(c.stdout).on('data', (d) => { stdout.push(d.toString()); c.onStdout(d) })
+        child.stderr.pipe(c.stderr).on('data', (d) => { stderr.push(d.toString()); c.onStderr(d) })
         child.on('error', (e) => error = e)
         child.on('exit', (code) => status = code)
         child.on('close', () => {
           c.callback(error, {
             error,
             status,
-            _stdout:  _stdout.join(''),
-            _stderr:  _stderr.join(''),
-            stdout:   c.stdout,
-            stderr:   c.stderr,
+            stdout:   stdout.join(''),
+            stderr:   stderr.join(''),
+            _stdout:  c.stdout,
+            _stderr:  c.stderr,
             signal:   child.signalCode,
             child,
             duration: Date.now() - now
@@ -144,10 +108,10 @@ export const invoke = (ctx: TSpawnCtx): TSpawnCtxNormalized => {
         error,
         status:   null,
         signal:   null,
-        _stdout:  '',
-        _stderr:  '',
-        stdout:   c.stdout,
-        stderr:   c.stderr,
+        stdout:   '',
+        stderr:   '',
+        _stdout:  c.stdout,
+        _stderr:  c.stderr,
         duration: Date.now() - now
       }
     )
