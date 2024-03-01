@@ -5,6 +5,7 @@ export type TSpawnResult = {
   error?:   any,
   stderr:   string
   stdout:   string
+  stdall:   string,
   _stderr:  Writable
   _stdout:  Writable
   status:   number | null

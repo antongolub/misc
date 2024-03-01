@@ -1,9 +1,10 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { zurk } from '../../main/ts'
+import { invoke, zurk } from '../../main/ts'
 
-describe('foo()', () => {
-  it('is callable', () => {
-    // assert.equal(zurk(), undefined)
+describe('index', () => {
+  it('has proper exports', () => {
+    assert.equal(typeof zurk, 'function')
+    assert.equal(typeof invoke, 'function')
   })
 })

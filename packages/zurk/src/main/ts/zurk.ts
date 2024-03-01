@@ -52,6 +52,7 @@ export class Zurk implements TSpawnResult {
   error = null
   stderr =  ''
   stdout =  ''
+  stdall = ''
   _stderr = new VoidWritable()
   _stdout = new VoidWritable()
   status = null
@@ -60,5 +61,5 @@ export class Zurk implements TSpawnResult {
   constructor(result?: Partial<TSpawnResult>) {
     Object.assign(this, result)
   }
-  toString() { return this.stdout }
+  toString() { return this.stdall }
 }

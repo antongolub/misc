@@ -1,1 +1,2 @@
-export * from './zurk.ts'
+export * from './zurk.js'
+export { invoke } from './spawn.js'

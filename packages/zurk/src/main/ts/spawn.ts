@@ -66,6 +66,7 @@ export const invoke = (c: TSpawnCtxNormalized): TSpawnCtxNormalized => {
         ...result,
         stdout:   result.stdout.toString(),
         stderr:   result.stderr.toString(),
+        get stdall() { return this.stdout + this.stderr },
         _stdout:  c.stdout,
         _stderr:  c.stderr,
         duration: Date.now() - now
@@ -78,12 +79,13 @@ export const invoke = (c: TSpawnCtxNormalized): TSpawnCtxNormalized => {
         const opts = buildSpawnOpts(c)
         const stderr: string[] = []
         const stdout: string[] = []
+        const stdall: string[] = []
         const child = c.spawn(c.cmd, c.args, opts)
         c.child = child
         processInput(child, c.input)
 
-        child.stdout.pipe(c.stdout).on('data', (d) => { stdout.push(d.toString()); c.onStdout(d) })
-        child.stderr.pipe(c.stderr).on('data', (d) => { stderr.push(d.toString()); c.onStderr(d) })
+        child.stdout.pipe(c.stdout).on('data', (d) => { stdout.push(d); stdall.push(d); c.onStdout(d) })
+        child.stderr.pipe(c.stderr).on('data', (d) => { stderr.push(d); stdall.push(d); c.onStderr(d) })
         child.on('error', (e) => error = e)
         child.on('exit', (code) => status = code)
         child.on('close', () => {
@@ -92,6 +94,7 @@ export const invoke = (c: TSpawnCtxNormalized): TSpawnCtxNormalized => {
             status,
             stdout:   stdout.join(''),
             stderr:   stderr.join(''),
+            stdall:   stdall.join(''),
             _stdout:  c.stdout,
             _stderr:  c.stderr,
             signal:   child.signalCode,
@@ -110,6 +113,7 @@ export const invoke = (c: TSpawnCtxNormalized): TSpawnCtxNormalized => {
         signal:   null,
         stdout:   '',
         stderr:   '',
+        stdall:   '',
         _stdout:  c.stdout,
         _stderr:  c.stderr,
         duration: Date.now() - now
