@@ -6,3 +6,5 @@ export const makeDeferred = <T = any>() => {
   const promise = new Promise<T>((res, rej) => { resolve = res; reject = rej })
   return { resolve, reject, promise }
 }
+
+export const isThenable = (value: any): boolean => typeof value?.then === 'function'

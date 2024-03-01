@@ -12,7 +12,7 @@ export const zurkAsync = (opts: TZurkOptions): ZurkPromise => {
   let ctx: TSpawnCtxNormalized
 
   return new Proxy(new Promise<Zurk>((resolve, reject) => {
-    const ctx = normalizeCtx(opts, {
+    ctx = normalizeCtx(opts, {
       sync: false,
       callback(err, data) {
         err ? reject(err) : resolve(new Zurk(data))
@@ -28,6 +28,8 @@ export const zurkAsync = (opts: TZurkOptions): ZurkPromise => {
 
       if (p === '_stdout') return ctx.stdout
       if (p === '_stderr') return ctx.stderr
+
+      if (p in target) return Reflect.get(target, p, receiver)
 
       return target.then(v => Reflect.get(v, p, receiver))
     }

@@ -1,5 +1,5 @@
 import cp from 'node:child_process'
-import { Stream, Writable } from 'node:stream'
+import { Stream, Writable, Transform } from 'node:stream'
 import { noop } from './util.js'
 import type { TChild, TInput, TSpawnCtx, TSpawnCtxNormalized } from './interface.js'
 
@@ -33,11 +33,15 @@ export const processInput = (child: TChild, input?: TInput | null) => {
   }
 }
 
-export class VoidWritable extends Writable {
-  _write(chunk: any, _: string, cb: (err?: Error) => void) {
+export class VoidWritable extends Transform {
+  _transform(chunk: any, _: string, cb: (err?: Error) => void) {
     this.emit('data', chunk)
     cb()
   }
+  // _write(chunk: any, _: string, cb: (err?: Error) => void) {
+  //   this.emit('data', chunk)
+  //   cb()
+  // }
 }
 
 export const buildSpawnOpts = ({spawnOpts, stdio, cwd, shell, input, env}: TSpawnCtxNormalized) => ({
