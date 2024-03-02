@@ -1,32 +1,47 @@
 import { Writable } from 'node:stream'
-import { Zurk, zurk, ZurkPromise } from './zurk.js'
+import { TZurkOptions, Zurk, zurk, ZurkPromise } from './zurk.js'
 import { isThenable } from './util.js'
-import { processInput, VoidWritable } from './spawn.js'
+import { VoidWritable } from './spawn.js'
+import { Promisified } from './interface.js'
 
-export interface TShellResponse {
+export type TPipeExtra<T = any> = {
   pipe(steam: Writable): Writable
-  pipe(pieces: TemplateStringsArray, ...args: any[]): TShellResponse
+  pipe(pieces: TemplateStringsArray, ...args: any[]): T
+}
+
+export interface TShellResponse extends Promisified<Zurk>, Promise<Zurk & TPipeExtra<TShellResponse>>, TPipeExtra<TShellResponse> {
+}
+
+export interface TShellResponseSync extends Zurk, TPipeExtra<TShellResponseSync> {
 }
 
 export interface TShell {
-  (pieces: TemplateStringsArray, ...args: any[]): TShellResponse
-  (opts: Record<any, any>): TShell
+  <O extends void>(this: O, pieces: TemplateStringsArray, ...args: any[]): TShellResponse
+  <O extends TZurkOptions = TZurkOptions, R = O extends {sync: true} ? TShellResponseSync : TShellResponse>(this: O, pieces: TemplateStringsArray, ...args: any[]): R
+  <O extends TZurkOptions = TZurkOptions, R = O extends {sync: true} ? TShellSync : TShell>(opts: O): R
+}
+
+export interface TShellSync {
+  <O>(this: O, pieces: TemplateStringsArray, ...args: any[]): TShellResponseSync
+  (opts: TZurkOptions): TShellSync
 }
 
 export type TQuote = (input: string) => string
 
-export const $: TShell = new Proxy<TShell>(function(this: any, pieces, ...args) {
-  if (typeof (pieces as any)[0] === 'string') return $({
-    ...this,
-    cmd: formatCmd(quote, pieces as TemplateStringsArray, ...args)
-  })
+const isLiteral = (pieces: any) => typeof pieces[0] === 'string'
 
-  const result = zurk(pieces as any)
-  return mixPipe(isThenable(result) ? (result as any).then((r: ZurkPromise) => mixPipe(r)) : result, result)
+export const $: TShell = new Proxy<TShell>(function(this: any, pieces: any, ...args: any): any {
+  if (isLiteral(pieces)) {
+    const cmd = formatCmd(quote, pieces as TemplateStringsArray, ...args)
+    const result = zurk(Object.assign(this || {}, { cmd }))
+    return mixPipe(isThenable(result) ? (result as any).then((r: ZurkPromise) => mixPipe(r)) : result, result)
+  }
+
+  return (...args: any) => $.apply(isLiteral(args[0]) ? pieces : this, args)
 }, {})
 
-const mixPipe = (result: Zurk | ZurkPromise, ctx = result) => {
-  return Object.assign(result, {
+const mixPipe = (result: Zurk | ZurkPromise, ctx = result) =>
+  Object.assign(result, {
     pipe(...args: any[]): typeof args[0] extends Writable ? Writable : TShellResponse {
       const stream = args[0]
       if (stream instanceof Writable) {
@@ -35,26 +50,22 @@ const mixPipe = (result: Zurk | ZurkPromise, ctx = result) => {
           stream.end()
 
           return stream
-        } else {
-          return (ctx._stdout as VoidWritable).pipe(stream)
         }
-      }
 
-      return $.apply({input: result.stdout || ctx._stdout}, args as any) as unknown as TShellResponse
+        return (ctx._stdout as VoidWritable).pipe(stream)
+      }
+// console.log('@@@', result)
+      return $.apply({input: result.stdout || ctx._stdout, sync: !('then' in ctx)}, args as any) as unknown as TShellResponse
     }
   })
-}
-
 
 export const formatCmd = (quote: TQuote, pieces: TemplateStringsArray, ...args: any[]) =>  {
   let cmd = pieces[0], i = 0
   while (i < args.length) {
-    let s
-    if (Array.isArray(args[i])) {
-      s = args[i].map((x: any) => quote(substitute(x))).join(' ')
-    } else {
-      s = quote(substitute(args[i]))
-    }
+    const s = Array.isArray(args[i])
+      ? args[i].map((x: any) => quote(substitute(x))).join(' ')
+      : quote(substitute(args[i]))
+
     cmd += s + pieces[++i]
   }
 
@@ -67,7 +78,7 @@ export const substitute = (arg: any) =>
     : `${arg}`
 
 export const quote = (arg: string) => {
-  if (/^[a-z0-9/_.\-@:=]+$/i.test(arg) || arg === '') {
+  if (/^[\w./:=@-]+$/i.test(arg) || arg === '') {
     return arg
   }
   return (
