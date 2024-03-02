@@ -1,9 +1,10 @@
-import { Stream, Readable } from 'node:stream'
-import {Zurk, zurk, ZurkPromise} from './zurk.js'
-import {isThenable} from "./util.js";
+import { Writable } from 'node:stream'
+import { Zurk, zurk, ZurkPromise } from './zurk.js'
+import { isThenable } from './util.js'
+import { processInput, VoidWritable } from './spawn.js'
 
 export interface TShellResponse {
-  pipe(steam: Stream): TShellResponse
+  pipe(steam: Writable): Writable
   pipe(pieces: TemplateStringsArray, ...args: any[]): TShellResponse
 }
 
@@ -26,8 +27,20 @@ export const $: TShell = new Proxy<TShell>(function(this: any, pieces, ...args) 
 
 const mixPipe = (result: Zurk | ZurkPromise, ctx = result) => {
   return Object.assign(result, {
-    pipe(...args: any[]) {
-      return $.apply({input: ctx._stdout}, args as any)
+    pipe(...args: any[]): typeof args[0] extends Writable ? Writable : TShellResponse {
+      const stream = args[0]
+      if (stream instanceof Writable) {
+        if (result.stdout) {
+          stream.write(result.stdout)
+          stream.end()
+
+          return stream
+        } else {
+          return (ctx._stdout as VoidWritable).pipe(stream)
+        }
+      }
+
+      return $.apply({input: result.stdout || ctx._stdout}, args as any) as unknown as TShellResponse
     }
   })
 }
