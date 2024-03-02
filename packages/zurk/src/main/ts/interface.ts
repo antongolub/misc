@@ -6,11 +6,13 @@ export type TSpawnResult = {
   stderr:   string
   stdout:   string
   stdall:   string,
+  _stdin:   Readable
   _stderr:  Writable
   _stdout:  Writable
   status:   number | null
   signal:   string | null
   duration: number
+  _ctx:     TSpawnCtxNormalized
 }
 
 export type TSpawnCtx = Partial<Omit<TSpawnCtxNormalized, 'child'>>
@@ -34,9 +36,11 @@ export type TSpawnCtxNormalized = {
   callback:   (err: any, result: TSpawnResult & {error?: any, child?: TChild}) => void
   onStdout:   (data: string | Buffer) => void
   onStderr:   (data: string | Buffer) => void
+  stdin:      Readable
   stdout:     Writable
   stderr:     Writable
   child?:     TChild
+  fulfilled?: TSpawnResult
 }
 
 // https://stackoverflow.com/questions/47423241/replace-fields-types-in-interfaces-to-promises

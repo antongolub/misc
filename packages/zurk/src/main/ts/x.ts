@@ -2,9 +2,10 @@ import { Writable } from 'node:stream'
 import { TZurkOptions, Zurk, zurk, ZurkPromise } from './zurk.js'
 import { isThenable } from './util.js'
 import { VoidWritable } from './spawn.js'
-import { Promisified } from './interface.js'
+import { Promisified, TSpawnCtxNormalized } from './interface.js'
 
 export type TPipeExtra<T = any> = {
+  pipe(shell: T): T
   pipe(steam: Writable): Writable
   pipe(pieces: TemplateStringsArray, ...args: any[]): T
 }
@@ -34,16 +35,31 @@ export const $: TShell = new Proxy<TShell>(function(this: any, pieces: any, ...a
   if (isLiteral(pieces)) {
     const cmd = formatCmd(quote, pieces as TemplateStringsArray, ...args)
     const result = zurk(Object.assign(this || {}, { cmd }))
-    return mixPipe(isThenable(result) ? (result as any).then((r: ZurkPromise) => mixPipe(r)) : result, result)
+
+    return mixPipe(
+      isThenable(result)
+        ? Object.defineProperty((result as any).then((r: ZurkPromise) => mixPipe(r)), '_ctx', {value: result._ctx, enumerable: false})
+        : result)
   }
 
   return (...args: any) => $.apply(isLiteral(args[0]) ? pieces : this, args)
 }, {})
 
-const mixPipe = (result: Zurk | ZurkPromise, ctx = result) =>
+const mixPipe = (result: Zurk | ZurkPromise) =>
   Object.assign(result, {
     pipe(...args: any[]): typeof args[0] extends Writable ? Writable : TShellResponse {
       const stream = args[0]
+      const {fulfilled, stdout} = (result._ctx as TSpawnCtxNormalized)
+      if (stream._ctx) {
+        if (fulfilled) {
+          stream._ctx.input = fulfilled.stdout
+        } else {
+          stream._ctx.stdin = stdout as VoidWritable
+        }
+
+        return stream as unknown as TShellResponse
+      }
+
       if (stream instanceof Writable) {
         if (result.stdout) {
           stream.write(result.stdout)
@@ -52,10 +68,9 @@ const mixPipe = (result: Zurk | ZurkPromise, ctx = result) =>
           return stream
         }
 
-        return (ctx._stdout as VoidWritable).pipe(stream)
+        return stdout.pipe(stream)
       }
-// console.log('@@@', result)
-      return $.apply({input: result.stdout || ctx._stdout, sync: !('then' in ctx)}, args as any) as unknown as TShellResponse
+      return $.apply({input: fulfilled?.stdout || stdout, sync: !('then' in result)}, args as any) as unknown as TShellResponse
     }
   })
 
