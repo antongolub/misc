@@ -9,4 +9,4 @@ export const makeDeferred = <T = any, E = any>(): {promise: Promise<T>, resolve:
   return { resolve, reject, promise } as any
 }
 
-export const isThenable = (value: any): boolean => typeof value?.then === 'function'
+export const isPromiseLike = (value: any): boolean => typeof value?.then === 'function'

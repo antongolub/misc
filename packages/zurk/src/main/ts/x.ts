@@ -2,21 +2,18 @@ import { Zurk, zurk, ZurkPromise} from './zurk.js'
 import { TShell, TQuote, TMixinHandler, TSpawnCtxNormalized } from './interface.js'
 import { pipeMixin } from './mixin/pipe.js'
 import { ctxMixin } from './mixin/ctx.js'
-import { isThenable } from './util.js'
+import { isPromiseLike } from './util.js'
 
 export const $: TShell = function(this: any, pieces: any, ...args: any): any {
   if (isLiteral(pieces)) {
     const opts = this || {}
     const cmd = formatCmd(quote, pieces as TemplateStringsArray, ...args)
-    const run = isThenable(cmd)
-      ? (cb: any, ctx: any) => (cmd as Promise<string>).then((cmd) => {
-        ctx.cmd = cmd
-        cb()
-      })
+    const run = isPromiseLike(cmd)
+      ? (cb: any, ctx: any) => (cmd as Promise<string>).then((cmd) => { ctx.cmd = cmd; cb() })
       : setImmediate
     const result = zurk(Object.assign(opts, { cmd, run }))
 
-    return applyMixins(isThenable(result)
+    return applyMixins(isPromiseLike(result)
       ? ((result as ZurkPromise).then((r: Zurk) => applyMixins(r, $.mixins, $, result._ctx as TSpawnCtxNormalized)) as ZurkPromise)
       : result, $.mixins, $, result._ctx as TSpawnCtxNormalized)
   }
@@ -31,9 +28,8 @@ export const applyMixins = (result: Zurk | ZurkPromise, mixins: TMixinHandler[],
   mixins.reduce((r, m) => m(r, $, ctx), result)
 
 export const formatCmd = (quote: TQuote, pieces: TemplateStringsArray, ...args: any[]): string | Promise<string> =>  {
-  if (args.some(isThenable)) {
+  if (args.some(isPromiseLike))
     return Promise.all(args).then((args) => formatCmd(quote, pieces, ...args))
-  }
 
   let cmd = pieces[0], i = 0
   while (i < args.length) {
