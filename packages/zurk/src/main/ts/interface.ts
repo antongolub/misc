@@ -6,9 +6,7 @@ export type TSpawnResult = {
   stderr:   string
   stdout:   string
   stdall:   string,
-  _stdin:   Readable
-  _stderr:  Writable
-  _stdout:  Writable
+  stdio:    [Readable | Writable, Writable, Writable]
   status:   number | null
   signal:   string | null
   duration: number

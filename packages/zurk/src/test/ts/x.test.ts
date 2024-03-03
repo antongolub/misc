@@ -8,10 +8,12 @@ describe('$()', () => {
       const result = $`echo "5\\n3\\n1\\n4\\n2"`
       const expected = '1\n2\n3\n4\n5'
 
-      const piped1 = result.pipe`sort`
+      const piped0 = result.pipe`sort | cat`
+      const piped1 = result.pipe`sort`.pipe`cat`
       const piped2 = (await result).pipe`sort`
       const piped3 = result.pipe($`sort`)
 
+      assert.equal((await piped0).toString().trim(), expected)
       assert.equal((await piped1).toString().trim(), expected)
       assert.equal((await piped2).toString().trim(), expected)
       assert.equal((await piped3).toString().trim(), expected)

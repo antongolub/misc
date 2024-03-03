@@ -1,6 +1,6 @@
 export const noop = () => { /* noop */ }
 
-type PromiseResolve<T = any> = (value: T | PromiseLike<T>) => void
+export type PromiseResolve<T = any> = (value: T | PromiseLike<T>) => void
 
 export const makeDeferred = <T = any, E = any>(): {promise: Promise<T>, resolve: PromiseResolve<T>, reject: PromiseResolve<E>} => {
   let resolve

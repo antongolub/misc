@@ -14,7 +14,7 @@ export const zurkAsync = (opts: TZurkOptions): ZurkPromise => {
   const ctx = normalizeCtx(opts, {
     sync: false,
     callback(err, data) {
-      err ? reject(err) : resolve(new Zurk(data, ctx))
+      err ? reject(err) : resolve(new Zurk(ctx))
     }
   })
 
@@ -43,7 +43,7 @@ export const zurkSync = (opts: TZurkOptions): Zurk => {
   const ctx = normalizeCtx(opts, {
     sync: true,
     callback(err, data) {
-      response = new Zurk(data, ctx)
+      response = new Zurk(ctx)
     }
   })
 
@@ -56,19 +56,23 @@ export const zurkSync = (opts: TZurkOptions): Zurk => {
 
 export class Zurk implements TSpawnResult {
   _ctx: TSpawnCtxNormalized
-  error = null
-  stderr =  ''
-  stdout =  ''
-  stdall = ''
-  _stdin = new VoidWritable()
-  _stderr = new VoidWritable()
-  _stdout = new VoidWritable()
-  status = null
-  signal = null
-  duration = 0
-  constructor(result: Partial<TSpawnResult> | undefined, ctx: TSpawnCtxNormalized) {
+  constructor(ctx: TSpawnCtxNormalized) {
     this._ctx = ctx
-    Object.assign(this, result)
   }
-  toString() { return this.stdall }
+  get status()    { return this._ctx.fulfilled?.status || null }
+  get signal()    { return this._ctx.fulfilled?.signal || null }
+  get error()     { return this._ctx.fulfilled?.error }
+  get stderr()    { return this._ctx.fulfilled?.stderr || '' }
+  get stdout()    { return this._ctx.fulfilled?.stdout || '' }
+  get stdall()    { return this._ctx.fulfilled?.stdall || '' }
+  get stdio(): TSpawnResult['stdio'] { return [
+    this._ctx.stdin,
+    this._ctx.stdout,
+    this._ctx.stderr
+  ]}
+  get _stdin()    { return this._ctx.stdin }
+  get _stdout()   { return this._ctx.stdout }
+  get _stderr()   { return this._ctx.stderr }
+  get duration()  { return this._ctx.fulfilled?.duration || 0 }
+  toString(){ return this.stdall.trim() }
 }

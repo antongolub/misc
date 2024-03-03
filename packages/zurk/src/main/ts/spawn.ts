@@ -1,7 +1,7 @@
 import cp from 'node:child_process'
 import { Stream, Transform } from 'node:stream'
 import { noop } from './util.js'
-import type { TChild, TInput, TSpawnCtx, TSpawnCtxNormalized } from './interface.js'
+import type { TChild, TInput, TSpawnCtx, TSpawnCtxNormalized, TSpawnResult } from './interface.js'
 
 export const normalizeCtx = (...ctxs: TSpawnCtx[]): TSpawnCtxNormalized => Object.defineProperties({
   cmd:        '',
@@ -59,6 +59,7 @@ export const buildSpawnOpts = ({spawnOpts, stdio, cwd, shell, input, env}: TSpaw
 
 export const invoke = (c: TSpawnCtxNormalized): TSpawnCtxNormalized => {
   const now = Date.now()
+  const stdio: TSpawnResult['stdio'] = [c.stdin, c.stdout, c.stderr]
 
   try {
     if (c.sync) {
@@ -73,10 +74,8 @@ export const invoke = (c: TSpawnCtxNormalized): TSpawnCtxNormalized => {
         ...result,
         stdout:   result.stdout.toString(),
         stderr:   result.stderr.toString(),
+        stdio,
         get stdall() { return this.stdout + this.stderr },
-        _stdin:   c.stdin,
-        _stdout:  c.stdout,
-        _stderr:  c.stderr,
         duration: Date.now() - now,
         _ctx:     c
       })
@@ -104,9 +103,7 @@ export const invoke = (c: TSpawnCtxNormalized): TSpawnCtxNormalized => {
             stdout:   stdout.join(''),
             stderr:   stderr.join(''),
             stdall:   stdall.join(''),
-            _stdin:   c.stdin,
-            _stdout:  c.stdout,
-            _stderr:  c.stderr,
+            stdio:    [c.stdin, c.stdout, c.stderr],
             signal:   child.signalCode,
             duration: Date.now() - now,
             _ctx:     c
@@ -124,9 +121,7 @@ export const invoke = (c: TSpawnCtxNormalized): TSpawnCtxNormalized => {
         stdout:   '',
         stderr:   '',
         stdall:   '',
-        _stdin:   c.stdin,
-        _stdout:  c.stdout,
-        _stderr:  c.stderr,
+        stdio,
         duration: Date.now() - now,
         _ctx:     c
       }
