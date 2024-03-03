@@ -3,6 +3,24 @@ import { describe, it } from 'node:test'
 import { $ } from '../../main/ts/x.js'
 
 describe('$()', () => {
+  it('supports async flow', async () => {
+    const p = $`echo foo`
+    const o1 = (await p).toString()
+    const o2 = await p.stdout
+
+    assert.equal(o1, 'foo')
+    assert.equal(o2.trim(), 'foo')
+  })
+
+  it('supports sync flow', () => {
+    const p = $({sync: true})`echo foo`
+    const o1 = p.toString()
+    const o2 = p.stdout
+
+    assert.equal(o1, 'foo')
+    assert.equal(o2.trim(), 'foo')
+  })
+
   it('handles promises in cmd literal', async () => {
     const example = $`echo example`
 
@@ -21,10 +39,10 @@ describe('$()', () => {
       const piped2 = (await result).pipe`sort`
       const piped3 = result.pipe($`sort`)
 
-      assert.equal((await piped0).toString().trim(), expected)
-      assert.equal((await piped1).toString().trim(), expected)
-      assert.equal((await piped2).toString().trim(), expected)
-      assert.equal((await piped3).toString().trim(), expected)
+      assert.equal((await piped0).toString(), expected)
+      assert.equal((await piped1).toString(), expected)
+      assert.equal((await piped2).toString(), expected)
+      assert.equal((await piped3).toString(), expected)
     })
 
     it('supports sync flow', async () => {
@@ -34,7 +52,7 @@ describe('$()', () => {
       const expected = '1\n2\n3\n4\n5'
       const piped = result.pipe`sort`
 
-      assert.equal(piped.toString().trim(), expected)
+      assert.equal(piped.toString(), expected)
     })
   })
 })

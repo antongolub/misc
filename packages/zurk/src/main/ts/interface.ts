@@ -54,7 +54,7 @@ export interface TSpawnCtxNormalized {
 export type Promisified<T> = {
   [K in keyof T]: T[K] extends (...args: any) => infer R ?
     (...args: Parameters<T[K]>) => Promise<R> :
-    Promise<T>;
+    Promise<T[K]>;
 }
 
 export interface TShellResponse extends Promisified<Zurk>, Promise<Zurk & TShellExtra<TShellResponse>>, TShellExtra<TShellResponse> {
@@ -63,7 +63,7 @@ export interface TShellResponse extends Promisified<Zurk>, Promise<Zurk & TShell
 export interface TShellResponseSync extends Zurk, TShellExtra<TShellResponseSync> {
 }
 
-export type TMixinHandler = (target: Zurk | ZurkPromise, $: TShell, ctx: TSpawnCtxNormalized) => Zurk | ZurkPromise
+export type TMixinHandler = (target: Zurk | ZurkPromise, ctx: TSpawnCtxNormalized, $: TShell) => Zurk | ZurkPromise
 
 export interface TShell {
   mixins: TMixinHandler[]

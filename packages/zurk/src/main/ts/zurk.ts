@@ -1,8 +1,9 @@
 import { TSpawnCtx, TSpawnCtxNormalized, TSpawnResult, Promisified } from './interface.js'
 import { invoke, normalizeCtx } from './spawn.js'
-import { makeDeferred } from './util.js'
+import { isPromiseLike, makeDeferred } from './util.js'
+import * as util from 'node:util'
 
-export type ZurkPromise = Promise<Zurk> & Promisified<Zurk> & Pick<TSpawnCtxNormalized, 'stdout' | 'stderr'>
+export type ZurkPromise = Promise<Zurk> & Promisified<Zurk> // & Pick<TSpawnCtxNormalized, 'stdout' | 'stderr'>
 
 export type TZurkOptions = Omit<TSpawnCtx, 'callback'>
 
@@ -20,7 +21,12 @@ export const zurkAsync = (opts: TZurkOptions): ZurkPromise => {
 
   invoke(ctx)
 
-  return new Proxy(promise, {
+  return zurkifyPromise(promise, ctx)
+}
+
+// eslint-disable-next-line sonarjs/cognitive-complexity
+export const zurkifyPromise = <T = ZurkPromise>(target: any, ctx: TSpawnCtxNormalized) => isPromiseLike(target) && !util.types.isProxy(target)
+  ? new Proxy(target, {
     get(target: Promise<Zurk>, p: string | symbol, receiver: any): any {
       if (p === 'then') return target.then.bind(target)
       if (p === 'catch') return target.catch.bind(target)
@@ -32,8 +38,8 @@ export const zurkAsync = (opts: TZurkOptions): ZurkPromise => {
 
       return target.then(v => Reflect.get(v, p, receiver))
     }
-  }) as ZurkPromise
-}
+  }) as T
+  : target
 
 export const zurkSync = (opts: TZurkOptions): Zurk => {
   let response: Zurk

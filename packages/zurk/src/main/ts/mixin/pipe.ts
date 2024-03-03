@@ -2,7 +2,7 @@ import { Writable } from 'node:stream'
 import { TSpawnCtxNormalized, TShellResponse, TMixinHandler, TShell } from '../interface.js'
 import { VoidWritable } from '../spawn.js'
 
-export const pipeMixin: TMixinHandler = (result: any, $: TShell, ctx: TSpawnCtxNormalized) => Object.assign(result, {
+export const pipeMixin: TMixinHandler = (result: any, ctx: TSpawnCtxNormalized, $: TShell) => Object.assign(result, {
   pipe(...args: any[]): typeof args[0] extends Writable ? Writable : TShellResponse {
     const stream = args[0]
     const { fulfilled, stdout} = ctx

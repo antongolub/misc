@@ -1,7 +1,6 @@
-import { Zurk, zurk, ZurkPromise} from './zurk.js'
+import { Zurk, zurk, zurkifyPromise, ZurkPromise } from './zurk.js'
 import { TShell, TQuote, TMixinHandler, TSpawnCtxNormalized } from './interface.js'
 import { pipeMixin } from './mixin/pipe.js'
-import { ctxMixin } from './mixin/ctx.js'
 import { isPromiseLike } from './util.js'
 
 export const $: TShell = function(this: any, pieces: any, ...args: any): any {
@@ -14,18 +13,18 @@ export const $: TShell = function(this: any, pieces: any, ...args: any): any {
     const result = zurk(Object.assign(opts, { cmd, run }))
 
     return applyMixins(isPromiseLike(result)
-      ? ((result as ZurkPromise).then((r: Zurk) => applyMixins(r, $.mixins, $, result._ctx as TSpawnCtxNormalized)) as ZurkPromise)
-      : result, $.mixins, $, result._ctx as TSpawnCtxNormalized)
+      ? ((result as ZurkPromise).then((r: Zurk) => applyMixins(r, $.mixins, result._ctx as TSpawnCtxNormalized, $)) as ZurkPromise)
+      : result, $.mixins, result._ctx as TSpawnCtxNormalized, $)
   }
 
   return (...args: any) => $.apply(isLiteral(args[0]) ? pieces : this, args)
 }
-$.mixins = [ctxMixin, pipeMixin]
+$.mixins = [pipeMixin, zurkifyPromise]
 
 export const isLiteral = (pieces: any) => typeof pieces?.[0] === 'string'
 
-export const applyMixins = (result: Zurk | ZurkPromise, mixins: TMixinHandler[], $: TShell, ctx: TSpawnCtxNormalized) =>
-  mixins.reduce((r, m) => m(r, $, ctx), result)
+export const applyMixins = (result: Zurk | ZurkPromise, mixins: TMixinHandler[], ctx: TSpawnCtxNormalized, $: TShell) =>
+  mixins.reduce((r, m) => m(r, ctx, $), result)
 
 export const formatCmd = (quote: TQuote, pieces: TemplateStringsArray, ...args: any[]): string | Promise<string> =>  {
   if (args.some(isPromiseLike))

@@ -9,8 +9,21 @@
 This subproject is a kind of experiment, addressed to the [google/zx/issues/589](https://github.com/google/zx/issues/589).
 Just a testing ground for verifying ideas and approaches aimed at improve the [zx](https://github.com/google/zx) architecture.
 
+
+- [x] Promises in cmd literals
+```ts
+const foo = $`echo foo`
+const foobarbaz = (await $`echo ${foo} ${$`echo bar`} ${await $`echo baz`}`)
 ```
-$`...`
+
+- [x] Both sync and async execution
+```ts
+const p1 = $`echo foo`
+const p2 = $({sync: true})`echo foo`
+
+const o1 = (await p1).toString()  // foo
+const o2 = await p1.stdout        // foo
+const o3 = p2.stdout              // foo
 ```
 
 ## License
