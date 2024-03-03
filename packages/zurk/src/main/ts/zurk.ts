@@ -1,5 +1,5 @@
 import { TSpawnCtx, TSpawnCtxNormalized, TSpawnResult, Promisified } from './interface.js'
-import { invoke, normalizeCtx, VoidWritable } from './spawn.js'
+import { invoke, normalizeCtx } from './spawn.js'
 import { makeDeferred } from './util.js'
 
 export type ZurkPromise = Promise<Zurk> & Promisified<Zurk> & Pick<TSpawnCtxNormalized, 'stdout' | 'stderr'>
@@ -25,10 +25,7 @@ export const zurkAsync = (opts: TZurkOptions): ZurkPromise => {
       if (p === 'then') return target.then.bind(target)
       if (p === 'catch') return target.catch.bind(target)
       if (p === 'finally') return target.finally.bind(target)
-
-      if (p === '_stdin') return ctx.stdin
-      if (p === '_stdout') return ctx.stdout
-      if (p === '_stderr') return ctx.stderr
+      if (p === 'stdio') return ctx.stdio
       if (p === '_ctx') return ctx
 
       if (p in target) return Reflect.get(target, p, receiver)
@@ -70,9 +67,6 @@ export class Zurk implements TSpawnResult {
     this._ctx.stdout,
     this._ctx.stderr
   ]}
-  get _stdin()    { return this._ctx.stdin }
-  get _stdout()   { return this._ctx.stdout }
-  get _stderr()   { return this._ctx.stderr }
   get duration()  { return this._ctx.fulfilled?.duration || 0 }
   toString(){ return this.stdall.trim() }
 }
