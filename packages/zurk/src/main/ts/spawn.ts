@@ -21,6 +21,7 @@ export const normalizeCtx = (...ctxs: TSpawnCtx[]): TSpawnCtxNormalized => Objec
   stdout:     new VoidWritable(),
   stderr:     new VoidWritable(),
   stdio:      ['pipe', 'pipe', 'pipe'],
+  run:        setImmediate
 }, ctxs.reduce<Record<string, any>>((m: TSpawnCtx, ctx) => ({...m, ...Object.getOwnPropertyDescriptors(ctx)}), {}))
 
 export const processInput = (child: TChild, input?: TInput | null) => {
@@ -81,7 +82,7 @@ export const invoke = (c: TSpawnCtxNormalized): TSpawnCtxNormalized => {
       })
 
     } else {
-      setImmediate(() => {
+      c.run(() => {
         let error: any = null
         let status: number | null = null
         const opts = buildSpawnOpts(c)
@@ -109,7 +110,7 @@ export const invoke = (c: TSpawnCtxNormalized): TSpawnCtxNormalized => {
             _ctx:     c
           })
         })
-      })
+      }, c)
     }
   } catch (error: unknown) {
     c.callback(

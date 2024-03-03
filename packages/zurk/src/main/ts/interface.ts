@@ -26,7 +26,7 @@ export type TChild = ReturnType<typeof cp.spawn>
 
 export type TInput = string | Buffer | Readable
 
-export type TSpawnCtxNormalized = {
+export interface TSpawnCtxNormalized {
   cwd:        string
   cmd:        string
   sync:       boolean
@@ -46,6 +46,8 @@ export type TSpawnCtxNormalized = {
   stderr:     Writable
   child?:     TChild
   fulfilled?: TSpawnResult
+  run:        (cb: () => void, ctx: TSpawnCtxNormalized) => void
+  // kill:       (signal: number) => void
 }
 
 // https://stackoverflow.com/questions/47423241/replace-fields-types-in-interfaces-to-promises

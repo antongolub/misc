@@ -4,15 +4,17 @@ import { pipeMixin } from './mixin/pipe.js'
 import { ctxMixin } from './mixin/ctx.js'
 import { isThenable } from './util.js'
 
-const isLiteral = (pieces: any) => typeof pieces?.[0] === 'string'
-
-export const applyMixins = (result: Zurk | ZurkPromise, mixins: TMixinHandler[], $: TShell, ctx: TSpawnCtxNormalized) =>
-  mixins.reduce((r, m) => m(r, $, ctx), result)
-
 export const $: TShell = function(this: any, pieces: any, ...args: any): any {
   if (isLiteral(pieces)) {
+    const opts = this || {}
     const cmd = formatCmd(quote, pieces as TemplateStringsArray, ...args)
-    const result = zurk(Object.assign(this || {}, { cmd }))
+    const run = isThenable(cmd)
+      ? (cb: any, ctx: any) => (cmd as Promise<string>).then((cmd) => {
+        ctx.cmd = cmd
+        cb()
+      })
+      : setImmediate
+    const result = zurk(Object.assign(opts, { cmd, run }))
 
     return applyMixins(isThenable(result)
       ? ((result as ZurkPromise).then((r: Zurk) => applyMixins(r, $.mixins, $, result._ctx as TSpawnCtxNormalized)) as ZurkPromise)
@@ -23,7 +25,16 @@ export const $: TShell = function(this: any, pieces: any, ...args: any): any {
 }
 $.mixins = [ctxMixin, pipeMixin]
 
-export const formatCmd = (quote: TQuote, pieces: TemplateStringsArray, ...args: any[]) =>  {
+export const isLiteral = (pieces: any) => typeof pieces?.[0] === 'string'
+
+export const applyMixins = (result: Zurk | ZurkPromise, mixins: TMixinHandler[], $: TShell, ctx: TSpawnCtxNormalized) =>
+  mixins.reduce((r, m) => m(r, $, ctx), result)
+
+export const formatCmd = (quote: TQuote, pieces: TemplateStringsArray, ...args: any[]): string | Promise<string> =>  {
+  if (args.some(isThenable)) {
+    return Promise.all(args).then((args) => formatCmd(quote, pieces, ...args))
+  }
+
   let cmd = pieces[0], i = 0
   while (i < args.length) {
     const s = Array.isArray(args[i])
@@ -37,8 +48,8 @@ export const formatCmd = (quote: TQuote, pieces: TemplateStringsArray, ...args: 
 }
 
 export const substitute = (arg: any) =>
-  (arg?.stdout?.endsWith?.('\n'))
-    ? arg.stdout.slice(0, -1)
+  (typeof arg?.stdout === 'string')
+    ? arg.stdout.replace(/\n$/, '')
     : `${arg}`
 
 export const quote = (arg: string) => {

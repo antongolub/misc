@@ -3,6 +3,14 @@ import { describe, it } from 'node:test'
 import { $ } from '../../main/ts/x.js'
 
 describe('$()', () => {
+  it('handles promises in cmd literal', async () => {
+    const example = $`echo example`
+
+    // eslint-disable-next-line sonarjs/no-nested-template-literals
+    assert.equal((await $`echo ${example} ${$`echo and`} ${await example}`)
+      .toString(), 'example and example')
+  })
+
   describe('pipe', () => {
     it('supports async flow', async () => {
       const result = $`echo "5\\n3\\n1\\n4\\n2"`
