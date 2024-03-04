@@ -10,6 +10,7 @@ This subproject is a kind of experiment, addressed to the [google/zx/issues/589]
 Just a testing ground for verifying ideas and approaches aimed at improve the [zx](https://github.com/google/zx) architecture.
 
 
+## Proposals
 - [x] Promises in cmd literals
 ```ts
 const foo = $`echo foo`
