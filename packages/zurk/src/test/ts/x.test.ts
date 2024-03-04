@@ -54,6 +54,11 @@ describe('$()', () => {
     const stdin = fs.createReadStream(path.join(fixtures, 'foo.json'))
     const data = await $({stdin})`jq -r .data`
     assert.equal(data.toString().trim(), 'foobar')
+
+    const p = $`echo "5\\n3\\n1\\n4\\n2"`
+    const sorted = $({input: p})`sort`
+
+    assert.equal((await sorted).toString(), '1\n2\n3\n4\n5')
   })
 
   describe('pipe', () => {

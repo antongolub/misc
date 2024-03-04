@@ -1,4 +1,4 @@
-import { Readable, Writable } from 'node:stream'
+import { Readable, Writable, Stream } from 'node:stream'
 import type cp from 'node:child_process'
 import { TZurkOptions, Zurk, ZurkPromise } from './zurk.js'
 
@@ -25,7 +25,7 @@ export type TSpawnCtx = Partial<Omit<TSpawnCtxNormalized, 'child'>>
 
 export type TChild = ReturnType<typeof cp.spawn>
 
-export type TInput = string | Buffer | Readable
+export type TInput = string | Buffer | Stream
 
 export interface TSpawnCtxNormalized {
   cwd:        string
@@ -58,7 +58,9 @@ export type Promisified<T> = {
     Promise<T[K]>;
 }
 
-export interface TShellResponse extends Promisified<Zurk>, Promise<Zurk & TShellExtra<TShellResponse>>, TShellExtra<TShellResponse> {
+export interface TShellResponse extends Omit<Promisified<Zurk>, 'stdio' | '_ctx'>, Promise<Zurk & TShellExtra<TShellResponse>>, TShellExtra<TShellResponse> {
+  stdio: [Readable | Writable, Writable, Writable]
+  _ctx: TSpawnCtxNormalized
 }
 
 export interface TShellResponseSync extends Zurk, TShellExtra<TShellResponseSync> {
@@ -66,11 +68,15 @@ export interface TShellResponseSync extends Zurk, TShellExtra<TShellResponseSync
 
 export type TMixinHandler = (target: Zurk | ZurkPromise, ctx: TSpawnCtxNormalized, $: TShell) => Zurk | ZurkPromise
 
+export type TShellOptions = Omit<TZurkOptions, 'input'> & {
+  input?: TSpawnCtx['input'] | TShellResponse | TShellResponseSync | null
+}
+
 export interface TShell {
   mixins: TMixinHandler[]
   <O extends void>(this: O, pieces: TemplateStringsArray, ...args: any[]): TShellResponse
-  <O extends TZurkOptions = TZurkOptions, R = O extends {sync: true} ? TShellResponseSync : TShellResponse>(this: O, pieces: TemplateStringsArray, ...args: any[]): R
-  <O extends TZurkOptions = TZurkOptions, R = O extends {sync: true} ? TShellSync : TShell>(opts: O): R
+  <O extends TShellOptions = TShellOptions, R = O extends {sync: true} ? TShellResponseSync : TShellResponse>(this: O, pieces: TemplateStringsArray, ...args: any[]): R
+  <O extends TShellOptions = TShellOptions, R = O extends {sync: true} ? TShellSync : TShell>(opts: O): R
 }
 
 export interface TShellSync {

@@ -1,4 +1,11 @@
-import { TSpawnCtx, TSpawnCtxNormalized, TSpawnResult, Promisified } from './interface.js'
+import {
+  TSpawnCtx,
+  TSpawnCtxNormalized,
+  TSpawnResult,
+  Promisified,
+  TShellResponse,
+  TShellResponseSync
+} from './interface.js'
 import { invoke, normalizeCtx } from './spawn.js'
 import { isPromiseLike, makeDeferred } from './util.js'
 import * as util from 'node:util'

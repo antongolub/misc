@@ -34,6 +34,9 @@ const name = await $({input})`jq -r .name` // foo
 
 const stdin = fs.createReadStream(path.join(fixtures, 'foo.json'))
 const data = await $({stdin})`jq -r .data` // foo
+
+const p = $`echo "5\\n3\\n1\\n4\\n2"`
+const sorted = $({input: p})`sort`          // 1\n2\n3\n4\n5
 ```
 
 ## License
