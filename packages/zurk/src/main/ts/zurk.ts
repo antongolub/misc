@@ -15,7 +15,8 @@ export const zurkAsync = (opts: TZurkOptions): ZurkPromise => {
   const ctx = normalizeCtx(opts, {
     sync: false,
     callback(err, data) {
-      err ? reject(err) : resolve(new Zurk(ctx))
+      const _err = getError(err, ctx)
+      _err ? reject(_err) : resolve(new Zurk(ctx))
     }
   })
 
@@ -46,6 +47,8 @@ export const zurkSync = (opts: TZurkOptions): Zurk => {
   const ctx = normalizeCtx(opts, {
     sync: true,
     callback(err, data) {
+      const _err = getError(err, ctx)
+      if (_err) throw _err
       response = new Zurk(ctx)
     }
   })
@@ -55,6 +58,14 @@ export const zurkSync = (opts: TZurkOptions): Zurk => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   return response as Zurk
+}
+
+export const getError = (err: any, ctx: TSpawnCtxNormalized) => {
+  if (err !== null) return err
+  if (ctx.fulfilled?.status) return new Error(`Command failed with exit code ${ctx.fulfilled?.status}`)
+  if (ctx.fulfilled?.signal) return new Error(`Command failed with signal ${ctx.fulfilled?.signal}`)
+
+  return null
 }
 
 export class Zurk implements TSpawnResult {

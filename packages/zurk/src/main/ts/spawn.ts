@@ -84,7 +84,7 @@ export const invoke = (c: TSpawnCtxNormalized): TSpawnCtxNormalized => {
     } else {
       c.run(() => {
         let error: any = null
-        let status: number | null = null
+        // let status: number | null = null
         const opts = buildSpawnOpts(c)
         const stderr: string[] = []
         const stdout: string[] = []
@@ -96,16 +96,16 @@ export const invoke = (c: TSpawnCtxNormalized): TSpawnCtxNormalized => {
         child.stdout.pipe(c.stdout).on('data', (d) => { stdout.push(d); stdall.push(d); c.onStdout(d) })
         child.stderr.pipe(c.stderr).on('data', (d) => { stderr.push(d); stdall.push(d); c.onStderr(d) })
         child.on('error', (e) => error = e)
-        child.on('exit', (code) => status = code)
-        child.on('close', () => {
+        // child.on('exit', (code) => status = code)
+        child.on('close', (status, signal) => {
           c.callback(error, c.fulfilled = {
             error,
             status,
+            signal,
             stdout:   stdout.join(''),
             stderr:   stderr.join(''),
             stdall:   stdall.join(''),
             stdio:    [c.stdin, c.stdout, c.stderr],
-            signal:   child.signalCode,
             duration: Date.now() - now,
             _ctx:     c
           })

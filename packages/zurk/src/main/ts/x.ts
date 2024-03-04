@@ -1,6 +1,7 @@
 import { Zurk, zurk, zurkifyPromise, ZurkPromise } from './zurk.js'
 import { TShell, TQuote, TMixinHandler, TSpawnCtxNormalized } from './interface.js'
 import { pipeMixin } from './mixin/pipe.js'
+import { killMixin } from './mixin/kill.js'
 import { isPromiseLike } from './util.js'
 
 export const $: TShell = function(this: any, pieces: any, ...args: any): any {
@@ -19,7 +20,7 @@ export const $: TShell = function(this: any, pieces: any, ...args: any): any {
 
   return (...args: any) => $.apply(isLiteral(args[0]) ? pieces : this, args)
 }
-$.mixins = [pipeMixin, zurkifyPromise]
+$.mixins = [killMixin, pipeMixin, zurkifyPromise]
 
 export const isLiteral = (pieces: any) => typeof pieces?.[0] === 'string'
 

@@ -6,6 +6,7 @@ export interface TShellExtra<T = any> {
   pipe(shell: T): T
   pipe(steam: Writable): Writable
   pipe(pieces: TemplateStringsArray, ...args: any[]): T
+  kill(signal?: NodeJS.Signals | null): Promise<void>
 }
 
 export type TSpawnResult = {

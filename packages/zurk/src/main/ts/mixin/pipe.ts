@@ -13,7 +13,7 @@ export const pipeMixin: TMixinHandler = (result: any, ctx: TSpawnCtxNormalized, 
         stream._ctx.stdin = stdout as VoidWritable
       }
 
-      return stream as unknown as TShellResponse
+      return stream
     }
 
     if (stream instanceof Writable) {
@@ -26,6 +26,6 @@ export const pipeMixin: TMixinHandler = (result: any, ctx: TSpawnCtxNormalized, 
 
       return stdout.pipe(stream)
     }
-    return $.apply({input: fulfilled?.stdout || stdout, sync: !('then' in result)}, args as any) as unknown as TShellResponse
+    return $.apply({input: fulfilled?.stdout || stdout, sync: !('then' in result)}, args as any) as TShellResponse
   }
 })

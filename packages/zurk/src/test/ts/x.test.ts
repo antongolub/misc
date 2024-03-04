@@ -21,6 +21,18 @@ describe('$()', () => {
     assert.equal(o2.trim(), 'foo')
   })
 
+  it('handles `kill`', async () => {
+    const p = $`sleep 10`
+    setTimeout(p.kill, 100)
+
+    try {
+      await p
+      throw new Error('should have thrown')
+    } catch (err) {
+      assert.equal(err.message, 'Command failed with signal SIGTERM')
+    }
+  })
+
   it('handles promises in cmd literal', async () => {
     const example = $`echo example`
 
