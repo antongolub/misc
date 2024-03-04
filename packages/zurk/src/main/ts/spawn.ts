@@ -36,16 +36,10 @@ export const processInput = (child: TChild, input?: TInput | null) => {
 }
 
 export class VoidWritable extends Transform {
-  // __data: any[] = []
   _transform(chunk: any, _: string, cb: (err?: Error) => void) {
     this.emit('data', chunk)
-    // this.__data.push(chunk)
     cb()
   }
-  // _write(chunk: any, _: string, cb: (err?: Error) => void) {
-  //   this.emit('data', chunk)
-  //   cb()
-  // }
 }
 
 export const buildSpawnOpts = ({spawnOpts, stdio, cwd, shell, input, env}: TSpawnCtxNormalized) => ({

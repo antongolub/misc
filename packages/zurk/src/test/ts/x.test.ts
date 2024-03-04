@@ -1,6 +1,11 @@
 import * as assert from 'node:assert'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
 import { describe, it } from 'node:test'
 import { $ } from '../../main/ts/x.js'
+
+const __dirname = new URL('.', import.meta.url).pathname
+const fixtures = path.resolve(__dirname, '../fixtures')
 
 describe('$()', () => {
   it('supports async flow', async () => {
@@ -39,6 +44,16 @@ describe('$()', () => {
     // eslint-disable-next-line sonarjs/no-nested-template-literals
     assert.equal((await $`echo ${example} ${$`echo and`} ${await example}`)
       .toString(), 'example and example')
+  })
+
+  it('supports stdin', async () => {
+    const input = '{"name": "foo"}'
+    const name = await $({input})`jq -r .name`
+    assert.equal(name.toString().trim(), 'foo')
+
+    const stdin = fs.createReadStream(path.join(fixtures, 'foo.json'))
+    const data = await $({stdin})`jq -r .data`
+    assert.equal(data.toString().trim(), 'foobar')
   })
 
   describe('pipe', () => {

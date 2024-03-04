@@ -26,5 +26,14 @@ const o2 = await p1.stdout        // foo
 const o3 = p2.stdout              // foo
 ```
 
+- [x] Configurable input
+```ts
+const input = '{"name": "foo"}'
+const name = await $({input})`jq -r .name` // foo
+
+const stdin = fs.createReadStream(path.join(fixtures, 'foo.json'))
+const data = await $({stdin})`jq -r .data` // foo
+```
+
 ## License
 [MIT](./LICENSE)
