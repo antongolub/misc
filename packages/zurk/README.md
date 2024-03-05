@@ -17,7 +17,7 @@ const foo = $`echo foo`
 const foobarbaz = (await $`echo ${foo} ${$`echo bar`} ${await $`echo baz`}`)
 ```
 
-- [x] Both sync and async execution
+- [x] Both sync and async executions
 ```ts
 const p1 = $`echo foo`
 const p2 = $({sync: true})`echo foo`
@@ -37,6 +37,16 @@ const data = await $({stdin})`jq -r .data` // foo
 
 const p = $`echo "5\\n3\\n1\\n4\\n2"`
 const sorted = $({input: p})`sort`          // 1\n2\n3\n4\n5
+```
+
+- [x] Pipe as literal
+```ts
+const result = $`echo "5\\n3\\n1\\n4\\n2"`
+
+const piped0 = result.pipe`sort | cat`     // '1\n2\n3\n4\n5'
+const piped1 = result.pipe`sort`.pipe`cat` // ...
+const piped2 = (await result).pipe`sort`
+const piped3 = result.pipe($`sort`)
 ```
 
 ## License
