@@ -1,8 +1,9 @@
 import { Writable } from 'node:stream'
-import { TSpawnCtxNormalized, TShellResponse, TMixinHandler, TShell } from '../interface.js'
+import { TSpawnCtxNormalized, TShellResponse, TMixin, TShell, ZurkPromise } from '../interface.js'
 import { VoidWritable } from '../spawn.js'
+import { Zurk } from '../zurk.js'
 
-export const pipeMixin: TMixinHandler = (result: any, ctx: TSpawnCtxNormalized, $: TShell) => Object.assign(result, {
+export const pipeMixin: TMixin = <T extends Zurk | ZurkPromise >($: TShell, result: T, ctx: TSpawnCtxNormalized) => Object.assign(result, {
   pipe(...args: any[]): typeof args[0] extends Writable ? Writable : TShellResponse {
     const stream = args[0]
     const { fulfilled, stdout} = ctx

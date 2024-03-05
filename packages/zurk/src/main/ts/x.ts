@@ -1,37 +1,55 @@
-import { Zurk, zurk, zurkifyPromise, ZurkPromise} from './zurk.js'
+import { Zurk, zurk, zurkifyPromise } from './zurk.js'
 import type {
   TShell,
   TQuote,
-  TMixinHandler,
+  TMixin,
   TSpawnCtxNormalized,
   TShellResponseSync,
   TShellResponse,
   TSpawnCtx,
-  TShellOptions
+  TShellOptions,
+  TZurkOptions,
+  ZurkPromise,
 } from './interface.js'
 import { pipeMixin } from './mixin/pipe.js'
 import { killMixin } from './mixin/kill.js'
-import { isPromiseLike } from './util.js'
+import { isPromiseLike, isStringLiteral } from './util.js'
 
 export const $: TShell = function(this: any, pieces: any, ...args: any): any {
-  if (isLiteral(pieces)) {
-    const input = parseInput(this?.input)
+  if (isStringLiteral(pieces)) {
     const cmd = formatCmd(quote, pieces as TemplateStringsArray, ...args)
-    const run = isPromiseLike(cmd)
-      ? (cb: any, ctx: any) => (cmd as Promise<string>).then((cmd) => { ctx.cmd = cmd; cb() })
+    const input = parseInput(this?.input)
+    const run = cmd instanceof Promise
+      ? (cb: any, ctx: any) => cmd.then((cmd) => { ctx.cmd = cmd; cb() })
       : setImmediate
-    const result = zurk(Object.assign(this || {}, { cmd, run, input }))
+    const opts = Object.assign(this || {}, { cmd, run, input })
 
-    return applyMixins(isPromiseLike(result)
-      ? ((result as ZurkPromise).then((r: Zurk) => applyMixins(r, $.mixins, result._ctx as TSpawnCtxNormalized, $)) as ZurkPromise)
-      : result, $.mixins, result._ctx as TSpawnCtxNormalized, $)
+    return applyMixins($, opts)
   }
 
-  return (...args: any) => $.apply(isLiteral(args[0]) ? pieces : this, args)
+  return (...args: any) => $.apply(isStringLiteral(args[0]) ? pieces : this, args)
 }
-$.mixins = [killMixin, pipeMixin, zurkifyPromise]
 
-export const isLiteral = (pieces: any) => typeof pieces?.[0] === 'string'
+const zurkMixin: TMixin = ($: TShell, target: TZurkOptions | Zurk | ZurkPromise | Promise<Zurk>) => {
+  if (target instanceof Zurk || target instanceof Promise) return target as TZurkOptions
+
+  const result: Zurk | ZurkPromise = zurk(target)
+  return isPromiseLike(result)
+    ? zurkifyPromise(
+      (result as ZurkPromise).then((r: Zurk) => applyMixins($, r, result)) as Promise<Zurk>,
+      result._ctx)
+    : result as Zurk
+}
+
+$.mixins = [zurkMixin, killMixin, pipeMixin]
+
+export const applyMixins = ($: TShell, result: Zurk | ZurkPromise | TZurkOptions, parent?: Zurk | ZurkPromise) => {
+  let ctx: TSpawnCtxNormalized = (parent as ZurkPromise | Zurk)?._ctx
+  return $.mixins.reduce((r, m) => {
+    ctx = ctx || (r as ZurkPromise | Zurk)._ctx
+    return m($, r as any, ctx)
+  }, result)
+}
 
 export const parseInput = (input: TShellOptions['input']): TSpawnCtx['input'] => {
   if (typeof (input as TShellResponseSync)?.stdout === 'string') return (input as TShellResponseSync).stdout
@@ -39,9 +57,6 @@ export const parseInput = (input: TShellOptions['input']): TSpawnCtx['input'] =>
 
   return input as TSpawnCtx['input']
 }
-
-export const applyMixins = (result: Zurk | ZurkPromise, mixins: TMixinHandler[], ctx: TSpawnCtxNormalized, $: TShell) =>
-  mixins.reduce((r, m) => m(r, ctx, $), result)
 
 export const formatCmd = (quote: TQuote, pieces: TemplateStringsArray, ...args: any[]): string | Promise<string> =>  {
   if (args.some(isPromiseLike))

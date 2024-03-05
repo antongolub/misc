@@ -10,3 +10,5 @@ export const makeDeferred = <T = any, E = any>(): {promise: Promise<T>, resolve:
 }
 
 export const isPromiseLike = (value: any): boolean => typeof value?.then === 'function'
+
+export const isStringLiteral = (pieces: any) => pieces?.every?.((p: any) => typeof p === 'string')

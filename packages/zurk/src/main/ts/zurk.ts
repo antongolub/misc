@@ -1,18 +1,12 @@
 import {
-  TSpawnCtx,
+  ZurkPromise,
   TSpawnCtxNormalized,
   TSpawnResult,
-  Promisified,
-  TShellResponse,
-  TShellResponseSync
+  TZurkOptions
 } from './interface.js'
 import { invoke, normalizeCtx } from './spawn.js'
 import { isPromiseLike, makeDeferred } from './util.js'
 import * as util from 'node:util'
-
-export type ZurkPromise = Promise<Zurk> & Promisified<Zurk> // & Pick<TSpawnCtxNormalized, 'stdout' | 'stderr'>
-
-export type TZurkOptions = Omit<TSpawnCtx, 'callback'>
 
 export const zurk = <T extends TZurkOptions = TZurkOptions, R = T['sync'] extends true ? Zurk : ZurkPromise>(opts: T): R =>
   (opts.sync ? zurkSync(opts) : zurkAsync(opts)) as R
@@ -33,7 +27,7 @@ export const zurkAsync = (opts: TZurkOptions): ZurkPromise => {
 }
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
-export const zurkifyPromise = <T = ZurkPromise>(target: any, ctx: TSpawnCtxNormalized) => isPromiseLike(target) && !util.types.isProxy(target)
+export const zurkifyPromise = (target: Promise<Zurk> | ZurkPromise, ctx: TSpawnCtxNormalized) => isPromiseLike(target) && !util.types.isProxy(target)
   ? new Proxy(target, {
     get(target: Promise<Zurk>, p: string | symbol, receiver: any): any {
       if (p === 'then') return target.then.bind(target)
@@ -46,8 +40,8 @@ export const zurkifyPromise = <T = ZurkPromise>(target: any, ctx: TSpawnCtxNorma
 
       return target.then(v => Reflect.get(v, p, receiver))
     }
-  }) as T
-  : target
+  }) as ZurkPromise
+  : target as ZurkPromise
 
 export const zurkSync = (opts: TZurkOptions): Zurk => {
   let response: Zurk
@@ -80,12 +74,12 @@ export class Zurk implements TSpawnResult {
   constructor(ctx: TSpawnCtxNormalized) {
     this._ctx = ctx
   }
-  get status()    { return this._ctx.fulfilled?.status || null }
-  get signal()    { return this._ctx.fulfilled?.signal || null }
-  get error()     { return this._ctx.fulfilled?.error }
-  get stderr()    { return this._ctx.fulfilled?.stderr || '' }
-  get stdout()    { return this._ctx.fulfilled?.stdout || '' }
-  get stdall()    { return this._ctx.fulfilled?.stdall || '' }
+  get status()  { return this._ctx.fulfilled?.status || null }
+  get signal()  { return this._ctx.fulfilled?.signal || null }
+  get error()   { return this._ctx.fulfilled?.error }
+  get stderr()  { return this._ctx.fulfilled?.stderr || '' }
+  get stdout()  { return this._ctx.fulfilled?.stdout || '' }
+  get stdall()  { return this._ctx.fulfilled?.stdall || '' }
   get stdio(): TSpawnResult['stdio'] { return [
     this._ctx.stdin,
     this._ctx.stdout,

@@ -1,6 +1,10 @@
 import { Readable, Writable, Stream } from 'node:stream'
 import type cp from 'node:child_process'
-import { TZurkOptions, Zurk, ZurkPromise } from './zurk.js'
+import { Zurk } from './zurk.js'
+
+export type ZurkPromise = Promise<Zurk> & Promisified<Zurk> & { _ctx: TSpawnCtxNormalized, stdio: TSpawnCtxNormalized['stdio'] }
+
+export type TZurkOptions = Omit<TSpawnCtx, 'callback'>
 
 export interface TShellExtra<T = any> {
   pipe(shell: T): T
@@ -66,14 +70,17 @@ export interface TShellResponse extends Omit<Promisified<Zurk>, 'stdio' | '_ctx'
 export interface TShellResponseSync extends Zurk, TShellExtra<TShellResponseSync> {
 }
 
-export type TMixinHandler = (target: Zurk | ZurkPromise, ctx: TSpawnCtxNormalized, $: TShell) => Zurk | ZurkPromise
+export type TMixin =
+  (($: TShell, target: TZurkOptions) => TZurkOptions | Zurk | ZurkPromise) |
+  (($: TShell, target: Zurk, ctx: TSpawnCtxNormalized) => Zurk) |
+  (($: TShell, target: Promise<Zurk> | ZurkPromise, ctx: TSpawnCtxNormalized) => Zurk | ZurkPromise)
 
 export type TShellOptions = Omit<TZurkOptions, 'input'> & {
   input?: TSpawnCtx['input'] | TShellResponse | TShellResponseSync | null
 }
 
 export interface TShell {
-  mixins: TMixinHandler[]
+  mixins: TMixin[]
   <O extends void>(this: O, pieces: TemplateStringsArray, ...args: any[]): TShellResponse
   <O extends TShellOptions = TShellOptions, R = O extends {sync: true} ? TShellResponseSync : TShellResponse>(this: O, pieces: TemplateStringsArray, ...args: any[]): R
   <O extends TShellOptions = TShellOptions, R = O extends {sync: true} ? TShellSync : TShell>(opts: O): R
