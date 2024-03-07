@@ -1,7 +1,48 @@
 import cp from 'node:child_process'
-import { Stream, Transform } from 'node:stream'
+import { Readable, Writable, Stream, Transform } from 'node:stream'
 import { noop } from './util.js'
-import type { TChild, TInput, TSpawnCtx, TSpawnCtxNormalized, TSpawnResult } from './interface.js'
+
+export type TSpawnResult = {
+  error?:   any,
+  stderr:   string
+  stdout:   string
+  stdall:   string,
+  stdio:    [Readable | Writable, Writable, Writable]
+  status:   number | null
+  signal:   string | null
+  duration: number
+  _ctx:     TSpawnCtxNormalized
+}
+
+export type TSpawnCtx = Partial<Omit<TSpawnCtxNormalized, 'child'>>
+
+export type TChild = ReturnType<typeof cp.spawn>
+
+export type TInput = string | Buffer | Stream
+
+export interface TSpawnCtxNormalized {
+  cwd:        string
+  cmd:        string
+  sync:       boolean
+  args:       ReadonlyArray<string>
+  input:      TInput | null
+  env:        Record<string, string | undefined>
+  stdio:      ['pipe', 'pipe', 'pipe']
+  shell:      string | true | undefined
+  spawn:      typeof cp.spawn
+  spawnSync:  typeof cp.spawnSync
+  spawnOpts:  Record<string, any>
+  callback:   (err: any, result: TSpawnResult & {error?: any, child?: TChild}) => void
+  onStdout:   (data: string | Buffer) => void
+  onStderr:   (data: string | Buffer) => void
+  stdin:      Readable
+  stdout:     Writable
+  stderr:     Writable
+  child?:     TChild
+  fulfilled?: TSpawnResult
+  run:        (cb: () => void, ctx: TSpawnCtxNormalized) => void
+  // kill:       (signal: number) => void
+}
 
 export const normalizeCtx = (...ctxs: TSpawnCtx[]): TSpawnCtxNormalized => Object.defineProperties({
   cmd:        '',

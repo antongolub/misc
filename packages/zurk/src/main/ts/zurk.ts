@@ -1,14 +1,15 @@
+import { Promisified } from './interface.js'
 import {
-  ZurkPromise,
+  invoke,
+  normalizeCtx,
+  TSpawnCtx,
   TSpawnCtxNormalized,
   TSpawnResult,
-  TZurkOptions
-} from './interface.js'
-import { invoke, normalizeCtx } from './spawn.js'
+} from './spawn.js'
 import { isPromiseLike, makeDeferred } from './util.js'
 import * as util from 'node:util'
 
-export const zurk = <T extends TZurkOptions = TZurkOptions, R = T['sync'] extends true ? Zurk : ZurkPromise>(opts: T): R =>
+export const zurk = <T extends TZurkOptions = TZurkOptions, R = T extends {sync: true} ? Zurk : ZurkPromise>(opts: T): R =>
   (opts.sync ? zurkSync(opts) : zurkAsync(opts)) as R
 
 export const zurkAsync = (opts: TZurkOptions): ZurkPromise => {
@@ -68,6 +69,10 @@ export const getError = (err: any, ctx: TSpawnCtxNormalized) => {
 
   return null
 }
+
+export type ZurkPromise = Promise<Zurk> & Promisified<Zurk> & { _ctx: TSpawnCtxNormalized, stdio: TSpawnCtxNormalized['stdio'] }
+
+export type TZurkOptions = Omit<TSpawnCtx, 'callback'>
 
 export class Zurk implements TSpawnResult {
   _ctx: TSpawnCtxNormalized

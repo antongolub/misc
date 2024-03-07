@@ -1,19 +1,55 @@
-import { Zurk, zurk, zurkifyPromise } from './zurk.js'
-import type {
-  TShell,
-  TQuote,
-  TMixin,
-  TSpawnCtxNormalized,
-  TShellResponseSync,
-  TShellResponse,
-  TSpawnCtx,
-  TShellOptions,
+import { Promisified } from './interface.js'
+import { TSpawnCtxNormalized, TSpawnCtx } from './spawn.js'
+import {
+  zurk,
+  zurkifyPromise,
   TZurkOptions,
-  ZurkPromise,
-} from './interface.js'
+  Zurk,
+  ZurkPromise
+} from './zurk.js'
+
+export interface TShellExtra<T = any> {
+  pipe(shell: T): T
+  pipe(steam: Writable): Writable
+  pipe(pieces: TemplateStringsArray, ...args: any[]): T
+  kill(signal?: NodeJS.Signals | null): Promise<void>
+}
+
+export interface TShellResponse extends Omit<Promisified<Zurk>, 'stdio' | '_ctx'>, Promise<Zurk & TShellExtra<TShellResponse>>, TShellExtra<TShellResponse> {
+  stdio: [Readable | Writable, Writable, Writable]
+  _ctx: TSpawnCtxNormalized
+}
+
+export interface TShellResponseSync extends Zurk, TShellExtra<TShellResponseSync> {
+}
+
+export type TMixin =
+  (($: TShell, target: TZurkOptions) => TZurkOptions | Zurk | ZurkPromise) |
+  (($: TShell, target: Zurk, ctx: TSpawnCtxNormalized) => Zurk) |
+  (($: TShell, target: Promise<Zurk> | ZurkPromise, ctx: TSpawnCtxNormalized) => Zurk | ZurkPromise)
+
+export type TShellOptions = Omit<TZurkOptions, 'input'> & {
+  input?: TSpawnCtx['input'] | TShellResponse | TShellResponseSync | null
+}
+
+export interface TShell {
+  mixins: TMixin[]
+  <O extends void>(this: O, pieces: TemplateStringsArray, ...args: any[]): TShellResponse
+  <O extends TShellOptions = TShellOptions, R = O extends {sync: true} ? TShellResponseSync : TShellResponse>(this: O, pieces: TemplateStringsArray, ...args: any[]): R
+  <O extends TShellOptions = TShellOptions, R = O extends {sync: true} ? TShellSync : TShell>(opts: O): R
+}
+
+export interface TShellSync {
+  <O>(this: O, pieces: TemplateStringsArray, ...args: any[]): TShellResponseSync
+  (opts: TZurkOptions): TShellSync
+}
+
+export type TQuote = (input: string) => string
+
 import { pipeMixin } from './mixin/pipe.js'
 import { killMixin } from './mixin/kill.js'
 import { isPromiseLike, isStringLiteral } from './util.js'
+import {Readable, Writable} from "node:stream";
 
 export const $: TShell = function(this: any, pieces: any, ...args: any): any {
   if (isStringLiteral(pieces)) {

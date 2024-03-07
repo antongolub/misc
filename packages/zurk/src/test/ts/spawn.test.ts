@@ -1,7 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { TSpawnCtx, TSpawnResult } from '../../main/ts/interface.js'
-import { invoke, normalizeCtx } from '../../main/ts/spawn.js'
+import { invoke, normalizeCtx, TSpawnCtx, TSpawnResult } from '../../main/ts/spawn.js'
 import { makeDeferred } from '../../main/ts/util.js'
 
 describe('invoke()', () => {

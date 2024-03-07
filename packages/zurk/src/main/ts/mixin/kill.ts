@@ -1,5 +1,6 @@
-import { TSpawnCtxNormalized, ZurkPromise, TMixin, TShell } from '../interface.js'
-import { Zurk } from "../zurk.js";
+import type { TSpawnCtxNormalized } from '../spawn.js'
+import type { TMixin, TShell } from '../x.js'
+import type { Zurk, ZurkPromise } from '../zurk.js'
 
 export const killMixin: TMixin = <T extends Zurk | ZurkPromise >($: TShell, result: T, ctx: TSpawnCtxNormalized) => Object.assign(result, {
   kill(signal: number | NodeJS.Signals = 'SIGTERM'): Promise<void> {
