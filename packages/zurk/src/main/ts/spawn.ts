@@ -9,7 +9,7 @@ export type TSpawnResult = {
   stdall:   string,
   stdio:    [Readable | Writable, Writable, Writable]
   status:   number | null
-  signal:   string | null
+  signal:   NodeJS.Signals | null
   duration: number
   _ctx:     TSpawnCtxNormalized
 }

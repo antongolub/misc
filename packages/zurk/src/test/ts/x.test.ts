@@ -1,11 +1,15 @@
 import * as assert from 'node:assert'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
+import * as os from 'node:os'
 import { describe, it } from 'node:test'
 import { $ } from '../../main/ts/x.js'
+import { Writable } from 'node:stream'
 
 const __dirname = new URL('.', import.meta.url).pathname
 const fixtures = path.resolve(__dirname, '../fixtures')
+const tempy = fs.mkdtempSync(path.join(os.tmpdir(), 'tempy-'))
+const onStreamFinish = (stream: Writable) => new Promise((resolve) => stream.on('finish', resolve))
 
 describe('$()', () => {
   it('supports async flow', async () => {
@@ -65,16 +69,31 @@ describe('$()', () => {
     it('supports async flow', async () => {
       const result = $`echo "5\\n3\\n1\\n4\\n2"`
       const expected = '1\n2\n3\n4\n5'
+      const writable1 = fs.createWriteStream(path.join(tempy, 'output1.txt'))
+      const writable2 = fs.createWriteStream(path.join(tempy, 'output2.txt'))
+      const w1 = onStreamFinish(writable1)
+      const w2 = onStreamFinish(writable1)
 
       const piped0 = result.pipe`sort | cat`
       const piped1 = result.pipe`sort`.pipe`cat`
-      const piped2 = (await result).pipe`sort`
+      const piped2 = result.pipe(writable2)
       const piped3 = result.pipe($`sort`)
+      const piped4 = (await result).pipe`sort`
+      const piped5 = result.pipe($`sort`)
+      const piped6 = (await result.pipe`sort`).pipe(writable1)
 
+      assert.equal(piped6, writable1)
+      assert.equal(piped2, writable2)
       assert.equal((await piped0).toString(), expected)
       assert.equal((await piped1).toString(), expected)
-      assert.equal((await piped2).toString(), expected)
       assert.equal((await piped3).toString(), expected)
+      assert.equal((await piped4).toString(), expected)
+      assert.equal((await piped5).toString(), expected)
+
+      await w1
+      await w2
+      assert.equal(fs.readFileSync(path.join(tempy, 'output1.txt'), 'utf8').trim(), expected)
+      assert.equal(fs.readFileSync(path.join(tempy, 'output2.txt'), 'utf8').trim(), '5\n3\n1\n4\n2')
     })
 
     it('supports sync flow', async () => {

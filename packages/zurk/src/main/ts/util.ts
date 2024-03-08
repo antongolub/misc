@@ -2,6 +2,13 @@ export const noop = () => { /* noop */ }
 
 export type PromiseResolve<T = any> = (value: T | PromiseLike<T>) => void
 
+// https://stackoverflow.com/questions/47423241/replace-fields-types-in-interfaces-to-promises
+export type Promisified<T> = {
+  [K in keyof T]: T[K] extends (...args: any) => infer R
+    ? (...args: Parameters<T[K]>) => Promise<R>
+    : Promise<T[K]>
+}
+
 export const makeDeferred = <T = any, E = any>(): {promise: Promise<T>, resolve: PromiseResolve<T>, reject: PromiseResolve<E>} => {
   let resolve
   let reject

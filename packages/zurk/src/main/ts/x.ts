@@ -1,26 +1,30 @@
-import { Promisified } from './interface.js'
-import { TSpawnCtxNormalized, TSpawnCtx } from './spawn.js'
+import { Readable, Writable } from 'node:stream'
 import {
   zurk,
   zurkifyPromise,
+  isZurkAny,
   TZurkOptions,
   Zurk,
   ZurkPromise
 } from './zurk.js'
+import { type Promisified, isPromiseLike, isStringLiteral } from './util.js'
+import { TSpawnCtxNormalized, TSpawnCtx } from './spawn.js'
+import { pipeMixin } from './mixin/pipe.js'
+import { killMixin } from './mixin/kill.js'
 
-export interface TShellExtra<T = any> {
+export interface TShellResponseExtra<T = any> {
   pipe(shell: T): T
   pipe(steam: Writable): Writable
   pipe(pieces: TemplateStringsArray, ...args: any[]): T
   kill(signal?: NodeJS.Signals | null): Promise<void>
 }
 
-export interface TShellResponse extends Omit<Promisified<Zurk>, 'stdio' | '_ctx'>, Promise<Zurk & TShellExtra<TShellResponse>>, TShellExtra<TShellResponse> {
+export interface TShellResponse extends Omit<Promisified<Zurk>, 'stdio' | '_ctx'>, Promise<Zurk & TShellResponseExtra<TShellResponse>>, TShellResponseExtra<TShellResponse> {
   stdio: [Readable | Writable, Writable, Writable]
   _ctx: TSpawnCtxNormalized
 }
 
-export interface TShellResponseSync extends Zurk, TShellExtra<TShellResponseSync> {
+export interface TShellResponseSync extends Zurk, TShellResponseExtra<TShellResponseSync> {
 }
 
 export type TMixin =
@@ -46,11 +50,6 @@ export interface TShellSync {
 
 export type TQuote = (input: string) => string
 
-import { pipeMixin } from './mixin/pipe.js'
-import { killMixin } from './mixin/kill.js'
-import { isPromiseLike, isStringLiteral } from './util.js'
-import {Readable, Writable} from "node:stream";
-
 export const $: TShell = function(this: any, pieces: any, ...args: any): any {
   if (isStringLiteral(pieces)) {
     const cmd = formatCmd(quote, pieces as TemplateStringsArray, ...args)
@@ -67,9 +66,9 @@ export const $: TShell = function(this: any, pieces: any, ...args: any): any {
 }
 
 const zurkMixin: TMixin = ($: TShell, target: TZurkOptions | Zurk | ZurkPromise | Promise<Zurk>) => {
-  if (target instanceof Zurk || target instanceof Promise) return target as TZurkOptions
+  if (isZurkAny(target)) return target
 
-  const result: Zurk | ZurkPromise = zurk(target)
+  const result: Zurk | ZurkPromise = zurk(target as TZurkOptions)
   return isPromiseLike(result)
     ? zurkifyPromise(
       (result as ZurkPromise).then((r: Zurk) => applyMixins($, r, result)) as Promise<Zurk>,
