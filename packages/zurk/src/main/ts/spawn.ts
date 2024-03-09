@@ -40,6 +40,7 @@ export interface TSpawnCtxNormalized {
   stderr:     Writable
   child?:     TChild
   fulfilled?: TSpawnResult
+  error?:     any
   run:        (cb: () => void, ctx: TSpawnCtxNormalized) => void
   // kill:       (signal: number) => void
 }

@@ -1,10 +1,10 @@
 import type { TSpawnCtxNormalized } from '../spawn.js'
 import type { TMixin, TShell } from '../x.js'
 import { type Zurk, type ZurkPromise, isZurkPromise } from '../zurk.js'
-import { assign } from '../util.js'
+import {assign, noop} from '../util.js'
 
 const attachTimeout = (
-  ctx: TSpawnCtxNormalized & {timer?: number | NodeJS.Timeout, timeout?: number, timeoutSignal?: NodeJS.Signals},
+  ctx: TSpawnCtxNormalized & { timer?: number | NodeJS.Timeout, timeout?: number, timeoutSignal?: NodeJS.Signals },
   result: ZurkPromise & { kill?: (signal: NodeJS.Signals) => void }
 ) => {
   clearTimeout(ctx.timer)
@@ -22,7 +22,7 @@ export const timeoutMixin: TMixin = <T extends Zurk | ZurkPromise >($: TShell, r
   if (isZurkPromise(result)) {
     assign(result, {
       set timeoutSignal(timeoutSignal: NodeJS.Signals) {
-        assign(ctx, {timeoutSignal})
+        assign(ctx, { timeoutSignal })
       },
       set timeout(timeout: number) {
         assign(ctx, {timeout})
@@ -31,9 +31,8 @@ export const timeoutMixin: TMixin = <T extends Zurk | ZurkPromise >($: TShell, r
     })
 
     attachTimeout(ctx, result)
-    result.finally(() => clearTimeout((ctx as any).timer))
+    result.finally(() => clearTimeout((ctx as any).timer)).catch(noop)
   }
 
   return result
 }
-

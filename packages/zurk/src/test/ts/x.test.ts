@@ -58,41 +58,30 @@ describe('$()', () => {
 describe('mixins', () => {
   describe('kill', () => {
     it('handles `kill`', async () => {
-      const p = $`sleep 10`
-      setTimeout(p.kill, 100)
+      const p = $({nothrow: true})`sleep 10000`
+      setTimeout(p.kill, 5)
 
-      try {
-        await p
-        throwError()
-      } catch (err) {
-        assert.equal(err.message, 'Command failed with signal SIGTERM')
-      }
+      const { error } = await p
+      assert.equal(error.message, 'Command failed with signal SIGTERM')
     })
   })
 
   describe('timeout', () => {
     it('handles `timeout` as option', async () => {
-      const p = $({ timeout: 5, timeoutSignal: 'SIGALRM' })`sleep 100`
+      const p = $({ timeout: 5, timeoutSignal: 'SIGALRM', nothrow: true })`sleep 100`
 
-      try {
-        await p
-        throwError()
-      } catch (err) {
-        assert.equal(err.message, 'Command failed with signal SIGALRM')
-      }
+      const { error } = await p
+      assert.equal(error.message, 'Command failed with signal SIGALRM')
     })
 
     it('handles `timeout` as promise setter', async () => {
       const p = $`sleep 100`
       p.timeoutSignal = 'SIGALRM'
       p.timeout = 5
+      p._ctx.nothrow = true
 
-      try {
-        await p
-        throwError()
-      } catch (err) {
-        assert.equal(err.message, 'Command failed with signal SIGALRM')
-      }
+      const { error } = await p
+      assert.equal(error.message, 'Command failed with signal SIGALRM')
     })
   })
 

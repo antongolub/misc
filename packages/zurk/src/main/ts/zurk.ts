@@ -8,22 +8,24 @@ import {
 } from './spawn.js'
 import { isPromiseLike, makeDeferred, type Promisified } from './util.js'
 
-export type ZurkPromise = Promise<Zurk> & Promisified<Zurk> & { _ctx: TSpawnCtxNormalized, stdio: TSpawnCtxNormalized['stdio'] }
-
-export type TZurkOptions = Omit<TSpawnCtx, 'callback'>
-
 export const ZURK = Symbol('Zurk')
+
+export type TZurkCtx = TSpawnCtxNormalized & { nothrow?: boolean }
+
+export type TZurkOptions = Omit<TSpawnCtx, 'callback'> & { nothrow?: boolean }
+
+export type ZurkPromise = Promise<Zurk> & Promisified<Zurk> & { _ctx: TZurkCtx, stdio: TZurkCtx['stdio'] }
 
 export const zurk = <T extends TZurkOptions = TZurkOptions, R = T extends {sync: true} ? Zurk : ZurkPromise>(opts: T): R =>
   (opts.sync ? zurkSync(opts) : zurkAsync(opts)) as R
 
 export const zurkAsync = (opts: TZurkOptions): ZurkPromise => {
   const { promise, resolve, reject } = makeDeferred<Zurk>()
-  const ctx = normalizeCtx(opts, {
+  const ctx: TZurkCtx = normalizeCtx(opts, {
     sync: false,
     callback(err, data) {
-      const _err = getError(err, ctx)
-      _err ? reject(_err) : resolve(new Zurk(ctx))
+      ctx.error = getError(err, ctx)
+      ctx.error && !ctx.nothrow ? reject(ctx.error) : resolve(new Zurk(ctx))
     }
   })
 
@@ -34,11 +36,11 @@ export const zurkAsync = (opts: TZurkOptions): ZurkPromise => {
 
 export const zurkSync = (opts: TZurkOptions): Zurk => {
   let response: Zurk
-  const ctx = normalizeCtx(opts, {
+  const ctx: TZurkCtx = normalizeCtx(opts, {
     sync: true,
     callback(err, data) {
-      const _err = getError(err, ctx)
-      if (_err) throw _err
+      ctx.error = getError(err, ctx)
+      if (ctx.error && !ctx.nothrow) throw ctx.error
       response = new Zurk(ctx)
     }
   })
@@ -70,7 +72,7 @@ export const zurkifyPromise = (target: Promise<Zurk> | ZurkPromise, ctx: TSpawnC
 
 
 export const getError = (err: any, ctx: TSpawnCtxNormalized) => {
-  if (err !== null) return err
+  if (err) return err
   if (ctx.fulfilled?.status) return new Error(`Command failed with exit code ${ctx.fulfilled?.status}`)
   if (ctx.fulfilled?.signal) return new Error(`Command failed with signal ${ctx.fulfilled?.signal}`)
 
@@ -89,7 +91,7 @@ export class Zurk implements TSpawnResult {
   }
   get status()  { return this._ctx.fulfilled?.status || null }
   get signal()  { return this._ctx.fulfilled?.signal || null }
-  get error()   { return this._ctx.fulfilled?.error }
+  get error()   { return this._ctx.error }
   get stderr()  { return this._ctx.fulfilled?.stderr || '' }
   get stdout()  { return this._ctx.fulfilled?.stdout || '' }
   get stdall()  { return this._ctx.fulfilled?.stdall || '' }

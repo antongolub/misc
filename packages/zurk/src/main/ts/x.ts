@@ -3,15 +3,29 @@ import {
   zurk,
   zurkifyPromise,
   isZurkAny,
-  TZurkOptions,
   Zurk,
-  ZurkPromise
+  ZurkPromise,
+  TZurkOptions,
+  TZurkCtx
 } from './zurk.js'
 import { type Promisified, isPromiseLike, isStringLiteral } from './util.js'
-import { TSpawnCtxNormalized, TSpawnCtx } from './spawn.js'
 import { pipeMixin } from './mixin/pipe.js'
 import { killMixin } from './mixin/kill.js'
 import { timeoutMixin } from './mixin/timeout.js'
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface TShellCtx extends TZurkCtx {
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface TShellExtra {
+
+}
+
+export interface TShellOptionsExtra {
+  timeout?: number
+  timeoutSignal?: NodeJS.Signals
+}
 
 export interface TShellResponseExtra<T = any> {
   pipe(shell: T): T
@@ -22,19 +36,9 @@ export interface TShellResponseExtra<T = any> {
   timeoutSignal?: NodeJS.Signals
 }
 
-export interface TShellExtra {
-  timeout?: number
-  timeoutSignal?: NodeJS.Signals
-}
-
-export interface TShellOptionsExtra {
-  timeout?: number
-  timeoutSignal?: NodeJS.Signals
-}
-
 export interface TShellResponse extends Omit<Promisified<Zurk>, 'stdio' | '_ctx'>, Promise<Zurk & TShellResponseExtra<TShellResponse>>, TShellResponseExtra<TShellResponse> {
   stdio: [Readable | Writable, Writable, Writable]
-  _ctx: TSpawnCtxNormalized
+  _ctx: TShellCtx
 }
 
 export interface TShellResponseSync extends Zurk, TShellResponseExtra<TShellResponseSync> {
@@ -42,12 +46,11 @@ export interface TShellResponseSync extends Zurk, TShellResponseExtra<TShellResp
 
 export type TMixin =
   (($: TShell, target: TZurkOptions) => TZurkOptions | Zurk | ZurkPromise) |
-  (($: TShell, target: Zurk, ctx: TSpawnCtxNormalized) => Zurk) |
-  (($: TShell, target: Promise<Zurk> | ZurkPromise, ctx: TSpawnCtxNormalized) => Zurk | ZurkPromise)// |
-
+  (($: TShell, target: Zurk, ctx: TShellCtx) => Zurk) |
+  (($: TShell, target: Promise<Zurk> | ZurkPromise, ctx: TShellCtx) => Zurk | ZurkPromise)
 
 export type TShellOptions = Omit<TZurkOptions, 'input'> & {
-  input?: TSpawnCtx['input'] | TShellResponse | TShellResponseSync | null
+  input?: TShellCtx['input'] | TShellResponse | TShellResponseSync | null
 } & TShellOptionsExtra
 
 export interface TShell extends TShellExtra {
@@ -59,7 +62,7 @@ export interface TShell extends TShellExtra {
 
 export interface TShellSync {
   <O>(this: O, pieces: TemplateStringsArray, ...args: any[]): TShellResponseSync
-  (opts: TZurkOptions): TShellSync
+  (opts: TShellOptions): TShellSync
 }
 
 export type TQuote = (input: string) => string
@@ -93,18 +96,19 @@ const zurkMixin: TMixin = ($: TShell, target: TZurkOptions | Zurk | ZurkPromise 
 $.mixins = [zurkMixin, killMixin, pipeMixin, timeoutMixin]
 
 export const applyMixins = ($: TShell, result: Zurk | ZurkPromise | TZurkOptions, parent?: Zurk | ZurkPromise) => {
-  let ctx: TSpawnCtxNormalized = (parent as ZurkPromise | Zurk)?._ctx
+  let ctx: TShellCtx = (parent as ZurkPromise | Zurk)?._ctx
+
   return $.mixins.reduce((r, m) => {
     ctx = ctx || (r as ZurkPromise | Zurk)._ctx
     return m($, r as any, ctx)
   }, result)
 }
 
-export const parseInput = (input: TShellOptions['input']): TSpawnCtx['input'] => {
+export const parseInput = (input: TShellOptions['input']): TShellCtx['input'] => {
   if (typeof (input as TShellResponseSync)?.stdout === 'string') return (input as TShellResponseSync).stdout
   if ((input as TShellResponse)?._ctx) return (input as TShellResponse)._ctx.stdout
 
-  return input as TSpawnCtx['input']
+  return input as TShellCtx['input']
 }
 
 export const formatCmd = (quote: TQuote, pieces: TemplateStringsArray, ...args: any[]): string | Promise<string> =>  {
