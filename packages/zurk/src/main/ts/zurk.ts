@@ -101,5 +101,6 @@ export class Zurk implements TSpawnResult {
     this._ctx.stderr
   ]}
   get duration()  { return this._ctx.fulfilled?.duration || 0 }
-  toString(){ return this.stdall.trim() }
+  toString(){ return this.stdout.trim() }
+  valueOf(){ return this.stdout.trim() }
 }
