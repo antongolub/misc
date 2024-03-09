@@ -8,6 +8,10 @@ import {
 } from './spawn.js'
 import { isPromiseLike, makeDeferred, type Promisified } from './util.js'
 
+export type ZurkPromise = Promise<Zurk> & Promisified<Zurk> & { _ctx: TSpawnCtxNormalized, stdio: TSpawnCtxNormalized['stdio'] }
+
+export type TZurkOptions = Omit<TSpawnCtx, 'callback'>
+
 export const ZURK = Symbol('Zurk')
 
 export const zurk = <T extends TZurkOptions = TZurkOptions, R = T extends {sync: true} ? Zurk : ZurkPromise>(opts: T): R =>
@@ -76,10 +80,6 @@ export const getError = (err: any, ctx: TSpawnCtxNormalized) => {
 export const isZurk = (o: any): o is Zurk => o?.[ZURK] === ZURK
 export const isZurkPromise = (o: any): o is ZurkPromise => o?.[ZURK] === ZURK && o instanceof Promise
 export const isZurkAny = (o: any): o is Zurk | ZurkPromise => isZurk(o) || isZurkPromise(o)
-
-export type ZurkPromise = Promise<Zurk> & Promisified<Zurk> & { _ctx: TSpawnCtxNormalized, stdio: TSpawnCtxNormalized['stdio'] }
-
-export type TZurkOptions = Omit<TSpawnCtx, 'callback'>
 
 export class Zurk implements TSpawnResult {
   _ctx: TSpawnCtxNormalized

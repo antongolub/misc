@@ -11,12 +11,25 @@ import { type Promisified, isPromiseLike, isStringLiteral } from './util.js'
 import { TSpawnCtxNormalized, TSpawnCtx } from './spawn.js'
 import { pipeMixin } from './mixin/pipe.js'
 import { killMixin } from './mixin/kill.js'
+import { timeoutMixin } from './mixin/timeout.js'
 
 export interface TShellResponseExtra<T = any> {
   pipe(shell: T): T
   pipe(steam: Writable): Writable
   pipe(pieces: TemplateStringsArray, ...args: any[]): T
   kill(signal?: NodeJS.Signals | null): Promise<void>
+  timeout?: number
+  timeoutSignal?: NodeJS.Signals
+}
+
+export interface TShellExtra {
+  timeout?: number
+  timeoutSignal?: NodeJS.Signals
+}
+
+export interface TShellOptionsExtra {
+  timeout?: number
+  timeoutSignal?: NodeJS.Signals
 }
 
 export interface TShellResponse extends Omit<Promisified<Zurk>, 'stdio' | '_ctx'>, Promise<Zurk & TShellResponseExtra<TShellResponse>>, TShellResponseExtra<TShellResponse> {
@@ -30,13 +43,14 @@ export interface TShellResponseSync extends Zurk, TShellResponseExtra<TShellResp
 export type TMixin =
   (($: TShell, target: TZurkOptions) => TZurkOptions | Zurk | ZurkPromise) |
   (($: TShell, target: Zurk, ctx: TSpawnCtxNormalized) => Zurk) |
-  (($: TShell, target: Promise<Zurk> | ZurkPromise, ctx: TSpawnCtxNormalized) => Zurk | ZurkPromise)
+  (($: TShell, target: Promise<Zurk> | ZurkPromise, ctx: TSpawnCtxNormalized) => Zurk | ZurkPromise)// |
+
 
 export type TShellOptions = Omit<TZurkOptions, 'input'> & {
   input?: TSpawnCtx['input'] | TShellResponse | TShellResponseSync | null
-}
+} & TShellOptionsExtra
 
-export interface TShell {
+export interface TShell extends TShellExtra {
   mixins: TMixin[]
   <O extends void>(this: O, pieces: TemplateStringsArray, ...args: any[]): TShellResponse
   <O extends TShellOptions = TShellOptions, R = O extends {sync: true} ? TShellResponseSync : TShellResponse>(this: O, pieces: TemplateStringsArray, ...args: any[]): R
@@ -76,7 +90,7 @@ const zurkMixin: TMixin = ($: TShell, target: TZurkOptions | Zurk | ZurkPromise 
     : result as Zurk
 }
 
-$.mixins = [zurkMixin, killMixin, pipeMixin]
+$.mixins = [zurkMixin, killMixin, pipeMixin, timeoutMixin]
 
 export const applyMixins = ($: TShell, result: Zurk | ZurkPromise | TZurkOptions, parent?: Zurk | ZurkPromise) => {
   let ctx: TSpawnCtxNormalized = (parent as ZurkPromise | Zurk)?._ctx

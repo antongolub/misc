@@ -10,6 +10,7 @@ const __dirname = new URL('.', import.meta.url).pathname
 const fixtures = path.resolve(__dirname, '../fixtures')
 const tempy = fs.mkdtempSync(path.join(os.tmpdir(), 'tempy-'))
 const onStreamFinish = (stream: Writable) => new Promise((resolve) => stream.on('finish', resolve))
+const throwError = (err: any = new Error('should have thrown')) => { throw err }
 
 describe('$()', () => {
   it('supports async flow', async () => {
@@ -28,18 +29,6 @@ describe('$()', () => {
 
     assert.equal(o1, 'foo')
     assert.equal(o2.trim(), 'foo')
-  })
-
-  it('handles `kill`', async () => {
-    const p = $`sleep 10`
-    setTimeout(p.kill, 100)
-
-    try {
-      await p
-      throw new Error('should have thrown')
-    } catch (err) {
-      assert.equal(err.message, 'Command failed with signal SIGTERM')
-    }
   })
 
   it('handles promises in cmd literal', async () => {
@@ -63,6 +52,48 @@ describe('$()', () => {
     const sorted = $({input: p})`sort`
 
     assert.equal((await sorted).toString(), '1\n2\n3\n4\n5')
+  })
+})
+
+describe('mixins', () => {
+  describe('kill', () => {
+    it('handles `kill`', async () => {
+      const p = $`sleep 10`
+      setTimeout(p.kill, 100)
+
+      try {
+        await p
+        throwError()
+      } catch (err) {
+        assert.equal(err.message, 'Command failed with signal SIGTERM')
+      }
+    })
+  })
+
+  describe('timeout', () => {
+    it('handles `timeout` as option', async () => {
+      const p = $({ timeout: 5, timeoutSignal: 'SIGALRM' })`sleep 100`
+
+      try {
+        await p
+        throwError()
+      } catch (err) {
+        assert.equal(err.message, 'Command failed with signal SIGALRM')
+      }
+    })
+
+    it('handles `timeout` as promise setter', async () => {
+      const p = $`sleep 100`
+      p.timeoutSignal = 'SIGALRM'
+      p.timeout = 5
+
+      try {
+        await p
+        throwError()
+      } catch (err) {
+        assert.equal(err.message, 'Command failed with signal SIGALRM')
+      }
+    })
   })
 
   describe('pipe', () => {

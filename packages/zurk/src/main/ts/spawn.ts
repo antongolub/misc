@@ -1,6 +1,6 @@
 import cp from 'node:child_process'
 import { Readable, Writable, Stream, Transform } from 'node:stream'
-import { noop } from './util.js'
+import { assign, noop } from './util.js'
 
 export type TSpawnResult = {
   error?:   any,
@@ -44,7 +44,7 @@ export interface TSpawnCtxNormalized {
   // kill:       (signal: number) => void
 }
 
-export const normalizeCtx = (...ctxs: TSpawnCtx[]): TSpawnCtxNormalized => Object.defineProperties({
+export const normalizeCtx = (...ctxs: TSpawnCtx[]): TSpawnCtxNormalized => assign({
   cmd:        '',
   cwd:        process.cwd(),
   sync:       false,
@@ -62,8 +62,8 @@ export const normalizeCtx = (...ctxs: TSpawnCtx[]): TSpawnCtxNormalized => Objec
   stdout:     new VoidWritable(),
   stderr:     new VoidWritable(),
   stdio:      ['pipe', 'pipe', 'pipe'],
-  run:        setImmediate
-}, ctxs.reduce<Record<string, any>>((m: TSpawnCtx, ctx) => ({...m, ...Object.getOwnPropertyDescriptors(ctx)}), {}))
+  run:        setImmediate,
+}, ...ctxs)
 
 export const processInput = (child: TChild, input?: TInput | null) => {
   if (input && child.stdin && !child.stdin.destroyed) {

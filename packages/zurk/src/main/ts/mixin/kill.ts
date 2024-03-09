@@ -5,10 +5,10 @@ import { type Zurk, type ZurkPromise, isZurkAny } from '../zurk.js'
 export const killMixin: TMixin = <T extends Zurk | ZurkPromise >($: TShell, result: T, ctx: TSpawnCtxNormalized) =>
   isZurkAny(result)
     ? Object.assign(result, {
-      kill(signal: number | NodeJS.Signals = 'SIGTERM'): Promise<void> {
-        return new Promise<any>((resolve, reject) => {
+      kill(signal: null | string | number | NodeJS.Signals = 'SIGTERM'): Promise<typeof signal> {
+        return new Promise<typeof signal>((resolve, reject) => {
           if (ctx.child) {
-            process.kill(ctx.child.pid as number, signal)
+            process.kill(ctx.child.pid as number, signal as NodeJS.Signals)
             ctx.child.on('exit', (code, signal) => {
               resolve(signal)
             })
