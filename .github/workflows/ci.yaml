@@ -42,6 +42,8 @@ jobs:
         run: |
           yarn warmup
           yarn build
+        env:
+          VERBOSE: true
 
       - name: Coverage
         run: yarn cov
@@ -68,7 +70,7 @@ jobs:
           GIT_AUTHOR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
           GIT_COMMITTER_NAME: ${{ secrets.GIT_COMMITTER_NAME }}
           GIT_COMMITTER_EMAIL: ${{ secrets.GIT_COMMITTER_EMAIL }}
-        run: VERBOSE=true npm_config_yes=true npx zx-bulk-release --no-build
+        run: npm_config_yes=true npx zx-bulk-release --no-build
 
   pr:
     if: github.event_name == 'pull_request'

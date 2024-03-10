@@ -87,6 +87,8 @@ export const isZurk = (o: any): o is TZurk => o?.[ZURK] === ZURK
 export const isZurkPromise = (o: any): o is TZurkPromise => o?.[ZURK] === ZURK && o instanceof Promise
 export const isZurkAny = (o: any): o is TZurk | TZurkPromise => isZurk(o) || isZurkPromise(o)
 
+export const zurkFactory = <C extends TSpawnCtxNormalized>(ctx: C): TZurk  => new Zurk(ctx)
+
 class Zurk implements TZurk {
   [ZURK] = ZURK
   _ctx: TZurkCtx
@@ -108,5 +110,3 @@ class Zurk implements TZurk {
   toString(){ return this.stdall.trim() }
   valueOf(){ return this.stdall.trim() }
 }
-
-export const zurkFactory = <C extends TSpawnCtxNormalized>(ctx: C): TZurk  => new Zurk(ctx)
