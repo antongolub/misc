@@ -20,4 +20,6 @@ const suites = focused.length ? focused : await glob('src/test/**/*.test.{ts,cjs
 
 await Promise.all(suites.map(suite => import(pathToFileURL(suite))))
 
-// exit(0)
+if (process.exitCode === undefined) {
+  process.exitCode = 0
+}
