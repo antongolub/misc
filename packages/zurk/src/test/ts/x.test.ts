@@ -60,13 +60,16 @@ describe('$()', () => {
     const p1 = $$()
     const p2 = $$$()
     const p3 = $$`echo baz`
+    const p4 = $$$({cmd: 'echo qux'})()
     const o1 = p1.stdout
     const o2 = p2.stdout
     const o3 = p3.stdout
+    const o4 = p4.stdout
 
     assert.equal(o1.trim(), 'foo')
     assert.equal(o2.trim(), 'bar')
     assert.equal(o3.trim(), 'baz')
+    assert.equal(o4.trim(), 'qux')
   })
 })
 
