@@ -6,7 +6,7 @@ import {
   TSpawnCtxNormalized,
   TSpawnResult,
 } from './spawn.js'
-import { assign, isPromiseLike, makeDeferred, type Promisified } from './util.js'
+import { isPromiseLike, makeDeferred, type Promisified } from './util.js'
 
 export const ZURK = Symbol('Zurk')
 
@@ -87,20 +87,26 @@ export const isZurk = (o: any): o is TZurk => o?.[ZURK] === ZURK
 export const isZurkPromise = (o: any): o is TZurkPromise => o?.[ZURK] === ZURK && o instanceof Promise
 export const isZurkAny = (o: any): o is TZurk | TZurkPromise => isZurk(o) || isZurkPromise(o)
 
-export const zurkFactory = (ctx: TSpawnCtxNormalized): TZurk  => assign({
-  _ctx: ctx,
-  get status()  { return this._ctx.fulfilled?.status || null },
-  get signal()  { return this._ctx.fulfilled?.signal || null },
-  get error()   { return this._ctx.error },
-  get stderr()  { return this._ctx.fulfilled?.stderr || '' },
-  get stdout()  { return this._ctx.fulfilled?.stdout || '' },
-  get stdall()  { return this._ctx.fulfilled?.stdall || '' },
+class Zurk implements TZurk {
+  [ZURK] = ZURK
+  _ctx: TZurkCtx
+  constructor(ctx: TZurkCtx) {
+    this._ctx = ctx
+  }
+  get status()  { return this._ctx.fulfilled?.status || null }
+  get signal()  { return this._ctx.fulfilled?.signal || null }
+  get error()   { return this._ctx.error }
+  get stderr()  { return this._ctx.fulfilled?.stderr || '' }
+  get stdout()  { return this._ctx.fulfilled?.stdout || '' }
+  get stdall()  { return this._ctx.fulfilled?.stdall || '' }
   get stdio(): TSpawnResult['stdio'] { return [
     this._ctx.stdin,
     this._ctx.stdout,
     this._ctx.stderr
-  ]},
-  get duration()  { return this._ctx.fulfilled?.duration || 0 },
-  toString(){ return this.stdall.trim() },
-  valueOf(){ return this.stdall.trim() },
-}, {[ZURK]: ZURK})
+  ]}
+  get duration()  { return this._ctx.fulfilled?.duration || 0 }
+  toString(){ return this.stdall.trim() }
+  valueOf(){ return this.stdall.trim() }
+}
+
+export const zurkFactory = <C extends TSpawnCtxNormalized>(ctx: C): TZurk  => new Zurk(ctx)
