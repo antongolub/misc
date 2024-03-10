@@ -56,13 +56,17 @@ describe('$()', () => {
 
   it('supports presets', () => {
     const $$ = $({sync: true, cmd: 'echo foo'})
+    const $$$ = $$({cmd: 'echo bar'})
     const p1 = $$()
-    const p2 = $$`echo bar`
+    const p2 = $$$()
+    const p3 = $$`echo baz`
     const o1 = p1.stdout
     const o2 = p2.stdout
+    const o3 = p3.stdout
 
     assert.equal(o1.trim(), 'foo')
     assert.equal(o2.trim(), 'bar')
+    assert.equal(o3.trim(), 'baz')
   })
 })
 

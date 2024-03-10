@@ -49,5 +49,15 @@ const piped2 = (await result).pipe`sort`
 const piped3 = result.pipe($`sort`)
 ```
 
+- [x] Presets
+```ts
+const $$ = $({sync: true, cmd: 'echo foo'})
+const $$$ = $$({cmd: 'echo bar'})
+
+const p1 = $$()           // foo
+const p2 = $$$()          // bar
+const p3 = $$`echo baz`   // baz
+```
+
 ## License
 [MIT](./LICENSE)

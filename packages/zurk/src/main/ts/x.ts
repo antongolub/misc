@@ -89,7 +89,7 @@ export const $: TShell = function(this: any, pieces?: any, ...args: any): any {
     return applyMixins($, opts)
   }
 
-  return (...args: any) => $.apply(this || pieces, args)
+  return (...args: any) => $.apply(this ? assign(this, pieces) : pieces, args)
 }
 
 const zurkMixin: TMixin = ($: TShell, target: TShellOptions | TZurk | TZurkPromise | Promise<TZurk>) => {
