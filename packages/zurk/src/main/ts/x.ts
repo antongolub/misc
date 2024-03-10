@@ -61,31 +61,35 @@ export type TMixin =
 
 export interface TShell extends TShellExtra {
   mixins: TMixin[]
-  <O extends void>(this: O, pieces: TemplateStringsArray, ...args: any[]): TShellResponse
-  <O extends TShellOptions = TShellOptions, R = O extends {sync: true} ? TShellResponseSync : TShellResponse>(this: O, pieces: TemplateStringsArray, ...args: any[]): R
+  <O extends void>(this: O, pieces?: TemplateStringsArray, ...args: any[]): TShellResponse
+  <O extends TShellOptions = TShellOptions, R = O extends {sync: true} ? TShellResponseSync : TShellResponse>(this: O, pieces?: TemplateStringsArray, ...args: any[]): R
   <O extends TShellOptions = TShellOptions, R = O extends {sync: true} ? TShellSync : TShell>(opts: O): R
 }
 
 export interface TShellSync {
-  <O>(this: O, pieces: TemplateStringsArray, ...args: any[]): TShellResponseSync
+  <O>(this: O, pieces?: TemplateStringsArray, ...args: any[]): TShellResponseSync
   (opts: TShellOptions): TShellSync
 }
 
 export type TQuote = (input: string) => string
 
-export const $: TShell = function(this: any, pieces: any, ...args: any): any {
+export const $: TShell = function(this: any, pieces?: any, ...args: any): any {
+  const preset = this || {}
+
+  if (pieces === undefined) return applyMixins($, preset)
+
   if (isStringLiteral(pieces)) {
     const cmd = formatCmd(quote, pieces as TemplateStringsArray, ...args)
-    const input = parseInput(this?.input)
+    const input = parseInput(preset.input)
     const run = cmd instanceof Promise
       ? (cb: any, ctx: any) => cmd.then((cmd) => { ctx.cmd = cmd; cb() })
       : setImmediate
-    const opts = assign(this || {}, { cmd, run, input })
+    const opts = assign(preset, { cmd, run, input })
 
     return applyMixins($, opts)
   }
 
-  return (...args: any) => $.apply(isStringLiteral(args[0]) ? pieces : this, args)
+  return (...args: any) => $.apply(this || pieces, args)
 }
 
 const zurkMixin: TMixin = ($: TShell, target: TShellOptions | TZurk | TZurkPromise | Promise<TZurk>) => {

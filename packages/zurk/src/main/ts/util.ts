@@ -9,7 +9,7 @@ export type Promisified<T> = {
     : Promise<T[K]>
 }
 
-export const makeDeferred = <T = any, E = any>(): {promise: Promise<T>, resolve: PromiseResolve<T>, reject: PromiseResolve<E>} => {
+export const makeDeferred = <T = any, E = any>(): { promise: Promise<T>, resolve: PromiseResolve<T>, reject: PromiseResolve<E> } => {
   let resolve
   let reject
   const promise = new Promise<T>((res, rej) => { resolve = res; reject = rej })

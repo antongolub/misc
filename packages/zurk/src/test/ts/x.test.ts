@@ -53,6 +53,17 @@ describe('$()', () => {
 
     assert.equal((await sorted).toString(), '1\n2\n3\n4\n5')
   })
+
+  it('supports presets', () => {
+    const $$ = $({sync: true, cmd: 'echo foo'})
+    const p1 = $$()
+    const p2 = $$`echo bar`
+    const o1 = p1.stdout
+    const o2 = p2.stdout
+
+    assert.equal(o1.trim(), 'foo')
+    assert.equal(o2.trim(), 'bar')
+  })
 })
 
 describe('mixins', () => {

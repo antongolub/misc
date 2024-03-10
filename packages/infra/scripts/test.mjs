@@ -5,7 +5,7 @@ import { pathToFileURL } from 'node:url'
 import process from 'node:process'
 import minimist from 'minimist'
 
-const { exit } = process
+// const { exit } = process
 const { cwd } = minimist(process.argv.slice(2), {
   default: {
     cwd: process.cwd()
@@ -20,4 +20,4 @@ const suites = focused.length ? focused : await glob('src/test/**/*.test.{ts,cjs
 
 await Promise.all(suites.map(suite => import(pathToFileURL(suite))))
 
-exit(0)
+// exit(0)
