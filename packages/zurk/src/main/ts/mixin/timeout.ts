@@ -13,7 +13,7 @@ const attachTimeout = <T extends TZurkPromise & { kill?: (signal: NodeJS.Signals
   const kill = () => {
     const { child, timeoutSignal = 'SIGTERM' } = ctx
     if (result.kill) return result.kill(timeoutSignal)
-    if (child) process.kill(child.pid as number, timeoutSignal)
+    if (child?.pid) process.kill(child.pid as number, timeoutSignal)
   }
   ctx.timer = setTimeout(kill, ctx.timeout)
 }
