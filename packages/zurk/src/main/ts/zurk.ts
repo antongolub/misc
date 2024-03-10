@@ -87,7 +87,7 @@ export const isZurk = (o: any): o is TZurk => o?.[ZURK] === ZURK
 export const isZurkPromise = (o: any): o is TZurkPromise => o?.[ZURK] === ZURK && o instanceof Promise
 export const isZurkAny = (o: any): o is TZurk | TZurkPromise => isZurk(o) || isZurkPromise(o)
 
-export const zurkFactory = (ctx: TSpawnCtxNormalized): TSpawnResult  => assign({
+export const zurkFactory = (ctx: TSpawnCtxNormalized): TZurk  => assign({
   _ctx: ctx,
   get status()  { return this._ctx.fulfilled?.status || null },
   get signal()  { return this._ctx.fulfilled?.signal || null },
