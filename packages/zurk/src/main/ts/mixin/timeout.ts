@@ -1,8 +1,8 @@
 import { assign, noop } from '../util.js'
 import type { TMixin, TShell, TShellCtx } from '../x.js'
-import { type Zurk, type ZurkPromise, isZurkPromise } from '../zurk.js'
+import { type TZurk, type TZurkPromise, isZurkPromise } from '../zurk.js'
 
-const attachTimeout = <T extends ZurkPromise & { kill?: (signal: NodeJS.Signals) => void }>(
+const attachTimeout = <T extends TZurkPromise & { kill?: (signal: NodeJS.Signals) => void }>(
   ctx: TShellCtx,
   result: T
 ) => {
@@ -17,7 +17,7 @@ const attachTimeout = <T extends ZurkPromise & { kill?: (signal: NodeJS.Signals)
   ctx.timer = setTimeout(kill, ctx.timeout)
 }
 
-export const timeoutMixin: TMixin = <T extends Zurk | ZurkPromise >($: TShell, result: T, ctx: TShellCtx) => {
+export const timeoutMixin: TMixin = <T extends TZurk | TZurkPromise >($: TShell, result: T, ctx: TShellCtx) => {
   if (isZurkPromise(result)) {
     assign(result, {
       set timeoutSignal(timeoutSignal: NodeJS.Signals) {

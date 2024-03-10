@@ -23,3 +23,23 @@ export const isStringLiteral = (pieces: any) => pieces?.every?.((p: any) => type
 export const assign = <T, E>(target: T, ...extras: E[]): T =>
   Object.defineProperties(target, extras.reduce<Record<string, any>>((m: any, extra) =>
     ({...m, ...Object.getOwnPropertyDescriptors(extra)}), {}))
+
+export const quote = (arg: string) => {
+  if (/^[\w./:=@-]+$/i.test(arg) || arg === '') {
+    return arg
+  }
+
+  return (
+    `$'` +
+    arg
+      .replace(/\\/g, '\\\\')
+      .replace(/'/g, "\\'")
+      .replace(/\f/g, '\\f')
+      .replace(/\n/g, '\\n')
+      .replace(/\r/g, '\\r')
+      .replace(/\t/g, '\\t')
+      .replace(/\v/g, '\\v')
+      .replace(/\0/g, '\\0') +
+    `'`
+  )
+}

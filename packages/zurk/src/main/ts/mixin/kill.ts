@@ -1,8 +1,8 @@
 import { assign } from '../util.js'
-import { TMixin, TShell, TShellCtx } from '../x.js'
-import { type Zurk, type ZurkPromise, isZurkAny } from '../zurk.js'
+import type { TMixin, TShell, TShellCtx } from '../x.js'
+import { type TZurk, type TZurkPromise, isZurkAny } from '../zurk.js'
 
-export const killMixin: TMixin = <T extends Zurk | ZurkPromise >($: TShell, result: T, ctx: TShellCtx) =>
+export const killMixin: TMixin = <T extends TZurk | TZurkPromise >($: TShell, result: T, ctx: TShellCtx) =>
   isZurkAny(result)
     ? assign(result, {
       kill(signal: null | string | number | NodeJS.Signals = 'SIGTERM'): Promise<typeof signal> {

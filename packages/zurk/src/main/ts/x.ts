@@ -3,12 +3,12 @@ import {
   zurk,
   zurkifyPromise,
   isZurkAny,
-  Zurk,
-  ZurkPromise,
+  TZurk,
+  TZurkPromise,
   TZurkOptions,
   TZurkCtx
 } from './zurk.js'
-import { type Promisified, isPromiseLike, isStringLiteral, assign } from './util.js'
+import { type Promisified, isPromiseLike, isStringLiteral, assign, quote } from './util.js'
 import { pipeMixin } from './mixin/pipe.js'
 import { killMixin } from './mixin/kill.js'
 import { timeoutMixin } from './mixin/timeout.js'
@@ -46,18 +46,18 @@ export type TShellOptions = Omit<TZurkOptions, 'input'> & {
   input?: TShellCtx['input'] | TShellResponse | TShellResponseSync | null
 } & TShellOptionsExtra
 
-export interface TShellResponse extends Omit<Promisified<Zurk>, 'stdio' | '_ctx'>, Promise<Zurk & TShellResponseExtra<TShellResponse>>, TShellResponseExtra<TShellResponse> {
+export interface TShellResponse extends Omit<Promisified<TZurk>, 'stdio' | '_ctx'>, Promise<TZurk & TShellResponseExtra<TShellResponse>>, TShellResponseExtra<TShellResponse> {
   stdio: [Readable | Writable, Writable, Writable]
   _ctx: TShellCtx
 }
 
-export interface TShellResponseSync extends Zurk, TShellResponseExtra<TShellResponseSync> {
+export interface TShellResponseSync extends TZurk, TShellResponseExtra<TShellResponseSync> {
 }
 
 export type TMixin =
-  (($: TShell, target: TShellOptions) => TShellOptions | Zurk | ZurkPromise) |
-  (($: TShell, target: Zurk, ctx: TShellCtx) => Zurk) |
-  (($: TShell, target: Promise<Zurk> | ZurkPromise, ctx: TShellCtx) => ZurkPromise)
+  (($: TShell, target: TShellOptions) => TShellOptions | TZurk | TZurkPromise) |
+  (($: TShell, target: TZurk, ctx: TShellCtx) => TZurk) |
+  (($: TShell, target: Promise<TZurk> | TZurkPromise, ctx: TShellCtx) => TZurkPromise)
 
 export interface TShell extends TShellExtra {
   mixins: TMixin[]
@@ -88,24 +88,24 @@ export const $: TShell = function(this: any, pieces: any, ...args: any): any {
   return (...args: any) => $.apply(isStringLiteral(args[0]) ? pieces : this, args)
 }
 
-const zurkMixin: TMixin = ($: TShell, target: TShellOptions | Zurk | ZurkPromise | Promise<Zurk>) => {
+const zurkMixin: TMixin = ($: TShell, target: TShellOptions | TZurk | TZurkPromise | Promise<TZurk>) => {
   if (isZurkAny(target)) return target
 
-  const result: Zurk | ZurkPromise = zurk(target as TZurkOptions)
+  const result: TZurk | TZurkPromise = zurk(target as TZurkOptions)
   return isPromiseLike(result)
     ? zurkifyPromise(
-      (result as ZurkPromise).then((r: Zurk) => applyMixins($, r, result)) as Promise<Zurk>,
+      (result as TZurkPromise).then((r: TZurk) => applyMixins($, r, result)) as Promise<TZurk>,
       result._ctx)
-    : result as Zurk
+    : result as TZurk
 }
 
 $.mixins = [zurkMixin, killMixin, pipeMixin, timeoutMixin]
 
-export const applyMixins = ($: TShell, result: Zurk | ZurkPromise | TShellOptions, parent?: Zurk | ZurkPromise) => {
-  let ctx: TShellCtx = (parent as ZurkPromise | Zurk)?._ctx
+export const applyMixins = ($: TShell, result: TZurk | TZurkPromise | TShellOptions, parent?: TZurk | TZurkPromise) => {
+  let ctx: TShellCtx = (parent as TZurkPromise | TZurk)?._ctx
 
   return $.mixins.reduce((r, m) => {
-    ctx = ctx || (r as ZurkPromise | Zurk)._ctx
+    ctx = ctx || (r as TZurkPromise | TZurk)._ctx
     return m($, r as any, ctx)
   }, result)
 }
@@ -137,22 +137,3 @@ export const substitute = (arg: any) =>
   (typeof arg?.stdout === 'string')
     ? arg.stdout.replace(/\n$/, '')
     : `${arg}`
-
-export const quote = (arg: string) => {
-  if (/^[\w./:=@-]+$/i.test(arg) || arg === '') {
-    return arg
-  }
-  return (
-    `$'` +
-    arg
-      .replace(/\\/g, '\\\\')
-      .replace(/'/g, "\\'")
-      .replace(/\f/g, '\\f')
-      .replace(/\n/g, '\\n')
-      .replace(/\r/g, '\\r')
-      .replace(/\t/g, '\\t')
-      .replace(/\v/g, '\\v')
-      .replace(/\0/g, '\\0') +
-    `'`
-  )
-}

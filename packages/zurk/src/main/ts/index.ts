@@ -4,5 +4,5 @@ export type * from './zurk.js'
 
 export { invoke } from './spawn.js'
 export { $ } from './x.js'
-export { Zurk, zurk } from './zurk.js'
-export type { Promisified } from './util.js'
+export { zurk } from './zurk.js'
+export { type Promisified } from './util.js'

@@ -2,10 +2,10 @@ import { Writable } from 'node:stream'
 import { assign } from '../util.js'
 import type { VoidWritable } from '../spawn.js'
 import type { TShell, TMixin, TShellCtx } from '../x.js'
-import { type Zurk, type ZurkPromise, isZurkAny } from '../zurk.js'
+import { type TZurk, type TZurkPromise, isZurkAny } from '../zurk.js'
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
-export const pipeMixin: TMixin = <T extends Zurk | ZurkPromise >($: TShell, result: T, ctx: TShellCtx) =>
+export const pipeMixin: TMixin = <T extends TZurk | TZurkPromise >($: TShell, result: T, ctx: TShellCtx) =>
   isZurkAny(result)
     ? assign(result, {
       pipe(...args: any[]) {
