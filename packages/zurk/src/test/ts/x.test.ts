@@ -4,12 +4,12 @@ import * as path from 'node:path'
 import * as os from 'node:os'
 import { describe, it } from 'node:test'
 import { $ } from '../../main/ts/x.js'
-import { Writable } from 'node:stream'
+import { Stream } from 'node:stream'
 
 const __dirname = new URL('.', import.meta.url).pathname
 const fixtures = path.resolve(__dirname, '../fixtures')
 const tempy = fs.mkdtempSync(path.join(os.tmpdir(), 'tempy-'))
-const onStreamFinish = (stream: Writable) => new Promise((resolve) => stream.on('finish', resolve))
+const onStreamFinish = (stream: Stream) => new Promise((resolve) => stream.on('finish', resolve))
 const throwError = (err: any = new Error('should have thrown')) => { throw err }
 
 describe('$()', () => {
