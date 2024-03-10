@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { assign } from '../util.js'
 import type { TMixin, TShell, TShellCtx } from '../x.js'
 import { type TZurk, type TZurkPromise, isZurkAny } from '../zurk.js'
