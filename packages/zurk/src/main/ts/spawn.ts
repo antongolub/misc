@@ -1,4 +1,5 @@
 import cp from 'node:child_process'
+import process from 'node:process'
 import { Readable, Writable, Stream, Transform } from 'node:stream'
 import { assign, noop } from './util.js'
 
@@ -133,6 +134,17 @@ export const invoke = (c: TSpawnCtxNormalized): TSpawnCtxNormalized => {
         const stdall: string[] = []
         const child = c.spawn(c.cmd, c.args, opts)
         c.child = child
+
+        opts.signal.addEventListener('abort', () => {
+          if (opts.detached && child.pid) {
+            try {
+              // https://github.com/nodejs/node/issues/51766
+              process.kill(-child.pid)
+            } catch {
+              child.kill()
+            }
+          }
+        })
         processInput(child, c.input || c.stdin)
 
         child.stdout.pipe(c.stdout).on('data', (d) => { stdout.push(d); stdall.push(d); c.onStdout(d) })

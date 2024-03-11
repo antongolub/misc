@@ -31,6 +31,7 @@ export interface TShellResponseExtra<T = any> {
   pipe(steam: Writable): Writable
   pipe(pieces: TemplateStringsArray, ...args: any[]): T
   kill(signal?: NodeJS.Signals | null): Promise<void>
+  abort(): void
   timeout?: number
   timeoutSignal?: NodeJS.Signals
 }

@@ -6,10 +6,8 @@ import { type TZurk, type TZurkPromise, isZurkAny } from '../zurk.js'
 
 // https://github.com/nodejs/node/issues/37518
 // https://github.com/nodejs/node/issues/46865
-const kill = (ac: AbortController, child?: ChildProcess, signal: null | string | number | NodeJS.Signals = 'SIGTERM') => new Promise<typeof signal>((resolve, reject) => {
+const kill = (child?: ChildProcess, signal: null | string | number | NodeJS.Signals = 'SIGTERM') => new Promise<typeof signal>((resolve, reject) => {
   if (child) {
-    // ac.abort()
-
     child.on('exit', (code, signal) => {
       resolve(signal)
     })
@@ -23,7 +21,8 @@ export const killMixin: TMixin = <T extends TZurk | TZurkPromise >($: TShell, re
   isZurkAny(result)
     ? assign(result, {
       kill(signal?: null | string | number | NodeJS.Signals): Promise<typeof signal> {
-        return kill(ctx.ac, ctx.child, signal)
-      }
+        return kill(ctx.child, signal)
+      },
+      abort() { ctx.ac.abort() },
     })
     : result

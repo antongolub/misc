@@ -86,6 +86,15 @@ describe('mixins', () => {
       assert.equal(signal, 'SIGTERM')
       assert.equal(error.message, 'Command failed with signal SIGTERM')
     })
+
+    it('handles `abort`', async () => {
+      const p = $({nothrow: true})`sleep 10`
+      setTimeout(() => p.abort(), 25)
+
+      const { error } = await p
+
+      assert.equal(error.message, 'The operation was aborted')
+    })
   })
 
   describe('timeout', () => {
