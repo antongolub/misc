@@ -76,8 +76,8 @@ describe('$()', () => {
 describe('mixins', () => {
   describe('kill', () => {
     it('handles `kill`', async () => {
-      const p = $({nothrow: true})`sleep 10000`
-      setTimeout(p.kill, 5)
+      const p = $({nothrow: true})`sleep 10`
+      setTimeout(p.kill.bind(p), 5)
 
       const { error } = await p
       assert.equal(error.message, 'Command failed with signal SIGTERM')
@@ -86,14 +86,14 @@ describe('mixins', () => {
 
   describe('timeout', () => {
     it('handles `timeout` as option', async () => {
-      const p = $({ timeout: 5, timeoutSignal: 'SIGALRM', nothrow: true })`sleep 100`
+      const p = $({ timeout: 5, timeoutSignal: 'SIGALRM', nothrow: true })`sleep 10`
 
       const { error } = await p
       assert.equal(error.message, 'Command failed with signal SIGALRM')
     })
 
     it('handles `timeout` as promise setter', async () => {
-      const p = $`sleep 100`
+      const p = $`sleep 10`
       p.timeoutSignal = 'SIGALRM'
       p.timeout = 5
       p._ctx.nothrow = true
