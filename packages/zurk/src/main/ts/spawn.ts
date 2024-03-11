@@ -28,6 +28,7 @@ export interface TSpawnCtxNormalized {
   input:      TInput | null
   env:        Record<string, string | undefined>
   stdio:      ['pipe', 'pipe', 'pipe']
+  detached:   boolean
   shell:      string | true | undefined
   spawn:      typeof cp.spawn
   spawnSync:  typeof cp.spawnSync
@@ -52,6 +53,7 @@ export const normalizeCtx = (...ctxs: TSpawnCtx[]): TSpawnCtxNormalized => assig
   args:       [],
   input:      null,
   env:        process.env,
+  detached:   false,
   shell:      true,
   spawn:      cp.spawn,
   spawnSync:  cp.spawnSync,
@@ -84,14 +86,15 @@ export class VoidWritable extends Transform {
   }
 }
 
-export const buildSpawnOpts = ({spawnOpts, stdio, cwd, shell, input, env}: TSpawnCtxNormalized) => ({
+export const buildSpawnOpts = ({spawnOpts, stdio, cwd, shell, input, env, detached}: TSpawnCtxNormalized) => ({
   ...spawnOpts,
   env,
   cwd,
   stdio,
   shell,
   input: input as string | Buffer,
-  windowsHide: true
+  windowsHide: true,
+  detached
 })
 
 export const invoke = (c: TSpawnCtxNormalized): TSpawnCtxNormalized => {
