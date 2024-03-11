@@ -59,5 +59,17 @@ const p2 = $$$()          // bar
 const p3 = $$`echo baz`   // baz
 ```
 
+- [x] AbortController
+```ts
+const ac = new AbortController()
+const p = $({nothrow: true, ac})`sleep 10`
+setTimeout(() => {
+  ac.signal.abort() // or just `p.abort()`
+}, 500)
+
+const { error } = await p
+error.message // 'The operation was aborted'
+```
+
 ## License
 [MIT](./LICENSE)
