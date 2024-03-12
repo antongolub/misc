@@ -86,7 +86,7 @@ export const $: TShell = function(this: any, pieces?: any, ...args: any): any {
 }
 
 const ignite = (preset: any, pieces: TemplateStringsArray, ...args: any[]) => {
-  const cmd = formatCmd(preset.quote || quote, pieces as TemplateStringsArray, ...args)
+  const cmd = buildCmd(preset.quote || quote, pieces as TemplateStringsArray, args)
   const input = parseInput(preset.input)
   const run = cmd instanceof Promise
     ? (cb: TVoidCallback, ctx: TShellCtx) => cmd.then((cmd) => { ctx.cmd = cmd; cb() })
@@ -125,9 +125,9 @@ export const parseInput = (input: TShellOptions['input']): TShellCtx['input'] =>
   return input as TShellCtx['input']
 }
 
-export const formatCmd = (quote: TQuote, pieces: TemplateStringsArray, ...args: any[]): string | Promise<string> =>  {
+export const buildCmd = (quote: TQuote, pieces: TemplateStringsArray, args: any[]): string | Promise<string> =>  {
   if (args.some(isPromiseLike))
-    return Promise.all(args).then((args) => formatCmd(quote, pieces, ...args))
+    return Promise.all(args).then((args) => buildCmd(quote, pieces, args))
 
   let cmd = pieces[0], i = 0
   while (i < args.length) {

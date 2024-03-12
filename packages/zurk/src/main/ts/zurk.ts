@@ -2,7 +2,6 @@ import util from 'node:util'
 import {
   invoke,
   normalizeCtx,
-  TSpawnCtx,
   TSpawnCtxNormalized,
   TSpawnResult,
 } from './spawn.js'
@@ -16,7 +15,7 @@ export interface TZurk extends TSpawnResult {
 
 export type TZurkCtx = TSpawnCtxNormalized & { nothrow?: boolean, nohandle?: boolean }
 
-export type TZurkOptions = Omit<TSpawnCtx, 'callback'>
+export type TZurkOptions = Partial<Omit<TZurkCtx, 'callback'>>
 
 export type TZurkPromise = Promise<TZurk> & Promisified<TZurk> & { _ctx: TZurkCtx, stdio: TZurkCtx['stdio'] }
 
