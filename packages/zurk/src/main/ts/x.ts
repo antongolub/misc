@@ -8,7 +8,7 @@ import {
   TZurkOptions,
   TZurkCtx
 } from './zurk.js'
-import { type Promisified, isPromiseLike, isStringLiteral, assign, quote } from './util.js'
+import { type Promisified, type TVoidCallback, isPromiseLike, isStringLiteral, assign, quote } from './util.js'
 import { pipeMixin } from './mixin/pipe.js'
 import { killMixin } from './mixin/kill.js'
 import { timeoutMixin } from './mixin/timeout.js'
@@ -44,6 +44,7 @@ export interface TShellCtx extends TZurkCtx, TShellCtxExtra {
 }
 
 export type TShellOptions = Omit<TZurkOptions, 'input'> & {
+  qoute?: TQuote
   input?: TShellCtx['input'] | TShellResponse | TShellResponseSync | null
 } & TShellOptionsExtra
 
@@ -79,18 +80,20 @@ export const $: TShell = function(this: any, pieces?: any, ...args: any): any {
 
   if (pieces === undefined) return applyMixins($, preset)
 
-  if (isStringLiteral(pieces)) {
-    const cmd = formatCmd(quote, pieces as TemplateStringsArray, ...args)
-    const input = parseInput(preset.input)
-    const run = cmd instanceof Promise
-      ? (cb: any, ctx: any) => cmd.then((cmd) => { ctx.cmd = cmd; cb() })
-      : setImmediate
-    const opts = assign(preset, { cmd, run, input })
-
-    return applyMixins($, opts)
-  }
+  if (isStringLiteral(pieces)) return ignite(preset, pieces, ...args)
 
   return (...args: any) => $.apply(this ? assign(this, pieces) : pieces, args)
+}
+
+const ignite = (preset: any, pieces: TemplateStringsArray, ...args: any[]) => {
+  const cmd = formatCmd(preset.quote || quote, pieces as TemplateStringsArray, ...args)
+  const input = parseInput(preset.input)
+  const run = cmd instanceof Promise
+    ? (cb: TVoidCallback, ctx: TShellCtx) => cmd.then((cmd) => { ctx.cmd = cmd; cb() })
+    : setImmediate
+  const opts = assign(preset, { cmd, run, input })
+
+  return applyMixins($, opts)
 }
 
 const zurkMixin: TMixin = ($: TShell, target: TShellOptions | TZurk | TZurkPromise | Promise<TZurk>) => {
