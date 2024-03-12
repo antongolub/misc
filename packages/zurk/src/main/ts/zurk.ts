@@ -94,8 +94,8 @@ class Zurk implements TZurk {
   constructor(ctx: TZurkCtx) {
     this._ctx = ctx
   }
-  get status()  { return this._ctx.fulfilled?.status || null }
-  get signal()  { return this._ctx.fulfilled?.signal || null }
+  get status()  { return this._ctx.fulfilled?.status ?? null }
+  get signal()  { return this._ctx.fulfilled?.signal ?? null }
   get error()   { return this._ctx.error }
   get stderr()  { return this._ctx.fulfilled?.stderr || '' }
   get stdout()  { return this._ctx.fulfilled?.stdout || '' }
@@ -105,7 +105,7 @@ class Zurk implements TZurk {
     this._ctx.stdout,
     this._ctx.stderr
   ]}
-  get duration()  { return this._ctx.fulfilled?.duration || 0 }
+  get duration()  { return this._ctx.fulfilled?.duration ?? 0 }
   toString(){ return this.stdall.trim() }
   valueOf(){ return this.stdall.trim() }
 }

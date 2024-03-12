@@ -20,6 +20,7 @@ describe('$()', () => {
 
     assert.equal(o1, 'foo')
     assert.equal(o2.trim(), 'foo')
+    assert.equal(await p.status, 0)
   })
 
   it('supports sync flow', () => {
