@@ -3,8 +3,9 @@ import process from 'node:process'
 import { Readable, Writable, Stream, Transform } from 'node:stream'
 import { assign, noop } from './util.js'
 
+export type TSpawnError = any
+
 export type TSpawnResult = {
-  error?:   any,
   stderr:   string
   stdout:   string
   stdall:   string,
@@ -13,6 +14,8 @@ export type TSpawnResult = {
   signal:   NodeJS.Signals | null
   duration: number
   _ctx:     TSpawnCtxNormalized
+  error?:   TSpawnError,
+  child?:   TChild
 }
 
 export type TSpawnCtx = Partial<Omit<TSpawnCtxNormalized, 'child'>>
@@ -35,7 +38,7 @@ export interface TSpawnCtxNormalized {
   spawn:      typeof cp.spawn
   spawnSync:  typeof cp.spawnSync
   spawnOpts:  Record<string, any>
-  callback:   (err: any, result: TSpawnResult & {error?: any, child?: TChild}) => void
+  callback:   (err: TSpawnError, result: TSpawnResult) => void
   onStdout:   (data: string | Buffer) => void
   onStderr:   (data: string | Buffer) => void
   stdin:      Readable

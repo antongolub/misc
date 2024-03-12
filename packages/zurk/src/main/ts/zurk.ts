@@ -14,9 +14,9 @@ export interface TZurk extends TSpawnResult {
   _ctx: TZurkCtx
 }
 
-export type TZurkCtx = TSpawnCtxNormalized & { nothrow?: boolean }
+export type TZurkCtx = TSpawnCtxNormalized & { nothrow?: boolean, nohandle?: boolean }
 
-export type TZurkOptions = Omit<TSpawnCtx, 'callback'> & { nothrow?: boolean }
+export type TZurkOptions = Omit<TSpawnCtx, 'callback'>
 
 export type TZurkPromise = Promise<TZurk> & Promisified<TZurk> & { _ctx: TZurkCtx, stdio: TZurkCtx['stdio'] }
 
@@ -28,7 +28,7 @@ export const zurkAsync = (opts: TZurkOptions): TZurkPromise => {
   const ctx: TZurkCtx = normalizeCtx(opts, {
     sync: false,
     callback(err, data) {
-      ctx.error = getError(err, ctx)
+      ctx.error = ctx.nohandle ? err : getError(data)
       ctx.error && !ctx.nothrow ? reject(ctx.error) : resolve(zurkFactory(ctx))
     }
   })
@@ -43,7 +43,7 @@ export const zurkSync = (opts: TZurkOptions): TZurk => {
   const ctx: TZurkCtx = normalizeCtx(opts, {
     sync: true,
     callback(err, data) {
-      ctx.error = getError(err, ctx)
+      ctx.error = ctx.nohandle ? err : getError(data)
       if (ctx.error && !ctx.nothrow) throw ctx.error
       response = zurkFactory(ctx)
     }
@@ -74,11 +74,10 @@ export const zurkifyPromise = (target: Promise<TZurk> | TZurkPromise, ctx: TSpaw
   }) as TZurkPromise
   : target as TZurkPromise
 
-
-export const getError = (err: any, ctx: TSpawnCtxNormalized) => {
-  if (err) return err
-  if (ctx.fulfilled?.status) return new Error(`Command failed with exit code ${ctx.fulfilled?.status}`)
-  if (ctx.fulfilled?.signal) return new Error(`Command failed with signal ${ctx.fulfilled?.signal}`)
+export const getError = (data: TSpawnResult) => {
+  if (data.error) return data.error
+  if (data.status) return new Error(`Command failed with exit code ${data.status}`)
+  if (data.signal) return new Error(`Command failed with signal ${data.signal}`)
 
   return null
 }
