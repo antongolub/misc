@@ -1,4 +1,4 @@
-import cp from 'node:child_process'
+import * as cp from 'node:child_process'
 import process from 'node:process'
 import { Readable, Writable, Stream, Transform } from 'node:stream'
 import { assign, noop } from './util.js'
