@@ -9,6 +9,8 @@ type TOpts = {
   ext: string
 }
 
+const externals: string[] = []
+
 export const entryChunksPlugin = (options: Record<string, any> = {}): Plugin => {
   return {
     name: 'entry-chunks',
@@ -43,7 +45,7 @@ export const onResolve = (ctx: OnResolveArgs, opts: TOpts): OnResolveResult | un
   const { entryPoints, ext} = opts
   const p = path.join(ctx.resolveDir, ctx.path)
 
-  if (p.endsWith(ext) && entryPoints.some(e => trimExt(e) === trimExt(p))) {
+  if (externals.includes(p) || (p.endsWith(ext) && entryPoints.some(e => trimExt(e) === trimExt(p)))) {
     return {
       external: true
     }
@@ -67,8 +69,10 @@ export const onLoad = async (ctx: OnLoadArgs, opts: TOpts): Promise<OnLoadResult
     if (!entryPoints.includes(p)) {
       return m
     }
+    const _value = './' + name + ext
+    externals.push(_value)
 
-    return m.replace(value, dir + '/' + name + ext)
+    return m.replace(value, _value)
   }, input)
 
   return { contents, loader: 'ts' }
