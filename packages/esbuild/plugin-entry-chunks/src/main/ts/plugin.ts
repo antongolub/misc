@@ -70,7 +70,7 @@ export const onLoad = async (ctx: OnLoadArgs, opts: TOpts): Promise<OnLoadResult
       return m
     }
     const _value = './' + name + ext
-    externals.push(_value)
+    externals.push(path.resolve(base, _value))
 
     return m.replace(value, _value)
   }, input)
