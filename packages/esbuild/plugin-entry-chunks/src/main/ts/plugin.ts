@@ -68,7 +68,7 @@ export const onLoad = async (ctx: OnLoadArgs, opts: TOpts): Promise<OnLoadResult
       return m
     }
 
-    return m.replace(value, './' + name + ext)
+    return m.replace(value, dir + '/' + name + ext)
   }, input)
 
   return { contents, loader: 'ts' }
