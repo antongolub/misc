@@ -5024,15 +5024,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zurk@workspace:packages/zurk":
-  version: 0.0.0-use.local
-  resolution: "zurk@workspace:packages/zurk"
-  dependencies:
-    "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.11.25"
-  languageName: unknown
-  linkType: soft
-
 "zx-bulk-release@npm:^2.15.3":
   version: 2.15.3
   resolution: "zx-bulk-release@npm:2.15.3"
