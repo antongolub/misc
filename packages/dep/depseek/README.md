@@ -61,7 +61,7 @@ Streams are aimed at intensive bulk operations. If you need to process just a fe
 import fs from 'node:fs'
 import { depseekSync } from 'depseek'
 
-const contents = fs.readFileSync('index.js', 'utf8')
+const contents = fs.readFileSync('index.js', 'utf8') // Buffer or string
 const deps = depseekSync(contents)
 ```
 
