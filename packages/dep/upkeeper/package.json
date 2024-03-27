@@ -48,6 +48,7 @@
   "homepage": "https://github.com/antongolub/misc/tree/master/packages/upkeeper",
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
+    "@types/minimist": "^1.2.5",
     "@types/node": "^20.11.30"
   },
   "dependencies": {
