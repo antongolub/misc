@@ -55,7 +55,7 @@
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
     "@fixtures/config-with-extends": "workspace:*",
-    "@types/node": "^20.11.25",
+    "@types/node": "^20.11.30",
     "cosmiconfig": "^9.0.0",
     "js-yaml": "^4.1.0"
   }
