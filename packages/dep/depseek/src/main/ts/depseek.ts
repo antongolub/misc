@@ -32,8 +32,8 @@ const normalizeOpts = (opts?: TOpts): TOptsNormalized => ({
   offset: 19,
   ...opts
 })
-export const depseek = (stream: Readable | string, opts?: TOpts): Promise<TCodeRef[]> => new Promise((resolve, reject) => {
-  if (typeof stream === 'string') {
+export const depseek = (stream: Readable | string | Buffer, opts?: TOpts): Promise<TCodeRef[]> => new Promise((resolve, reject) => {
+  if (typeof stream === 'string' || stream instanceof Buffer) {
     return resolve(depseekSync(stream, opts))
   }
 
@@ -49,7 +49,7 @@ export const depseek = (stream: Readable | string, opts?: TOpts): Promise<TCodeR
     .on('error', reject)
 })
 
-export const depseekSync = (input: string, opts?: TOpts): TCodeRef[] => extract(readify(input), opts)
+export const depseekSync = (input: string | Buffer, opts?: TOpts): TCodeRef[] => extract(readify(input.toString()), opts)
 
 export const patchRefs = (contents: string, patcher: (ref: string) => string): string => {
   const deps = depseekSync(contents)

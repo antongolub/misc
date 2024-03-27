@@ -1,7 +1,7 @@
 import * as assert from 'node:assert'
 import {Duplex} from 'node:stream'
 import { describe, it } from 'node:test'
-import { depseek, fullRe, patchRefs } from '../../main/ts'
+import { depseek, depseekSync, fullRe, patchRefs } from '../../main/ts'
 
 describe('depseek()', () => {
   it('searches for deps and comments', async () => {
@@ -165,5 +165,15 @@ import {bar} from "./bar.js"
 import {baz} from 'baz'
 `
     assert.equal(patchRefs(input, patcher), expected)
+  })
+})
+
+describe('depseekSync()', () => {
+  it('accepts string input', () => {
+    assert.deepEqual(depseekSync('import "foo"'), [{index: 8, value: 'foo', type: 'dep'}])
+  })
+
+  it('accepts Buffer input', () => {
+    assert.deepEqual(depseekSync(Buffer.from('import "foo"')), [{index: 8, value: 'foo', type: 'dep'}])
   })
 })
