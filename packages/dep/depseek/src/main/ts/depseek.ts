@@ -51,7 +51,7 @@ export const depseek = (stream: Readable | string | Buffer, opts?: TOpts): Promi
 
 export const depseekSync = (input: string | Buffer, opts?: TOpts): TCodeRef[] => extract(readify(input.toString()), opts)
 
-export const patchRefs = (contents: string, patcher: (ref: string) => string): string => {
+export const patchRefs = (contents: string | Buffer, patcher: (ref: string) => string): string => {
   const deps = depseekSync(contents)
   let pos = 0
   let _contents = ''
