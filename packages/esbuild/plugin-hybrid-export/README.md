@@ -8,8 +8,11 @@
 PoC
 
 ## Problem
-[Hybrid package](https://2ality.com/2019/10/hybrid-npm-packages.html) is a quite specific approach when, for some reason, you may need to support both modern (esm) and legacy (cjs) architectures.
-By default, esbuild suggests using two separate bundles, but is not always acceptable due to the resulting code duplication. A little optimization fixes it easily:
+[Hybrid package](https://2ality.com/2019/10/hybrid-npm-packages.html) is a quite specific approach when, for some reason, you may need to support both modern (esm) and legacy (cjs) architectures. Node.js does some internal magic to support both:
+> ⚠️ When importing CommonJS modules, the module.exports object is provided as the default export. Named exports **may be available**, provided by static analysis as a convenience for better ecosystem compatibility.
+> https://nodejs.org/api/esm.html#import-statements
+
+Unfortunately, this mechanism does not provide absolute reliability. That's why, the general approach for this case is double bundling, when size is not critical. Otherwise, a little optimization fixes it easily:
 
 _index.cjs (generated)_
 ```ts
@@ -26,8 +29,18 @@ export {foo}
 This plugin just handles the mentioned routine.
 
 ## Usage
-
 ```ts
+import { build, BuildOptions } from 'esbuild'
+import { hybridExportPlugin } from 'esbuild-plugin-entry-chunks'
+
+const plugin = hybridExportPlugin()
+const config: BuildOptions = {
+  entryPoints: ['index.ts'],
+  plugins: [plugin],
+  format: 'cjs'
+}
+
+await build(config)
 ```
 
 ## Refs
@@ -35,6 +48,10 @@ This plugin just handles the mentioned routine.
 * [fkhadra/react-toastify/issues/1061](https://github.com/fkhadra/react-toastify/issues/1061)
 * [esbuild/issues/3580](https://github.com/evanw/esbuild/issues/3580)
 * [esbuild/issues/1950](https://github.com/evanw/esbuild/issues/1950)
+* [esbuild/issues/1591](https://github.com/evanw/esbuild/issues/1591)
+* [node/issues/40891](https://github.com/nodejs/node/issues/40891)
+* [commonjs-named-exports](https://2ality.com/2022/10/commonjs-named-exports.html)
+* [__esModule](https://stackoverflow.com/questions/50943704/whats-the-purpose-of-object-definepropertyexports-esmodule-value-0)
 
 ## License
 [MIT](./LICENSE)

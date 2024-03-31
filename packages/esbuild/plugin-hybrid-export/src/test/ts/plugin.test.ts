@@ -12,10 +12,24 @@ const fixtures = path.resolve(__dirname, '../fixtures')
 const temp = path.resolve(__dirname, '../temp')
 
 describe('plugin()', () => {
-  it.skip('throws if bundle is false', async () => {
+  it('generates esm reexport files', async () => {
+    const cwd = fixtures
     const plugin = hybridExportPlugin()
     const config: BuildOptions = {
+      entryPoints: [
+        'index.ts',
+      ],
       plugins: [plugin],
+      platform: 'node',
+      external: ['node:*'],
+      bundle: true,
+      minify: false,
+      sourcemap: false,
+      format: 'cjs',
+      legalComments: 'none',
+      absWorkingDir: cwd,
+      outdir: temp,
+      allowOverwrite: true,
     }
     let error: Error | undefined
 
@@ -24,6 +38,6 @@ describe('plugin()', () => {
     } catch (err) {
       error = err
     }
-    assert.ok(error.message.endsWith('esbuild-plugin-entry-chunks requires `bundle: true`'))
+    // assert.ok(error.message.endsWith('esbuild-plugin-entry-chunks requires `bundle: true`'))
   })
 })

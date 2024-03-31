@@ -14,7 +14,7 @@ export const hybridExportPlugin = (options: Record<string, any> = {}): Plugin =>
     setup(build) {
       const {
         absWorkingDir,
-        bundle,
+        format,
         entryPoints: entries,
         outExtension: {
           '.js': ext = '.js'} = {}
@@ -28,8 +28,8 @@ export const hybridExportPlugin = (options: Record<string, any> = {}): Plugin =>
       }
 
       build.onStart(() => {
-        if (!bundle) {
-          throw new Error('esbuild-plugin-entry-chunks requires `bundle: true`')
+        if (format !== 'cjs') {
+          throw new Error('esbuild-plugin-hybrid-export requires `format: cjs`')
         }
       })
       build.onEnd(result => onEnd(result, opts))
@@ -38,7 +38,7 @@ export const hybridExportPlugin = (options: Record<string, any> = {}): Plugin =>
 }
 
 const onEnd = async (result: OnEndResult, opts: TOpts) => {
-  return
+  console.log('result:', result, opts)
 }
 
 const normalizeEntryPoints = (entryPoints: BuildOptions['entryPoints'], cwd: string): string[] =>
