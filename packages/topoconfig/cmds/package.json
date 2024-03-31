@@ -47,7 +47,7 @@
   "dependencies": {
     "@topoconfig/extends": "workspace:*",
     "ajv": "^8.12.0",
-    "ajv-formats": "^3.0.0-rc.0",
+    "ajv-formats": "^3.0.1",
     "app-root-path": "^3.1.0",
     "conf": "^12.0.0",
     "dot": "^2.0.0-beta.1",
@@ -64,6 +64,6 @@
     "@types/ip": "^1.1.3",
     "@types/js-yaml": "^4.0.9",
     "@types/minimist": "^1.2.5",
-    "@types/node": "^20.11.30"
+    "@types/node": "^20.12.2"
   }
 }

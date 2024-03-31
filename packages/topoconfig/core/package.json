@@ -46,6 +46,6 @@
   "homepage": "https://github.com/antongolub/misc/tree/master/packages/topoconfig/core",
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
-    "@types/node": "^20.11.30"
+    "@types/node": "^20.12.2"
   }
 }
