@@ -14,7 +14,10 @@ const temp = path.resolve(__dirname, '../temp')
 describe('plugin()', () => {
   it('generates esm reexport files', async () => {
     const cwd = fixtures
-    const plugin = hybridExportPlugin()
+    const plugin = hybridExportPlugin({
+      to: '../temp/reexport',
+      toExt: '.mjs',
+    })
     const config: BuildOptions = {
       entryPoints: [
         'index.ts',
@@ -31,13 +34,38 @@ describe('plugin()', () => {
       outdir: temp,
       allowOverwrite: true,
     }
-    let error: Error | undefined
 
+    await build(config)
+
+    assert.equal(await fs.readFile(path.resolve(temp, 'reexport/index.mjs'), 'utf8'), `const {
+  bar,
+  foo,
+  qux,
+  default: __default__
+} = require('../index.js')
+export {
+  bar,
+  foo,
+  qux
+}
+export default __default__
+`
+)
+  })
+
+  it('requires `format: cjs`', async () => {
+    const cwd = fixtures
+    const plugin = hybridExportPlugin()
+    const config: BuildOptions = {
+      format: 'esm',
+      plugins: [plugin],
+    }
+    let error: Error | undefined
     try {
       await build(config)
     } catch (err) {
       error = err
     }
-    // assert.ok(error.message.endsWith('esbuild-plugin-entry-chunks requires `bundle: true`'))
+    assert.ok(error.message.endsWith('esbuild-plugin-hybrid-export requires `format: cjs`'))
   })
 })

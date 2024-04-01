@@ -8,7 +8,7 @@
 PoC
 
 ## Problem
-[Hybrid package](https://2ality.com/2019/10/hybrid-npm-packages.html) is a quite specific approach when, for some reason, you may need to support both modern (esm) and legacy (cjs) architectures. Node.js does some internal magic to support both:
+[Hybrid package](https://2ality.com/2019/10/hybrid-npm-packages.html) is a quite specific approach when, for some reason, you may need to support both modern (esm) and legacy (cjs) architectures. Node.js brings a portion of internal magic for this:
 > ⚠️ When importing CommonJS modules, the module.exports object is provided as the default export. Named exports **may be available**, provided by static analysis as a convenience for better ecosystem compatibility.
 > https://nodejs.org/api/esm.html#import-statements
 
@@ -31,11 +31,15 @@ This plugin just handles the mentioned routine.
 ## Usage
 ```ts
 import { build, BuildOptions } from 'esbuild'
-import { hybridExportPlugin } from 'esbuild-plugin-entry-chunks'
+import { hybridExportPlugin } from 'esbuild-plugin-hybrid-export'
 
-const plugin = hybridExportPlugin()
+const plugin = hybridExportPlugin({
+  to: 'target/esm',
+  toExt: '.mjs'
+})
 const config: BuildOptions = {
   entryPoints: ['index.ts'],
+  outdir: 'target/cjs',
   plugins: [plugin],
   format: 'cjs'
 }

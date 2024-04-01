@@ -4,7 +4,6 @@
   "description": "Esbuild plugin to simplify hybrid (aka dual) packages forging",
   "type": "module",
   "main": "target/cjs/index.cjs",
-  "private": true,
   "exports": {
     ".": {
       "types": "./target/dts/index.d.ts",
