@@ -17,7 +17,7 @@ __metadata:
   resolution: "@antongolub/blank@workspace:packages/blank"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.12.2"
+    "@types/node": "npm:^20.12.7"
   languageName: unknown
   linkType: soft
 
@@ -34,7 +34,7 @@ __metadata:
   dependencies:
     "@antongolub/git-root": "npm:^1.5.13"
     "@semrel-extra/topo": "npm:^1.14.1"
-    "@types/node": "npm:^20.12.2"
+    "@types/node": "npm:^20.12.7"
     c8: "npm:^9.1.0"
     concurrently: "npm:^8.2.2"
     esbuild: "npm:^0.20.2"
@@ -42,11 +42,11 @@ __metadata:
     eslint: "npm:^8.57.0"
     eslint-config-qiwi: "npm:^2.1.3"
     fast-glob: "npm:^3.3.2"
-    oxlint: "npm:^0.2.15"
+    oxlint: "npm:^0.2.18"
     ts-node: "npm:^10.9.2"
-    typedoc: "npm:^0.25.12"
-    typescript: "npm:^5.4.3"
-    zx-bulk-release: "npm:^2.15.4"
+    typedoc: "npm:^0.25.13"
+    typescript: "npm:^5.4.5"
+    zx-bulk-release: "npm:^2.15.8"
   languageName: unknown
   linkType: soft
 
@@ -572,58 +572,58 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@oxlint/darwin-arm64@npm:0.2.15":
-  version: 0.2.15
-  resolution: "@oxlint/darwin-arm64@npm:0.2.15"
+"@oxlint/darwin-arm64@npm:0.2.18":
+  version: 0.2.18
+  resolution: "@oxlint/darwin-arm64@npm:0.2.18"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@oxlint/darwin-x64@npm:0.2.15":
-  version: 0.2.15
-  resolution: "@oxlint/darwin-x64@npm:0.2.15"
+"@oxlint/darwin-x64@npm:0.2.18":
+  version: 0.2.18
+  resolution: "@oxlint/darwin-x64@npm:0.2.18"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@oxlint/linux-arm64-gnu@npm:0.2.15":
-  version: 0.2.15
-  resolution: "@oxlint/linux-arm64-gnu@npm:0.2.15"
+"@oxlint/linux-arm64-gnu@npm:0.2.18":
+  version: 0.2.18
+  resolution: "@oxlint/linux-arm64-gnu@npm:0.2.18"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@oxlint/linux-arm64-musl@npm:0.2.15":
-  version: 0.2.15
-  resolution: "@oxlint/linux-arm64-musl@npm:0.2.15"
+"@oxlint/linux-arm64-musl@npm:0.2.18":
+  version: 0.2.18
+  resolution: "@oxlint/linux-arm64-musl@npm:0.2.18"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@oxlint/linux-x64-gnu@npm:0.2.15":
-  version: 0.2.15
-  resolution: "@oxlint/linux-x64-gnu@npm:0.2.15"
+"@oxlint/linux-x64-gnu@npm:0.2.18":
+  version: 0.2.18
+  resolution: "@oxlint/linux-x64-gnu@npm:0.2.18"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@oxlint/linux-x64-musl@npm:0.2.15":
-  version: 0.2.15
-  resolution: "@oxlint/linux-x64-musl@npm:0.2.15"
+"@oxlint/linux-x64-musl@npm:0.2.18":
+  version: 0.2.18
+  resolution: "@oxlint/linux-x64-musl@npm:0.2.18"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@oxlint/win32-arm64@npm:0.2.15":
-  version: 0.2.15
-  resolution: "@oxlint/win32-arm64@npm:0.2.15"
+"@oxlint/win32-arm64@npm:0.2.18":
+  version: 0.2.18
+  resolution: "@oxlint/win32-arm64@npm:0.2.18"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@oxlint/win32-x64@npm:0.2.15":
-  version: 0.2.15
-  resolution: "@oxlint/win32-x64@npm:0.2.15"
+"@oxlint/win32-x64@npm:0.2.18":
+  version: 0.2.18
+  resolution: "@oxlint/win32-x64@npm:0.2.18"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -672,7 +672,7 @@ __metadata:
     "@types/ip": "npm:^1.1.3"
     "@types/js-yaml": "npm:^4.0.9"
     "@types/minimist": "npm:^1.2.5"
-    "@types/node": "npm:^20.12.2"
+    "@types/node": "npm:^20.12.7"
     ajv: "npm:^8.12.0"
     ajv-formats: "npm:^3.0.1"
     app-root-path: "npm:^3.1.0"
@@ -693,7 +693,7 @@ __metadata:
   dependencies:
     "@antongolub/infra": "workspace:*"
     "@fixtures/config-with-extends": "workspace:*"
-    "@types/node": "npm:^20.12.2"
+    "@types/node": "npm:^20.12.7"
     cosmiconfig: "npm:^9.0.0"
     js-yaml: "npm:^4.1.0"
   bin:
@@ -706,7 +706,7 @@ __metadata:
   resolution: "@topoconfig/locator@workspace:packages/topoconfig/locator"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.12.2"
+    "@types/node": "npm:^20.12.7"
   languageName: unknown
   linkType: soft
 
@@ -840,21 +840,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:>=20.11.28, @types/node@npm:^20.11.30":
-  version: 20.11.30
-  resolution: "@types/node@npm:20.11.30"
+"@types/node@npm:>=20.12.5, @types/node@npm:^20.12.6, @types/node@npm:^20.12.7":
+  version: 20.12.7
+  resolution: "@types/node@npm:20.12.7"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 78515bc768d2b878e2e06a1c20eb4f5840072b79b8d28ff3dd0a7feaaf48fd3a2ac03cfa5bc7564da82db5906b43e9ba0e5df9f43d870b7aae2942306e208815
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^20.12.2":
-  version: 20.12.2
-  resolution: "@types/node@npm:20.12.2"
-  dependencies:
-    undici-types: "npm:~5.26.4"
-  checksum: f1f0ebfe475aefa183763b856e0023b81b76554196e8676a45b9fcfd1012cdd20d32adefb3c0330001c0011e074676603c34c24821a4924228250ea13a75da43
+  checksum: b4a28a3b593a9bdca5650880b6a9acef46911d58cf7cfa57268f048e9a7157a7c3196421b96cea576850ddb732e3b54bc982c8eb5e1e5ef0635d4424c2fce801
   languageName: node
   linkType: hard
 
@@ -1732,7 +1723,7 @@ __metadata:
   resolution: "depseek@workspace:packages/dep/depseek"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.12.2"
+    "@types/node": "npm:^20.12.7"
     benchmark: "npm:^2.1.4"
     deps-regex: "npm:^0.2.0"
     esprima: "npm:^4.0.1"
@@ -1744,7 +1735,7 @@ __metadata:
   resolution: "depshot@workspace:packages/dep/depshot"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.12.2"
+    "@types/node": "npm:^20.12.7"
   languageName: unknown
   linkType: soft
 
@@ -1840,7 +1831,7 @@ __metadata:
   resolution: "envader@workspace:packages/env/envader"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.12.2"
+    "@types/node": "npm:^20.12.7"
   languageName: unknown
   linkType: soft
 
@@ -1849,7 +1840,7 @@ __metadata:
   resolution: "envimist@workspace:packages/env/envimist"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.12.2"
+    "@types/node": "npm:^20.12.7"
     minimist: "npm:^1.2.8"
   languageName: unknown
   linkType: soft
@@ -1992,7 +1983,7 @@ __metadata:
   dependencies:
     "@antongolub/infra": "workspace:*"
     "@topoconfig/extends": "workspace:*"
-    "@types/node": "npm:^20.12.2"
+    "@types/node": "npm:^20.12.7"
     cosmiconfig: "npm:^9.0.0"
     esbuild: "npm:>=0.19.0"
     esbuild-node-externals: "npm:^1.13.0"
@@ -2021,7 +2012,7 @@ __metadata:
   resolution: "esbuild-plugin-entry-chunks@workspace:packages/esbuild/plugin-entry-chunks"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.12.2"
+    "@types/node": "npm:^20.12.7"
     depseek: "workspace:*"
     esbuild: "npm:>=0.20.2"
   peerDependencies:
@@ -2034,7 +2025,7 @@ __metadata:
   resolution: "esbuild-plugin-hybrid-export@workspace:packages/esbuild/plugin-hybrid-export"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.12.2"
+    "@types/node": "npm:^20.12.7"
     esbuild: "npm:>=0.20.2"
   peerDependencies:
     esbuild: ">=0.19.0"
@@ -3434,7 +3425,7 @@ __metadata:
   resolution: "lcov-utils@workspace:packages/lcov-utils"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.12.2"
+    "@types/node": "npm:^20.12.7"
   languageName: unknown
   linkType: soft
 
@@ -3806,18 +3797,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oxlint@npm:^0.2.15":
-  version: 0.2.15
-  resolution: "oxlint@npm:0.2.15"
+"oxlint@npm:^0.2.18":
+  version: 0.2.18
+  resolution: "oxlint@npm:0.2.18"
   dependencies:
-    "@oxlint/darwin-arm64": "npm:0.2.15"
-    "@oxlint/darwin-x64": "npm:0.2.15"
-    "@oxlint/linux-arm64-gnu": "npm:0.2.15"
-    "@oxlint/linux-arm64-musl": "npm:0.2.15"
-    "@oxlint/linux-x64-gnu": "npm:0.2.15"
-    "@oxlint/linux-x64-musl": "npm:0.2.15"
-    "@oxlint/win32-arm64": "npm:0.2.15"
-    "@oxlint/win32-x64": "npm:0.2.15"
+    "@oxlint/darwin-arm64": "npm:0.2.18"
+    "@oxlint/darwin-x64": "npm:0.2.18"
+    "@oxlint/linux-arm64-gnu": "npm:0.2.18"
+    "@oxlint/linux-arm64-musl": "npm:0.2.18"
+    "@oxlint/linux-x64-gnu": "npm:0.2.18"
+    "@oxlint/linux-x64-musl": "npm:0.2.18"
+    "@oxlint/win32-arm64": "npm:0.2.18"
+    "@oxlint/win32-x64": "npm:0.2.18"
   dependenciesMeta:
     "@oxlint/darwin-arm64":
       optional: true
@@ -3837,7 +3828,7 @@ __metadata:
       optional: true
   bin:
     oxlint: bin/oxlint
-  checksum: 6f3718cf5d57e13e6a771bff9499ab4a41934d39232173ad07bfe3ad5ead054c1ca5193fa143fd8af2426b264090ae912525eaa15f2421bc24fa0a8dfb07decf
+  checksum: 3bb772bbdb0913d0315d25395602ac6eea597123c520ee8c6446d8d2f18d2223ba9b80ba93350141c59424c13b72bc1510b8c0b8fae034e7e265e68f4c8de3a4
   languageName: node
   linkType: hard
 
@@ -4789,7 +4780,7 @@ __metadata:
   resolution: "topoconfig@workspace:packages/topoconfig/core"
   dependencies:
     "@antongolub/infra": "workspace:*"
-    "@types/node": "npm:^20.12.2"
+    "@types/node": "npm:^20.12.7"
   languageName: unknown
   linkType: soft
 
@@ -4854,7 +4845,7 @@ __metadata:
     "@antongolub/infra": "workspace:*"
     "@topoconfig/extends": "workspace:*"
     "@types/minimist": "npm:^1.2.5"
-    "@types/node": "npm:^20.12.2"
+    "@types/node": "npm:^20.12.7"
     depseek: "workspace:*"
     minimist: "npm:^1.2.8"
   peerDependencies:
@@ -4999,9 +4990,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:^0.25.12":
-  version: 0.25.12
-  resolution: "typedoc@npm:0.25.12"
+"typedoc@npm:^0.25.13":
+  version: 0.25.13
+  resolution: "typedoc@npm:0.25.13"
   dependencies:
     lunr: "npm:^2.3.9"
     marked: "npm:^4.3.0"
@@ -5011,27 +5002,27 @@ __metadata:
     typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x || 5.3.x || 5.4.x
   bin:
     typedoc: bin/typedoc
-  checksum: eb02b35a6fd1f8c3f9bb2b42b379139cce5b72b3797e983e58f61578b23610c1ee770dc442286981ab13d2949bdb746a84c38bcd856f09ac50a7a861cca56fd8
+  checksum: 3c82603894b5830c4b027b4f4f9ca70f770b6752c6512a42e780c40cb67fe4c9a144e34a837bb35aab14a125e00a5893e1e6feac1ec86a2add80f46833b279d4
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.4.3":
-  version: 5.4.3
-  resolution: "typescript@npm:5.4.3"
+"typescript@npm:^5.4.5":
+  version: 5.4.5
+  resolution: "typescript@npm:5.4.5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: de4c69f49a7ad4b1ea66a6dcc8b055ac34eb56af059a069d8988dd811c5e649be07e042e5bf573e8d0ac3ec2f30e6c999aa651cd09f6e9cbc6113749e8b6be20
+  checksum: d04a9e27e6d83861f2126665aa8d84847e8ebabcea9125b9ebc30370b98cb38b5dff2508d74e2326a744938191a83a69aa9fddab41f193ffa43eabfdf3f190a5
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.4.3#optional!builtin<compat/typescript>":
-  version: 5.4.3
-  resolution: "typescript@patch:typescript@npm%3A5.4.3#optional!builtin<compat/typescript>::version=5.4.3&hash=e012d7"
+"typescript@patch:typescript@npm%3A^5.4.5#optional!builtin<compat/typescript>":
+  version: 5.4.5
+  resolution: "typescript@patch:typescript@npm%3A5.4.5#optional!builtin<compat/typescript>::version=5.4.5&hash=e012d7"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 3abea475798fdf7ee46e75dafc50c85f30fd1e7061559ec2af61646f23d16c91742703f04f0ac55be52f58ca05c02f77404b7b94bbad16278c9a54c9eeb4f4ea
+  checksum: 584be8bac7112ad49a9eb9992f71d542b1ff2fafb5bb315e1c196145e8feab589f1d7223cfb2d5df6770789582e6918f8287d1f2f89911b38eb80e29c560ad00
   languageName: node
   linkType: hard
 
@@ -5083,7 +5074,7 @@ __metadata:
   dependencies:
     "@antongolub/infra": "workspace:*"
     "@types/minimist": "npm:^1.2.5"
-    "@types/node": "npm:^20.12.2"
+    "@types/node": "npm:^20.12.7"
     dot: "npm:^2.0.0-beta.1"
     fast-glob: "npm:^3.3.2"
     minimist: "npm:^1.2.8"
@@ -5305,28 +5296,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zx-bulk-release@npm:^2.15.4":
-  version: 2.15.4
-  resolution: "zx-bulk-release@npm:2.15.4"
+"zx-bulk-release@npm:^2.15.8":
+  version: 2.15.8
+  resolution: "zx-bulk-release@npm:2.15.8"
   dependencies:
     "@semrel-extra/topo": "npm:^1.14.1"
     cosmiconfig: "npm:^9.0.0"
     queuefy: "npm:^1.2.1"
     tar-stream: "npm:^3.1.7"
-    zx-extra: "npm:^3.0.0"
+    zx-extra: "npm:3.0.6"
   bin:
     zx-bulk-release: src/main/js/cli.js
-  checksum: 0ee2f01ca86e70da850ddf9577de254c0fd5e0090b05e1e2e3f9fd82fe9e08bbf0fc0ce43332c2b7113bbec6ff360607b4076f27d5e09ec257ef24ee23995ed6
+  checksum: 362589990fe4f1b0bd0c9f2cab3a366d1c0959262d1bc19056c46534ebfec3bc1a55eba56b6a63ee04b53a4f32c86f2446443dec9c9d0d353d0e1f2c23870450
   languageName: node
   linkType: hard
 
-"zx-extra@npm:^3.0.0":
-  version: 3.0.1
-  resolution: "zx-extra@npm:3.0.1"
+"zx-extra@npm:3.0.6":
+  version: 3.0.6
+  resolution: "zx-extra@npm:3.0.6"
   dependencies:
     "@qiwi/deep-proxy": "npm:^3.0.0"
     "@types/ip": "npm:^1.1.3"
-    "@types/node": "npm:^20.11.30"
+    "@types/node": "npm:^20.12.6"
     "@types/semver": "npm:^7.5.8"
     globby-cp: "npm:^1.3.0"
     ini: "npm:^4.1.2"
@@ -5336,19 +5327,19 @@ __metadata:
     semver: "npm:^7.6.0"
     ssri: "npm:^10.0.5"
     tempy: "npm:^3.1.0"
-    zx: "npm:7.2.3-dev.c2cda4a"
+    zx: "npm:8.0.2"
   bin:
     zx-extra: src/main/js/cli.mjs
-  checksum: c46b8e46b6d9c86cd0a25bd6cafe2e94f17aa0dec5759f5fad9ef7a3b9335b2516650d5b64359276b36f60a1929b45219eeb14288c57fc71bcf631564790bb85
+  checksum: 1c67f0abc5e7dd5c81eea1f53bf028ba2c94363ffc7ce728121f9192d2944dd71fd177645e677203907f73ae8d05dc86290ea81f2d7ae61c3a5c1500601c8083
   languageName: node
   linkType: hard
 
-"zx@npm:7.2.3-dev.c2cda4a":
-  version: 7.2.3-dev.c2cda4a
-  resolution: "zx@npm:7.2.3-dev.c2cda4a"
+"zx@npm:8.0.2":
+  version: 8.0.2
+  resolution: "zx@npm:8.0.2"
   dependencies:
     "@types/fs-extra": "npm:^11.0.4"
-    "@types/node": "npm:>=20.11.28"
+    "@types/node": "npm:>=20.12.5"
   dependenciesMeta:
     "@types/fs-extra":
       optional: true
@@ -5356,6 +5347,6 @@ __metadata:
       optional: true
   bin:
     zx: build/cli.js
-  checksum: b857f968820f9a430f8846efcb3df3f574a7abe45ad58e31f3e6a9ab6739b56bb1ff84c368ae7055aa192c1199284d961ff1822d41d502c72830d7c7219da97f
+  checksum: 189e83f6f4ce9ca13a41db522bbe8314bdc416653edc542f496659ddc91faac5f51f0512a03e991c36f00e936b94e25d1da0e6658b6ba600f9738837fe596382
   languageName: node
   linkType: hard
