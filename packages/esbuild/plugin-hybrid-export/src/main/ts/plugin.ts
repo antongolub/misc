@@ -61,10 +61,10 @@ export const hybridExportPlugin = (options: Record<string, any> = {}): Plugin =>
 }
 
 const onEnd = async (result: OnEndResult, opts: TOpts) => {
-  await Promise.all(opts.entryPoints
+  await Promise.all(trimCommonPrefix(opts.entryPoints)
     .map(async e => {
-      const input = path.resolve(opts.from, path.relative(opts.cwd, e).replace(/\.\w+$/, opts.fromExt))
-      const output = path.resolve(opts.to, path.relative(opts.cwd, e).replace(/\.\w+$/, opts.toExt))
+      const input = path.resolve(opts.from, e.replace(/\.\w+$/, opts.fromExt))
+      const output = path.resolve(opts.to, e.replace(/\.\w+$/, opts.toExt))
       const _rel = path.relative(opts.to, input)
       const rel = _rel.startsWith('.') ? _rel : './' + _rel
       const raw = await fs.readFile(input, 'utf-8')
@@ -125,3 +125,8 @@ const getExports = (contents: string): string[] => {
 
 const normalizeEntryPoints = (entryPoints: BuildOptions['entryPoints'], cwd: string): string[] =>
   Array.isArray(entryPoints) ? entryPoints.map<string>(e => path.resolve(cwd, e as string)): []
+
+const trimCommonPrefix = (files: string[]): string[] =>
+  files.length === 1
+    ? [path.basename(files[0])]
+    : files.map(f => f.slice([...(files[0])].findIndex((c, i) => files.some(f => f.charAt(i) !== c))))
