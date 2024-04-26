@@ -68,7 +68,7 @@ const onEnd = async (result: OnEndResult, opts: TOpts) => {
       const _rel = path.relative(opts.to, input)
       const rel = _rel.startsWith('.') ? _rel : './' + _rel
       const raw = await fs.readFile(input, 'utf-8')
-      const refs = getExports(raw)
+      const refs = await getExports(raw, input)
       const contents = formatRefs(rel, refs)
 
       await fs.mkdir(path.dirname(output), {recursive: true})
@@ -101,11 +101,19 @@ ${hasDefault ? 'export default __default__' : ''}
  qux: () => qux
  });
 */
-const getExports = (contents: string): string[] => {
-  const lines = contents.split(/[\n\r/]/)
+const getExports = async (contents: string, file: string): Promise<string[]> => {
+  const lines = contents.split(/\r?\n/)
   const refs = []
   let r = false
   for (const line of lines) {
+    if (line.startsWith('__reExport(')) {
+      const ref = line.match(/require\("([^"]+)"\)/)?.[1] as string
+      const f = path.resolve(path.dirname(file), ref)
+      const c = await fs.readFile(f, 'utf-8')
+
+      refs.push(... (await getExports(c, f)))
+      continue
+    }
     if (line.startsWith('__export(')) {
       r = true
       continue
@@ -115,7 +123,7 @@ const getExports = (contents: string): string[] => {
       if (m) {
         refs.push(m)
       } else {
-        break
+        r = false
       }
     }
   }

@@ -2,7 +2,7 @@ import * as assert from 'node:assert'
 import * as path from 'node:path'
 import * as fs from 'node:fs/promises'
 import { describe, it } from 'node:test'
-import {fileURLToPath} from 'node:url'
+import { fileURLToPath } from 'node:url'
 
 import { type BuildOptions, build } from 'esbuild'
 import { hybridExportPlugin } from '../../main/ts'
@@ -12,10 +12,10 @@ const fixtures = path.resolve(__dirname, '../fixtures')
 const temp = path.resolve(__dirname, '../temp')
 
 describe('plugin()', () => {
-  it('generates esm reexport files', async () => {
-    const cwd = fixtures
+  it('generates esm files (mixed case)', async () => {
+    const cwd = path.resolve(fixtures, 'mixed-exports')
     const plugin = hybridExportPlugin({
-      to: '../temp/reexport',
+      to: '../../temp/mixed',
       toExt: '.mjs',
     })
     const config: BuildOptions = {
@@ -31,18 +31,18 @@ describe('plugin()', () => {
       format: 'cjs',
       legalComments: 'none',
       absWorkingDir: cwd,
-      outdir: temp,
+      outdir: path.resolve(temp, 'mixed'),
       allowOverwrite: true,
     }
 
     await build(config)
 
-    assert.equal(await fs.readFile(path.resolve(temp, 'reexport/index.mjs'), 'utf8'), `const {
+    assert.equal(await fs.readFile(path.resolve(temp, 'mixed/index.mjs'), 'utf8'), `const {
   bar,
   foo,
   qux,
   default: __default__
-} = require('../index.js')
+} = require('./index.js')
 export {
   bar,
   foo,
@@ -53,8 +53,51 @@ export default __default__
 )
   })
 
+  it('generates esm files (full reexport case)', async () => {
+    const cwd = path.resolve(fixtures, 'full-reexport')
+    const plugin = hybridExportPlugin({
+      to: '../../temp/reexport',
+      toExt: '.mjs',
+    })
+    const config: BuildOptions = {
+      entryPoints: [
+        'index.ts',
+        'foo.ts',
+        'baz.ts'
+      ],
+      plugins: [plugin],
+      platform: 'node',
+      bundle: false,
+      minify: false,
+      sourcemap: false,
+      format: 'cjs',
+      legalComments: 'none',
+      absWorkingDir: cwd,
+      outdir: path.resolve(temp, 'reexport'),
+      allowOverwrite: true,
+    }
+
+    await build(config)
+
+    assert.equal(await fs.readFile(path.resolve(temp, 'reexport/index.mjs'), 'utf8'), `const {
+  a,
+  baz,
+  bar,
+  foo,
+  default: __default__
+} = require('./index.js')
+export {
+  a,
+  baz,
+  bar,
+  foo
+}
+export default __default__
+`
+    )
+  })
+
   it('requires `format: cjs`', async () => {
-    const cwd = fixtures
     const plugin = hybridExportPlugin()
     const config: BuildOptions = {
       format: 'esm',
