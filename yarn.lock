@@ -2014,7 +2014,7 @@ __metadata:
     "@antongolub/infra": "workspace:*"
     "@types/node": "npm:^20.12.7"
     depseek: "workspace:*"
-    esbuild: "npm:>=0.20.2"
+    esbuild: "npm:>=0.19.0"
   peerDependencies:
     esbuild: ">=0.19.0"
   languageName: unknown
@@ -2023,6 +2023,18 @@ __metadata:
 "esbuild-plugin-hybrid-export@workspace:packages/esbuild/plugin-hybrid-export":
   version: 0.0.0-use.local
   resolution: "esbuild-plugin-hybrid-export@workspace:packages/esbuild/plugin-hybrid-export"
+  dependencies:
+    "@antongolub/infra": "workspace:*"
+    "@types/node": "npm:^20.12.7"
+    esbuild: "npm:>=0.20.2"
+  peerDependencies:
+    esbuild: ">=0.19.0"
+  languageName: unknown
+  linkType: soft
+
+"esbuild-plugin-transform-hook@workspace:packages/esbuild/plugin-transform-hook":
+  version: 0.0.0-use.local
+  resolution: "esbuild-plugin-transform-hook@workspace:packages/esbuild/plugin-transform-hook"
   dependencies:
     "@antongolub/infra": "workspace:*"
     "@types/node": "npm:^20.12.7"
