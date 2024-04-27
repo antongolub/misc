@@ -43,8 +43,6 @@ export const hybridExportPlugin = (options: Record<string, any> = {}): Plugin =>
         loader
       }
 
-      // console.log('to=', opts.to)
-
       build.onStart(() => {
         if (format !== 'cjs') {
           throw new Error('esbuild-plugin-hybrid-export requires `format: cjs`')
