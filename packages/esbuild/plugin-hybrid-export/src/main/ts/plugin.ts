@@ -119,7 +119,7 @@ const getExports = async (contents: string, file: string): Promise<string[]> => 
       continue
     }
     if (r) {
-      const m = line.match(/(\w+): \(\) => (\w+)/)?.[1]
+      const m = line.match(/^\s*([$\w]+):/)?.[1];
       if (m) {
         refs.push(m)
       } else {
