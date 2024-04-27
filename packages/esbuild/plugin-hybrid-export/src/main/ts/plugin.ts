@@ -9,17 +9,10 @@ type TOpts = {
   to: string
   toExt: string
   entryPoints: string[]
+  loader: string
 }
 
-type TPluginOpts = Partial<{
-  cwd: string
-  from: string
-  fromExt: string
-  to: string
-  toExt: string
-  entryPoints: string[]
-  ext: string
-}>
+type TPluginOpts = Partial<TOpts>
 
 export const hybridExportPlugin = (options: Record<string, any> = {}): Plugin => {
   return {
@@ -36,7 +29,8 @@ export const hybridExportPlugin = (options: Record<string, any> = {}): Plugin =>
         outExtension: {
           '.js': fromExt = '.js'
         } = {},
-        toExt = fromExt
+        toExt = fromExt,
+        loader = 'require'
       } = { ...options, ...build.initialOptions } as BuildOptions & TPluginOpts
       const entryPoints = normalizeEntryPoints(entries, cwd)
       const opts: TOpts = {
@@ -46,6 +40,7 @@ export const hybridExportPlugin = (options: Record<string, any> = {}): Plugin =>
         to: path.resolve(cwd, to),
         toExt,
         entryPoints,
+        loader
       }
 
       // console.log('to=', opts.to)
@@ -69,7 +64,7 @@ const onEnd = async (result: OnEndResult, opts: TOpts) => {
       const rel = _rel.startsWith('.') ? _rel : './' + _rel
       const raw = await fs.readFile(input, 'utf-8')
       const refs = await getExports(raw, input)
-      const contents = formatRefs(rel, refs)
+      const contents = formatRefs(rel, refs, opts.loader)
 
       await fs.mkdir(path.dirname(output), {recursive: true})
       await fs.writeFile(output, contents, 'utf-8')
@@ -78,13 +73,14 @@ const onEnd = async (result: OnEndResult, opts: TOpts) => {
 
 const renderList = (list: string[]) => list.map(r => '  ' + r).join(',\n')
 
-const formatRefs = (link: string, refs: string[]): string => {
+const formatRefs = (link: string, refs: string[], loader = 'require'): string => {
   const hasDefault = refs.includes('default')
   const _refs = refs.filter(r => r !== 'default')
+  const load = loader === 'require' ? 'require' : 'await import'
 
   return `const {
 ${renderList([..._refs, hasDefault ? 'default: __default__' : '',].filter(Boolean))}
-} = require('${link}')
+} = ${load}('${link}')
 export {
 ${renderList(_refs)}
 }
@@ -119,7 +115,7 @@ const getExports = async (contents: string, file: string): Promise<string[]> => 
       continue
     }
     if (r) {
-      const m = line.match(/^\s*([$\w]+):/)?.[1];
+      const m = line.match(/^\s*([\w$]+):/)?.[1];
       if (m) {
         refs.push(m)
       } else {

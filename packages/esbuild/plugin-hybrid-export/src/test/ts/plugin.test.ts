@@ -58,6 +58,7 @@ export default __default__
     const plugin = hybridExportPlugin({
       to: '../../temp/reexport',
       toExt: '.mjs',
+      loader: 'import'
     })
     const config: BuildOptions = {
       entryPoints: [
@@ -85,7 +86,7 @@ export default __default__
   bar,
   foo,
   default: __default__
-} = require('./index.js')
+} = await import('./index.js')
 export {
   a,
   baz,
