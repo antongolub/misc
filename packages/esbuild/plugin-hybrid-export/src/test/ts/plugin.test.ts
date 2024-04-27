@@ -80,7 +80,8 @@ export default __default__
 
     await build(config)
 
-    assert.equal(await fs.readFile(path.resolve(temp, 'reexport/index.mjs'), 'utf8'), `const {
+    assert.equal(await fs.readFile(path.resolve(temp, 'reexport/index.mjs'), 'utf8'), `#!/usr/bin/env node
+const {
   a,
   baz,
   bar,

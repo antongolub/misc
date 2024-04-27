@@ -64,7 +64,8 @@ const onEnd = async (result: OnEndResult, opts: TOpts) => {
       const rel = _rel.startsWith('.') ? _rel : './' + _rel
       const raw = await fs.readFile(input, 'utf-8')
       const refs = await getExports(raw, input)
-      const contents = formatRefs(rel, refs, opts.loader)
+      const shebang = raw.match(/^#!.+\n/)?.[0] || ''
+      const contents = shebang + formatRefs(rel, refs, opts.loader)
 
       await fs.mkdir(path.dirname(output), {recursive: true})
       await fs.writeFile(output, contents, 'utf-8')
