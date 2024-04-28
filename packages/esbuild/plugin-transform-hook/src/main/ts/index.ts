@@ -1,2 +1,2 @@
-export { hybridExportPlugin } from './plugin.ts'
-export { hybridExportPlugin as default } from './plugin.ts'
+export { transformHookPlugin } from './plugin.ts'
+export { transformHookPlugin as default } from './plugin.ts'

@@ -2,14 +2,15 @@ import path from 'node:path'
 import fs from 'node:fs/promises'
 import type {Plugin, BuildOptions, OnEndResult} from 'esbuild'
 
+type THook = {
+  pattern: string
+  transform: (contents: string) => string | Promise<string>
+  rename?: (file: string) => string | Promise<string>
+}
+
 type TOpts = {
   cwd: string
-  from: string
-  fromExt: string
-  to: string
-  toExt: string
-  entryPoints: string[]
-  loader: string
+  hooks: THook[]
 }
 
 type TPluginOpts = Partial<TOpts>
@@ -24,23 +25,12 @@ export const transformHookPlugin = (options: Record<string, any> = {}): Plugin =
         absWorkingDir = process.cwd(),
         cwd = absWorkingDir,
         outdir = cwd,
-        from = outdir,
-        to = from,
-        outExtension: {
-          '.js': fromExt = '.js'
-        } = {},
-        toExt = fromExt,
-        loader = 'require'
-      } = { ...options, ...build.initialOptions } as BuildOptions & TPluginOpts
+        hooks = []
+      } = { ...build.initialOptions, ...options } as BuildOptions & TPluginOpts
       const entryPoints = normalizeEntryPoints(entries, cwd)
       const opts: TOpts = {
         cwd,
-        from: path.resolve(cwd, from),
-        fromExt,
-        to: path.resolve(cwd, to),
-        toExt,
-        entryPoints,
-        loader
+        hooks
       }
 
       build.onStart(() => {
@@ -70,61 +60,6 @@ const onEnd = async (result: OnEndResult, opts: TOpts) => {
     }))
 }
 
-const renderList = (list: string[]) => list.map(r => '  ' + r).join(',\n')
-
-const formatRefs = (link: string, refs: string[], loader = 'require'): string => {
-  const hasDefault = refs.includes('default')
-  const _refs = refs.filter(r => r !== 'default')
-  const load = loader === 'require' ? 'require' : 'await import'
-
-  return `const {
-${renderList([..._refs, hasDefault ? 'default: __default__' : '',].filter(Boolean))}
-} = ${load}('${link}')
-export {
-${renderList(_refs)}
-}
-${hasDefault ? 'export default __default__' : ''}
-`
-}
-
-
-/**
- __export(fixtures_exports, {
- bar: () => bar,
- default: () => fixtures_default,
- foo: () => foo,
- qux: () => qux
- });
-*/
-const getExports = async (contents: string, file: string): Promise<string[]> => {
-  const lines = contents.split(/\r?\n/)
-  const refs = []
-  let r = false
-  for (const line of lines) {
-    if (line.startsWith('__reExport(')) {
-      const ref = line.match(/require\("([^"]+)"\)/)?.[1] as string
-      const f = path.resolve(path.dirname(file), ref)
-      const c = await fs.readFile(f, 'utf-8')
-
-      refs.push(... (await getExports(c, f)))
-      continue
-    }
-    if (line.startsWith('__export(')) {
-      r = true
-      continue
-    }
-    if (r) {
-      const m = line.match(/^\s*([\w$]+):/)?.[1];
-      if (m) {
-        refs.push(m)
-      } else {
-        r = false
-      }
-    }
-  }
-
-  return refs
-}
 
 const normalizeEntryPoints = (entryPoints: BuildOptions['entryPoints'], cwd: string): string[] =>
   Array.isArray(entryPoints) ? entryPoints.map<string>(e => path.resolve(cwd, e as string)): []
