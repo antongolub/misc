@@ -2014,7 +2014,7 @@ __metadata:
     "@antongolub/infra": "workspace:*"
     "@types/node": "npm:^20.12.7"
     depseek: "workspace:*"
-    esbuild: "npm:>=0.19.0"
+    esbuild: "npm:>=0.20.2"
   peerDependencies:
     esbuild: ">=0.19.0"
   languageName: unknown
