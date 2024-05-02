@@ -1,6 +1,9 @@
 # esbuild-plugin-transform-hook
 > Esbuild plugin to apply custom transformation hooks
 
+[![lcov](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fantongolub%2Fmisc%2Freleases%2Fdownload%2Flcov%2Flcov-sum.json&query=%24.scopes.packages_esbuild_plugin_transform_hook.max&label=lcov&color=brightgreen)](https://github.com/antongolub/misc/releases/download/lcov/lcov.info)
+[![npm](https://img.shields.io/npm/v/esbuild-plugin-transform-hook.svg?&color=white)](https://www.npmjs.com/package/esbuild-plugin-transform-hook)
+
 ## Status
 PoC
 
