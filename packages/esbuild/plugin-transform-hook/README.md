@@ -10,7 +10,7 @@ Esbuild and its plugins mostly focus on sources processing, but sometimes additi
 * Custom patches: [esbuild#3360](https://github.com/evanw/esbuild/issues/3360)
 * Dynamic banners: [esbuild#3291](https://github.com/evanw/esbuild/issues/3291)
 
-I think these features will be provided sooner or later, but for now we need a workaround to apply custom transforms.
+These features will be provided sooner or later, but for now we need a workaround to apply custom transforms.
 
 ## Usage
 ```ts
@@ -20,6 +20,7 @@ import { transformHookPlugin } from 'esbuild-plugin-transform-hook'
 const plugin = transformHookPlugin({
   hooks: [
     {
+      on: 'load', // or 'end'
       pattern: /\.ts$/,
       transform: (source) => {
         return source.replace(/console\.log/g, 'console.error')
