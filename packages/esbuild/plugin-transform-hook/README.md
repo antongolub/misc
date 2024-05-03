@@ -12,9 +12,9 @@ Esbuild and its plugins mostly focus on sources processing, but sometimes additi
 * Polyfill injects: [esbuild#2840](https://github.com/evanw/esbuild/issues/2840), [esbuild#3517](https://github.com/evanw/esbuild/issues/3517), [esbuild#3099](https://github.com/evanw/esbuild/issues/3099)
 * Custom patches: [esbuild#3360](https://github.com/evanw/esbuild/issues/3360)
 * Dynamic banners: [esbuild#3291](https://github.com/evanw/esbuild/issues/3291)
-* Importable helpers: [esbuild#1230](https://github.com/evanw/esbuild/issues/1230)
+* Importable helpers: [esbuild#1230](https://github.com/evanw/esbuild/issues/1230), [esbuild-plugin-extract-helpers](https://github.com/antongolub/misc/tree/master/packages/esbuild/plugin-extract-helpers)
 
-These features will be provided sooner or later, but for now we need a workaround to apply custom transforms.
+These features will be provided sooner or later, but for now we need a workaround to apply custom transforms.  
 
 ## Usage
 ```ts
