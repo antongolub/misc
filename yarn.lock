@@ -2041,6 +2041,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"esbuild-plugin-extract-helpers@workspace:packages/esbuild/plugin-extract-helpers":
+  version: 0.0.0-use.local
+  resolution: "esbuild-plugin-extract-helpers@workspace:packages/esbuild/plugin-extract-helpers"
+  dependencies:
+    "@antongolub/infra": "workspace:*"
+    "@types/node": "npm:^20.12.8"
+    esbuild: "npm:>=0.19.0"
+  peerDependencies:
+    esbuild: ">=0.19.0"
+  languageName: unknown
+  linkType: soft
+
 "esbuild-plugin-hybrid-export@workspace:packages/esbuild/plugin-hybrid-export":
   version: 0.0.0-use.local
   resolution: "esbuild-plugin-hybrid-export@workspace:packages/esbuild/plugin-hybrid-export"
