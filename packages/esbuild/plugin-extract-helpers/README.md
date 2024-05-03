@@ -1,6 +1,9 @@
 # esbuild-plugin-extract-helpers
 > Esbuild plugin to extract cjs helpers (like tslib)
 
+[![lcov](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fantongolub%2Fmisc%2Freleases%2Fdownload%2Flcov%2Flcov-sum.json&query=%24.scopes.packages_esbuild_plugin_extract_helpers.max&label=lcov&color=brightgreen)](https://github.com/antongolub/misc/releases/download/lcov/lcov.info)
+[![npm](https://img.shields.io/npm/v/esbuild-plugin-extract-helpers.svg?&color=white)](https://www.npmjs.com/package/esbuild-plugin-extract-helpers)
+
 ## Status
 PoC
 

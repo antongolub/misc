@@ -1,5 +1,5 @@
 {
-  "name": "esbuild-plugin-hybrid-export",
+  "name": "esbuild-plugin-extract-helpers",
   "extends": ["../../../../../infra/typedoc.json"],
   "entryPoints": ["../../../src/main/ts/"],
   "exclude": ["../../../src/test", "**/node_modules/**"],
