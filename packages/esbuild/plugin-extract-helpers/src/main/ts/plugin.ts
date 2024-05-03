@@ -1,7 +1,7 @@
 import path from 'node:path'
 import fs from 'node:fs/promises'
 import { Plugin, BuildOptions, BuildResult } from 'esbuild'
-import { THook, transformFile, writeFiles, TOutputFile, getOutputFiles } from 'esbuild-plugin-transform-hook'
+import { type THook, transformFile, writeFiles, TOutputFile, getOutputFiles } from 'esbuild-plugin-transform-hook'
 
 export type TOpts = {
   include: RegExp

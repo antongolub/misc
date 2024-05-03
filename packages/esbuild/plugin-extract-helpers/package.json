@@ -45,7 +45,7 @@
   },
   "homepage": "https://github.com/antongolub/misc#readme",
   "dependencies": {
-    "esbuild-plugin-transform-hook": "^0.0.0"
+    "esbuild-plugin-transform-hook": "workspace:*"
   },
   "peerDependencies": {
     "esbuild": ">=0.19.0"
