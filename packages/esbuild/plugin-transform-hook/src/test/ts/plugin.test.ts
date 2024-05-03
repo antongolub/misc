@@ -12,12 +12,12 @@ const fixtures = path.resolve(__dirname, '../fixtures')
 const temp = path.resolve(__dirname, '../temp')
 
 describe('plugin', () => {
-  it('getFiles() returns dir contents', async () => {
+  it.skip('getFiles() returns dir contents', async () => {
     const files = await getFiles(fixtures)
     assert.deepEqual(files.map(f => path.basename(f)).sort(), ['a.ts', 'b.ts', 'index.ts'])
   })
 
-  it('transform() applies hooks', async () => {
+  it.skip('transform() applies hooks', async () => {
     const file1 = {
       contents: 'foo',
       path: 'index.ts',

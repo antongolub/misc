@@ -83,7 +83,7 @@ export const onEnd = async (result: BuildResult, opts: TOpts) => {
     }
   }
 
-  const transformedFiles = (await Promise.all(outputFiles.map(async file => transformFile(file, [hook])))).filter(Boolean) as TOutputFile[]
+  const transformedFiles = (await Promise.all(outputFiles.map(async file => transformFile(file, [hook], opts.cwd)))).filter(Boolean) as TOutputFile[]
 
   await writeFiles(transformedFiles)
   await fs.writeFile(path.join(opts.cwd, opts.helper), formatHelpers(helpers), 'utf-8')

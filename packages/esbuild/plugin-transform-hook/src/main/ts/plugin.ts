@@ -1,4 +1,4 @@
-import path from 'node:path'
+import np from 'node:path'
 import fss from 'node:fs'
 import fs from 'node:fs/promises'
 import {Plugin, BuildOptions, OnLoadArgs, BuildResult, OutputFile} from 'esbuild'
@@ -28,7 +28,6 @@ export const transformHookPlugin = (options: Record<string, any> = {}): Plugin =
     name: 'transform-hook',
     setup(build) {
       const {
-        entryPoints: entries,
         absWorkingDir = process.cwd(),
         cwd = absWorkingDir,
         outdir,
@@ -47,9 +46,10 @@ export const transformHookPlugin = (options: Record<string, any> = {}): Plugin =
 }
 
 export const onEnd = async (result: BuildResult, opts: TOpts) => {
+  const cwd = opts.outdir || opts.cwd
   const hooks = opts.hooks.filter(h => h.on === 'end')
-  const outputFiles = await getOutputFiles(result.outputFiles, opts.cwd)
-  const transformedFiles = (await Promise.all(outputFiles.map(async file => transformFile(file, hooks)))).filter(Boolean) as TOutputFile[]
+  const outputFiles = await getOutputFiles(result.outputFiles, cwd)
+  const transformedFiles = (await Promise.all(outputFiles.map(async file => transformFile(file, hooks, cwd)))).filter(Boolean) as TOutputFile[]
 
   await writeFiles(transformedFiles)
 }
@@ -60,14 +60,14 @@ export const onLoad = async (args: OnLoadArgs, opts: TOpts) => {
     contents: await fs.readFile(args.path, 'utf-8')
   }
   const hooks = opts.hooks.filter(h => h.on === 'load')
-  const modified = await transformFile(file, hooks)
+  const modified = await transformFile(file, hooks, opts.cwd)
 
   if (modified) return { contents: modified.contents }
 }
 
 export const writeFiles = async (files: TOutputFile[]) => {
   await Promise.all(files.map(async file => {
-    await fs.mkdir(path.dirname(file.path), {recursive: true})
+    await fs.mkdir(np.dirname(file.path), {recursive: true})
     await fs.writeFile(file.path, file.contents, 'utf-8')
   }))
 }
@@ -87,13 +87,13 @@ export const readOutputs = async (cwd = process.cwd()): Promise<TOutputFile[]> =
   })))
 }
 
-export const transformFile = async (file: TOutputFile, hooks: THook[]): Promise<TOutputFile | undefined> => {
+export const transformFile = async (file: TOutputFile, hooks: THook[], cwd = process.cwd()): Promise<TOutputFile | undefined> => {
   let contents = file.contents
   let path = file.path
   for (const hook of hooks) {
     if (hook.pattern.test(file.path)) {
       contents = hook.transform ? await hook.transform(contents, file.path) : contents
-      path = hook.rename ? await hook.rename(path) : path
+      path = hook.rename ? np.resolve(cwd, await hook.rename(path)) : path
     }
   }
 
