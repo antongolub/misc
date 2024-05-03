@@ -62,7 +62,7 @@ export const onEnd = async (result: BuildResult, opts: TOpts) => {
       for (const line of lines) {
         if (ref) {
           helper += line + '\n'
-          if (line === '};') capture()
+          if (line.endsWith(';') && !line.startsWith(' ')) capture()
         } else {
           const match = helperRe.exec(line)
           if (match) {
