@@ -60,7 +60,7 @@ const onEnd = async (result: OnEndResult, opts: TOpts) => {
       const output = path.resolve(opts.to, e.replace(/\.\w+$/, opts.toExt))
       const _rel = path.relative(opts.to, input)
       const rel = _rel.startsWith('.') ? _rel : './' + _rel
-      const raw = await fs.readFile(input, 'utf-8')
+      const raw = (await fs.readFile(input, 'utf-8')).trim()
       const refs = await getExports(raw, input)
       const shebang = raw.match(/^#!.+\n/)?.[0] || ''
       const contents = shebang + formatRefs(rel, refs, opts.loader)

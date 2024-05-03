@@ -46,7 +46,7 @@ export const onEnd = async (result: BuildResult, opts: TOpts) => {
     pattern: opts.include,
     // eslint-disable-next-line sonarjs/cognitive-complexity
     transform(c, p) {
-      const lines = c.split(/\r?\n/)
+      const lines = c.trim().split(/\r?\n/)
       const output: string[] = []
       const helperPath = getRelativePath(opts.cwd, p, opts.helper)
       const capture = () => {
@@ -101,11 +101,14 @@ ${renderList([...helpers.keys()])}
 };
 `
 
-export const formatFile = (lines: string[], refs: string[], helperPath: string) => `const {
+export const formatFile = (lines: string[], refs: string[], helperPath: string) => {
+  const shebang = lines[0].startsWith('#') ? lines.shift() + '\n' : ''
+  return `${shebang}const {
 ${renderList(refs)}
 } = require('${helperPath}');
 
 ${lines.join('\n')}
 `
+}
 
 export const renderList = (list: string[], pad = '  ') => list.map(r => pad + r).join(',\n')
