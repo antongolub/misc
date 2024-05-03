@@ -70,7 +70,7 @@ const onEnd = async (result: OnEndResult, opts: TOpts) => {
     }))
 }
 
-const renderList = (list: string[]) => list.map(r => '  ' + r).join(',\n')
+const renderList = (list: string[], pad = '  ') => list.map(r => pad + r).join(',\n')
 
 const formatRefs = (link: string, refs: string[], loader = 'require'): string => {
   const hasDefault = refs.includes('default')
