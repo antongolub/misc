@@ -4,7 +4,15 @@ import * as fs from 'node:fs/promises'
 import { describe, it } from 'node:test'
 import { fileURLToPath } from 'node:url'
 
-import { readFiles, getFilesList, getOutputFiles, transformFile, writeFiles, TTransformHook } from '../../main/ts/utils'
+import {
+  renderList,
+  readFiles,
+  getFilesList,
+  getOutputFiles,
+  transformFile,
+  writeFiles,
+  TTransformHook
+} from '../../main/ts/utils'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const fixtures = path.resolve(__dirname, '../fixtures')
@@ -65,5 +73,11 @@ describe('utils', () => {
     await writeFiles(entries)
     const a = await fs.readFile(path.join(temp, 'a.ts'), 'utf8')
     assert.equal(a, 'export const a = \'a\'')
+  })
+
+  it('renderList() formats list line by line', () => {
+    const list = ['a', 'b', 'c']
+    const result = renderList(list)
+    assert.equal(result, '  a,\n  b,\n  c')
   })
 })
