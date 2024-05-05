@@ -9,6 +9,7 @@ import {
   writeFile,
   writeFiles,
   renderList,
+  resolveEntryPointsPaths,
 } from '../../main/ts'
 
 describe('utils', () => {
@@ -21,5 +22,6 @@ describe('utils', () => {
     assert.ok(writeFile)
     assert.ok(writeFiles)
     assert.ok(renderList)
+    assert.ok(resolveEntryPointsPaths)
   })
 })

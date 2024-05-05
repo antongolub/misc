@@ -11,6 +11,7 @@ import {
   getOutputFiles,
   transformFile,
   writeFiles,
+  resolveEntryPointsPaths,
   TTransformHook
 } from '../../main/ts/utils'
 
@@ -79,5 +80,15 @@ describe('utils', () => {
     const list = ['a', 'b', 'c']
     const result = renderList(list)
     assert.equal(result, '  a,\n  b,\n  c')
+  })
+
+  it('resolveEntryPointsPaths() returns absolute paths', () => {
+    const entryPoints = ['a.ts', 'b.ts']
+    const result = resolveEntryPointsPaths(entryPoints, fixtures)
+
+    assert.deepEqual(result, [
+      path.resolve(fixtures, 'a.ts'),
+      path.resolve(fixtures, 'b.ts'),
+    ])
   })
 })
