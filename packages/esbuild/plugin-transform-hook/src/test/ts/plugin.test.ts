@@ -5,49 +5,14 @@ import { describe, it } from 'node:test'
 import { fileURLToPath } from 'node:url'
 
 import { type BuildOptions, build } from 'esbuild'
-import { transformHookPlugin, getFiles, transformFile, THook } from '../../main/ts/plugin'
+import { transformHookPlugin, THook } from '../../main/ts/plugin'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const fixtures = path.resolve(__dirname, '../fixtures')
 const temp = path.resolve(__dirname, '../temp')
 
 describe('plugin', () => {
-  it.skip('getFiles() returns dir contents', async () => {
-    const files = await getFiles(fixtures)
-    assert.deepEqual(files.map(f => path.basename(f)).sort(), ['a.ts', 'b.ts', 'index.ts'])
-  })
-
-  it.skip('transform() applies hooks', async () => {
-    const file1 = {
-      contents: 'foo',
-      path: 'index.ts',
-    }
-    const file2 = {
-      contents: 'bar',
-      path: 'plugin.js',
-    }
-    const hooks: THook[] = [
-      {
-        pattern: /index/,
-        on: 'load',
-        transform: c => c.replace('foo', 'bar'),
-      },
-      {
-        pattern: /index/,
-        on: 'end',
-        rename() { return 'index.cjs' },
-      }
-    ]
-
-    const result1 = await transformFile(file1, hooks)
-    assert.equal(result1.contents, 'bar')
-    assert.equal(result1.path, 'index.cjs')
-
-    const result2 = await transformFile(file2, hooks)
-    assert.equal(result2, undefined)
-  })
-
-  it('applies hooks', async () => {
+  it('applies transformation hooks', async () => {
     const cwd = fixtures
     const plugin = transformHookPlugin({
       hooks: [{
