@@ -1,7 +1,15 @@
 import path from 'node:path'
 import fs from 'node:fs/promises'
 import { Plugin, BuildOptions, BuildResult } from 'esbuild'
-import { type TTransformHook, transformFile, writeFiles, TFileEntry, getOutputFiles, renderList } from 'esbuild-plugin-utils'
+import {
+  type TTransformHook,
+  type TFileEntry,
+  transformFile,
+  writeFiles,
+  getOutputFiles,
+  renderList,
+  parseContentsLayout
+} from 'esbuild-plugin-utils'
 
 export type TOpts = {
   include: RegExp
@@ -46,7 +54,8 @@ export const onEnd = async (result: BuildResult, opts: TOpts) => {
     pattern: opts.include,
     // eslint-disable-next-line sonarjs/cognitive-complexity
     transform(c, p) {
-      const lines = c.trim().split(/\r?\n/)
+      const { lines, header, body }  = parseContentsLayout(c.trim())
+      const headerSize = header ? header.split('\n').length : 0
       const output: string[] = []
       const helperPath = getRelativePath(opts.cwd, p, opts.helper)
       const capture = () => {
@@ -59,7 +68,7 @@ export const onEnd = async (result: BuildResult, opts: TOpts) => {
       let helper = ''
       let ref = ''
 
-      for (const line of lines) {
+      for (const line of lines.slice(headerSize)) {
         if (ref) {
           helper += line + '\n'
           if (line.endsWith(';') && !line.startsWith(' ')) capture()
@@ -79,7 +88,7 @@ export const onEnd = async (result: BuildResult, opts: TOpts) => {
       if (refs.length === 0) return c
 
       refs = refs.filter(r => output.some(l => l.includes(r)))
-      return formatFile(output, refs, helperPath)
+      return formatFile(header, output, refs, helperPath)
     }
   }
 
@@ -101,12 +110,16 @@ ${renderList([...helpers.keys()])}
 };
 `
 
-export const formatFile = (lines: string[], refs: string[], helperPath: string) => {
-  const shebang = lines[0].startsWith('#') ? lines.shift() + '\n' : ''
-  return `${shebang}const {
+export const formatFile = (header: string, lines: string[], refs: string[], helperPath: string) => {
+  const body = lines.join('\n')
+  const helpers = `const {
 ${renderList(refs)}
 } = require('${helperPath}');
-
-${lines.join('\n')}
 `
+
+  return [
+    header,
+    helpers,
+    body
+  ].filter(Boolean).join('\n')
 }

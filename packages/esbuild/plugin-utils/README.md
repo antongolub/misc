@@ -77,5 +77,20 @@ const list = renderList(['a', 'b'], '  ')
  */
 ```
 
+### parseContentsLayout
+Splits script contents into layout parts: header (shebang, use strict) and body.
+```ts
+const { header, body } = parseContentsLayout(`
+"use strict";
+console.log("Hello")
+`)
+
+// header 
+// "use strict";
+
+// body
+// console.log("Hello")
+```
+
 ## License
 [MIT](./LICENSE)

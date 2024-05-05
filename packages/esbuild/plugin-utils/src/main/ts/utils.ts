@@ -2,7 +2,6 @@ import np from 'node:path'
 import fss from 'node:fs'
 import fs from 'node:fs/promises'
 import type { OutputFile, BuildOptions } from 'esbuild'
-import path from "node:path";
 
 export type TTransformHook = {
   pattern: RegExp
@@ -70,6 +69,26 @@ export const getFilesList = async (dir: string, recursive = true, files: string[
 }
 
 export const resolveEntryPointsPaths = (entryPoints: BuildOptions['entryPoints'], cwd: string): string[] =>
-  Array.isArray(entryPoints) ? entryPoints.map<string>(e => path.resolve(cwd, e as string)): []
+  Array.isArray(entryPoints) ? entryPoints.map<string>(e => np.resolve(cwd, e as string)): []
 
 export const renderList = (list: string[], pad = '  ') => list.map(r => pad + r).join(',\n')
+
+export const parseContentsLayout = (contents: string) => {
+  const lines = contents.split(/\r?\n/)
+  const header: string[] = []
+  const body: string[] = []
+
+  for (const line of lines) {
+    if (line.startsWith('#') || line.startsWith(`'use strict'`) || line.startsWith(`"use strict"`)) {
+      header.push(line)
+    } else {
+      body.push(line)
+    }
+  }
+
+  return {
+    lines,
+    header: header.join('\n'),
+    body: body.join('\n')
+  }
+}

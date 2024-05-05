@@ -1,7 +1,7 @@
 import path from 'node:path'
 import fs from 'node:fs/promises'
 import type {Plugin, BuildOptions, OnEndResult} from 'esbuild'
-import { resolveEntryPointsPaths, renderList } from 'esbuild-plugin-utils'
+import { resolveEntryPointsPaths, renderList, parseContentsLayout } from 'esbuild-plugin-utils'
 
 type TOpts = {
   cwd: string
@@ -63,8 +63,8 @@ const onEnd = async (result: OnEndResult, opts: TOpts) => {
       const rel = _rel.startsWith('.') ? _rel : './' + _rel
       const raw = (await fs.readFile(input, 'utf-8')).trim()
       const refs = await getExports(raw, input)
-      const shebang = raw.match(/^#!.+\n/)?.[0] || ''
-      const contents = shebang + formatRefs(rel, refs, opts.loader)
+      const { header } = parseContentsLayout(raw)
+      const contents = [header, formatRefs(rel, refs, opts.loader)].filter(Boolean).join('\n')
 
       await fs.mkdir(path.dirname(output), {recursive: true})
       await fs.writeFile(output, contents, 'utf-8')
@@ -96,7 +96,7 @@ ${hasDefault ? 'export default __default__' : ''}
  });
 */
 const getExports = async (contents: string, file: string): Promise<string[]> => {
-  const lines = contents.split(/\r?\n/)
+  const { lines } = parseContentsLayout(contents)
   const refs = []
   let r = false
   for (const line of lines) {

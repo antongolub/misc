@@ -12,6 +12,7 @@ import {
   transformFile,
   writeFiles,
   resolveEntryPointsPaths,
+  parseContentsLayout,
   TTransformHook
 } from '../../main/ts/utils'
 
@@ -90,5 +91,20 @@ describe('utils', () => {
       path.resolve(fixtures, 'a.ts'),
       path.resolve(fixtures, 'b.ts'),
     ])
+  })
+
+  it('parseContentsLayout() extracts header and body of a given script', () => {
+    const contents = `#!/usr/bin/env node
+'use strict';
+
+const foo = 'foo';
+`
+    const layout = parseContentsLayout(contents)
+
+    assert.equal(layout.lines.length, 5)
+    assert.equal(layout.header, `#!/usr/bin/env node\n'use strict';`)
+    assert.equal(layout.body, `
+const foo = 'foo';
+`)
   })
 })
