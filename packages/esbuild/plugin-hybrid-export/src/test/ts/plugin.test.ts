@@ -37,7 +37,8 @@ describe('plugin()', () => {
 
     await build(config)
 
-    assert.equal(await fs.readFile(path.resolve(temp, 'mixed/index.mjs'), 'utf8'), `const {
+    assert.equal(await fs.readFile(path.resolve(temp, 'mixed/index.mjs'), 'utf8'), `"use strict";
+const {
   bar,
   foo,
   qux,
@@ -81,6 +82,7 @@ export default __default__
     await build(config)
 
     assert.equal(await fs.readFile(path.resolve(temp, 'reexport/index.mjs'), 'utf8'), `#!/usr/bin/env node
+"use strict";
 const {
   a,
   baz,
