@@ -5,7 +5,12 @@ import {topo} from '@semrel-extra/topo'
 import {gitRoot} from '@antongolub/git-root'
 
 const root = await gitRoot()
-const {packages} = await topo({cwd: root})
+const ignore = ['esbuild-plugin-utils']
+const {packages} = await topo({
+  cwd: root,
+  filter({manifest}) {
+    return !manifest.private && !ignore.includes(manifest.name)
+  }})
 const readmes = Object.fromEntries((await Promise.all([
     ['root', {relPath: '.'}],
     ...Object.entries(packages)
