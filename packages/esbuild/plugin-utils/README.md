@@ -78,18 +78,16 @@ const list = renderList(['a', 'b'], '  ')
 ```
 
 ### parseContentsLayout
-Splits script contents into layout parts: header (shebang, use strict) and body.
+Splits script contents into layout parts: header (shebang, use strict directive) and body.
 ```ts
-const { header, body } = parseContentsLayout(`
+const { header, body, lines } = parseContentsLayout(`
 "use strict";
 console.log("Hello")
 `)
 
-// header 
-// "use strict";
-
-// body
-// console.log("Hello")
+// header: "use strict";
+// body: console.log("Hello")\n
+// lines: ['"use strict";', 'console.log("Hello")', '']
 ```
 
 ## License
