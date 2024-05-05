@@ -1,7 +1,8 @@
 import np from 'node:path'
 import fss from 'node:fs'
 import fs from 'node:fs/promises'
-import { type OutputFile } from 'esbuild'
+import type { OutputFile, BuildOptions } from 'esbuild'
+import path from "node:path";
 
 export type TTransformHook = {
   pattern: RegExp
@@ -67,5 +68,8 @@ export const getFilesList = async (dir: string, recursive = true, files: string[
   }
   return files
 }
+
+export const resolveEntryPointsPaths = (entryPoints: BuildOptions['entryPoints'], cwd: string): string[] =>
+  Array.isArray(entryPoints) ? entryPoints.map<string>(e => path.resolve(cwd, e as string)): []
 
 export const renderList = (list: string[], pad = '  ') => list.map(r => pad + r).join(',\n')

@@ -59,5 +59,23 @@ const entry = await transformFile(
 )
 ```
 
+### resolveEntryPointsPaths
+Resolves entry points paths to absolute paths.
+```ts
+const paths = resolveEntryPointsPaths(['file1', 'file2'], process.cwd()) // string[]
+```
+
+### renderList
+Formats a comma-separated list line by line.
+```ts
+const list = renderList(['a', 'b'], '  ')
+/**
+
+  a,
+  b
+
+ */
+```
+
 ## License
 [MIT](./LICENSE)
