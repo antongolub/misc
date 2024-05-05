@@ -2078,6 +2078,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"esbuild-plugin-utils@workspace:packages/esbuild/plugin-utils":
+  version: 0.0.0-use.local
+  resolution: "esbuild-plugin-utils@workspace:packages/esbuild/plugin-utils"
+  dependencies:
+    "@antongolub/infra": "workspace:*"
+    "@types/node": "npm:^20.12.8"
+    esbuild: "npm:>=0.19.0"
+  peerDependencies:
+    esbuild: ">=0.19.0"
+  languageName: unknown
+  linkType: soft
+
 "esbuild@npm:>=0.19.0":
   version: 0.20.1
   resolution: "esbuild@npm:0.20.1"
