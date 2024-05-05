@@ -67,3 +67,5 @@ export const getFilesList = async (dir: string, recursive = true, files: string[
   }
   return files
 }
+
+export const renderList = (list: string[], pad = '  ') => list.map(r => pad + r).join(',\n')

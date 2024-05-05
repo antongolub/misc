@@ -8,6 +8,7 @@ import {
   transformFile,
   writeFile,
   writeFiles,
+  renderList,
 } from '../../main/ts'
 
 describe('utils', () => {
@@ -19,5 +20,6 @@ describe('utils', () => {
     assert.ok(transformFile)
     assert.ok(writeFile)
     assert.ok(writeFiles)
+    assert.ok(renderList)
   })
 })
