@@ -1,7 +1,7 @@
 {
   "name": "esbuild-plugin-utils",
   "version": "0.0.0",
-  "description": "Helpers to build esbuild plugins",
+  "description": "Common utils for esbuild plugins",
   "type": "module",
   "main": "target/cjs/index.cjs",
   "exports": {
