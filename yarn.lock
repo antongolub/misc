@@ -2036,6 +2036,7 @@ __metadata:
     "@types/node": "npm:^20.12.8"
     depseek: "workspace:*"
     esbuild: "npm:>=0.20.2"
+    esbuild-plugin-utils: "workspace:*"
   peerDependencies:
     esbuild: ">=0.19.0"
   languageName: unknown
@@ -2049,6 +2050,7 @@ __metadata:
     "@types/node": "npm:^20.12.8"
     esbuild: "npm:>=0.19.0"
     esbuild-plugin-transform-hook: "workspace:*"
+    esbuild-plugin-utils: "workspace:*"
   peerDependencies:
     esbuild: ">=0.19.0"
   languageName: unknown
@@ -2061,6 +2063,7 @@ __metadata:
     "@antongolub/infra": "workspace:*"
     "@types/node": "npm:^20.12.8"
     esbuild: "npm:>=0.20.2"
+    esbuild-plugin-utils: "workspace:*"
   peerDependencies:
     esbuild: ">=0.19.0"
   languageName: unknown
@@ -2073,12 +2076,13 @@ __metadata:
     "@antongolub/infra": "workspace:*"
     "@types/node": "npm:^20.12.8"
     esbuild: "npm:>=0.19.0"
+    esbuild-plugin-utils: "workspace:*"
   peerDependencies:
     esbuild: ">=0.19.0"
   languageName: unknown
   linkType: soft
 
-"esbuild-plugin-utils@workspace:packages/esbuild/plugin-utils":
+"esbuild-plugin-utils@workspace:*, esbuild-plugin-utils@workspace:packages/esbuild/plugin-utils":
   version: 0.0.0-use.local
   resolution: "esbuild-plugin-utils@workspace:packages/esbuild/plugin-utils"
   dependencies:

@@ -1,6 +1,7 @@
 import path from 'node:path'
 import fs from 'node:fs/promises'
 import type {Plugin, BuildOptions, OnEndResult} from 'esbuild'
+import { resolveEntryPointsPaths, renderList } from 'esbuild-plugin-utils'
 
 type TOpts = {
   cwd: string
@@ -32,7 +33,7 @@ export const hybridExportPlugin = (options: Record<string, any> = {}): Plugin =>
         toExt = fromExt,
         loader = 'require'
       } = { ...options, ...build.initialOptions } as BuildOptions & TPluginOpts
-      const entryPoints = normalizeEntryPoints(entries, cwd)
+      const entryPoints = resolveEntryPointsPaths(entries, cwd)
       const opts: TOpts = {
         cwd,
         from: path.resolve(cwd, from),
@@ -69,8 +70,6 @@ const onEnd = async (result: OnEndResult, opts: TOpts) => {
       await fs.writeFile(output, contents, 'utf-8')
     }))
 }
-
-const renderList = (list: string[], pad = '  ') => list.map(r => pad + r).join(',\n')
 
 const formatRefs = (link: string, refs: string[], loader = 'require'): string => {
   const hasDefault = refs.includes('default')
@@ -125,9 +124,6 @@ const getExports = async (contents: string, file: string): Promise<string[]> => 
 
   return refs
 }
-
-const normalizeEntryPoints = (entryPoints: BuildOptions['entryPoints'], cwd: string): string[] =>
-  Array.isArray(entryPoints) ? entryPoints.map<string>(e => path.resolve(cwd, e as string)): []
 
 const trimCommonPrefix = (files: string[]): string[] =>
   files.length === 1

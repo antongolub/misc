@@ -44,6 +44,9 @@
     "url": "https://github.com/antongolub/misc/issues"
   },
   "homepage": "https://github.com/antongolub/misc#readme",
+  "dependencies": {
+    "esbuild-plugin-utils": "workspace:*"
+  },
   "peerDependencies": {
     "esbuild": ">=0.19.0"
   },

@@ -1,7 +1,8 @@
 import path from 'node:path'
 import fs from 'node:fs'
-import type {OnLoadArgs, OnResolveArgs, OnLoadResult, Plugin, OnResolveResult, BuildOptions} from 'esbuild'
 import {depseekSync} from 'depseek'
+import type {OnLoadArgs, OnResolveArgs, OnLoadResult, Plugin, OnResolveResult, BuildOptions} from 'esbuild'
+import { resolveEntryPointsPaths } from 'esbuild-plugin-utils'
 
 type TOpts = {
   cwd: string
@@ -23,7 +24,7 @@ export const entryChunksPlugin = (options: Record<string, any> = {}): Plugin => 
           '.js': ext = '.js'} = {}
       } = build.initialOptions
       const cwd = absWorkingDir || process.cwd()
-      const entryPoints = normalizeEntryPoints(entries, cwd)
+      const entryPoints = resolveEntryPointsPaths(entries, cwd)
       const opts: TOpts = {
         cwd,
         entryPoints,
@@ -82,6 +83,3 @@ const trimExt = (value: string) => {
   const {dir, name} = path.parse(value)
   return path.join(dir, name)
 }
-
-const normalizeEntryPoints = (entryPoints: BuildOptions['entryPoints'], cwd: string): string[] =>
-  Array.isArray(entryPoints) ? entryPoints.map<string>(e => path.resolve(cwd, e as string)): []

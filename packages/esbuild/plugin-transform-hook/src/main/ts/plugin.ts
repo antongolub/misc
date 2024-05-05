@@ -2,6 +2,7 @@ import np from 'node:path'
 import fss from 'node:fs'
 import fs from 'node:fs/promises'
 import {Plugin, BuildOptions, OnLoadArgs, BuildResult, OutputFile} from 'esbuild'
+import { writeFiles, getOutputFiles, transformFile } from 'esbuild-plugin-utils'
 
 export type THook = {
   pattern: RegExp
@@ -63,54 +64,4 @@ export const onLoad = async (args: OnLoadArgs, opts: TOpts) => {
   const modified = await transformFile(file, hooks, opts.cwd)
 
   if (modified) return { contents: modified.contents }
-}
-
-export const writeFiles = async (files: TOutputFile[]) => {
-  await Promise.all(files.map(async file => {
-    await fs.mkdir(np.dirname(file.path), {recursive: true})
-    await fs.writeFile(file.path, file.contents, 'utf-8')
-  }))
-}
-
-export const getOutputFiles = async (files?: OutputFile[], cwd?: string) =>
-  files?.map(e => ({path: e.path, contents: e.text})) ||
-  cwd
-    ? await readOutputs(cwd)
-    : []
-
-export const readOutputs = async (cwd = process.cwd()): Promise<TOutputFile[]> => {
-  const files = await getFiles(cwd)
-
-  return Promise.all(files.map(async file => ({
-    path: file,
-    contents: await fs.readFile(file, 'utf-8')
-  })))
-}
-
-export const transformFile = async (file: TOutputFile, hooks: THook[], cwd = process.cwd()): Promise<TOutputFile | undefined> => {
-  let contents = file.contents
-  let path = file.path
-  for (const hook of hooks) {
-    if (hook.pattern.test(file.path)) {
-      contents = hook.transform ? await hook.transform(contents, file.path) : contents
-      path = hook.rename ? np.resolve(cwd, await hook.rename(path)) : path
-    }
-  }
-
-  if (file.path !== path || file.contents !== contents) {
-    return {contents, path}
-  }
-}
-
-export const getFiles = async (dir: string, files: string[] = []) => {
-  if (dir.endsWith('node_modules')) return files
-  for (const file of await fs.readdir(dir)) {
-    const name = `${dir}/${file}`
-    if (fss.statSync(name).isDirectory()) {
-      await getFiles(name, files)
-    } else {
-      files.push(name)
-    }
-  }
-  return files
 }

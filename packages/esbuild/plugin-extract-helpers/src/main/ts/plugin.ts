@@ -1,7 +1,7 @@
 import path from 'node:path'
 import fs from 'node:fs/promises'
 import { Plugin, BuildOptions, BuildResult } from 'esbuild'
-import { type THook, transformFile, writeFiles, TOutputFile, getOutputFiles } from 'esbuild-plugin-transform-hook'
+import { type TTransformHook, transformFile, writeFiles, TFileEntry, getOutputFiles, renderList } from 'esbuild-plugin-utils'
 
 export type TOpts = {
   include: RegExp
@@ -41,7 +41,7 @@ export const onEnd = async (result: BuildResult, opts: TOpts) => {
   const outputFiles = await getOutputFiles(result.outputFiles, opts.cwd)
   const helpers = new Map<string, string>()
   const helperRe = /^var (__\w+) = /
-  const hook: THook = {
+  const hook: TTransformHook = {
     on: 'end',
     pattern: opts.include,
     // eslint-disable-next-line sonarjs/cognitive-complexity
@@ -83,7 +83,7 @@ export const onEnd = async (result: BuildResult, opts: TOpts) => {
     }
   }
 
-  const transformedFiles = (await Promise.all(outputFiles.map(async file => transformFile(file, [hook], opts.cwd)))).filter(Boolean) as TOutputFile[]
+  const transformedFiles = (await Promise.all(outputFiles.map(async file => transformFile(file, [hook], opts.cwd)))).filter(Boolean) as TFileEntry[]
 
   await writeFiles(transformedFiles)
   await fs.writeFile(path.join(opts.cwd, opts.helper), formatHelpers(helpers), 'utf-8')
@@ -110,5 +110,3 @@ ${renderList(refs)}
 ${lines.join('\n')}
 `
 }
-
-export const renderList = (list: string[], pad = '  ') => list.map(r => pad + r).join(',\n')
