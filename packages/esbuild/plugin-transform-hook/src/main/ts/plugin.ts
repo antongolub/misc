@@ -1,12 +1,11 @@
-import np from 'node:path'
-import fss from 'node:fs'
 import fs from 'node:fs/promises'
-import {Plugin, BuildOptions, OnLoadArgs, BuildResult, OutputFile} from 'esbuild'
+import { Plugin, BuildOptions, OnLoadArgs, BuildResult } from 'esbuild'
 import { writeFiles, getOutputFiles, transformFile } from 'esbuild-plugin-utils'
 
 export type THook = {
   pattern: RegExp
   on: 'load' | 'end'
+  if?: boolean
   transform?: (contents: string, path: string) => string | Promise<string>
   rename?: (file: string) => string | Promise<string>
 }
@@ -32,7 +31,7 @@ export const transformHookPlugin = (options: Record<string, any> = {}): Plugin =
         absWorkingDir = process.cwd(),
         cwd = absWorkingDir,
         outdir,
-        hooks = []
+        hooks = [],
       } = { ...build.initialOptions, ...options } as BuildOptions & TPluginOpts
       const opts: TOpts = {
         cwd,
@@ -48,7 +47,7 @@ export const transformHookPlugin = (options: Record<string, any> = {}): Plugin =
 
 export const onEnd = async (result: BuildResult, opts: TOpts) => {
   const cwd = opts.outdir || opts.cwd
-  const hooks = opts.hooks.filter(h => h.on === 'end')
+  const hooks = opts.hooks.filter(h => h.on === 'end' && (h.if ?? true))
   const outputFiles = await getOutputFiles(result.outputFiles, cwd)
   const transformedFiles = (await Promise.all(outputFiles.map(async file => transformFile(file, hooks, cwd)))).filter(Boolean) as TOutputFile[]
 
@@ -60,7 +59,7 @@ export const onLoad = async (args: OnLoadArgs, opts: TOpts) => {
     path: args.path,
     contents: await fs.readFile(args.path, 'utf-8')
   }
-  const hooks = opts.hooks.filter(h => h.on === 'load')
+  const hooks = opts.hooks.filter(h => h.on === 'load' && (h.if ?? true))
   const modified = await transformFile(file, hooks, opts.cwd)
 
   if (modified) return { contents: modified.contents }

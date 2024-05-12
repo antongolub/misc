@@ -5,7 +5,7 @@ import { describe, it } from 'node:test'
 import { fileURLToPath } from 'node:url'
 
 import { type BuildOptions, build } from 'esbuild'
-import { transformHookPlugin, THook } from '../../main/ts/plugin'
+import { transformHookPlugin } from '../../main/ts/plugin'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const fixtures = path.resolve(__dirname, '../fixtures')
