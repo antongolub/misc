@@ -92,3 +92,19 @@ export const parseContentsLayout = (contents: string) => {
     body: body.join('\n')
   }
 }
+
+export const injectFile = (contents: string, ...files: string[]) => {
+  const blocks = files.map(file => fss.readFileSync(file, 'utf8'))
+  return injectCode(contents, ...blocks)
+}
+
+export const injectCode = (contents: string, ...blocks: string[]) => {
+  const { header, body } = parseContentsLayout(contents)
+  return [
+    header,
+    ...blocks,
+    body,
+  ]
+    .filter(Boolean)
+    .join('\n')
+}
