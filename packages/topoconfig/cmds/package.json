@@ -46,7 +46,7 @@
   "homepage": "https://github.com/antongolub/misc/tree/master/packages/topoconfig/cmds",
   "dependencies": {
     "@topoconfig/extends": "workspace:*",
-    "ajv": "^8.13.0",
+    "ajv": "^8.14.0",
     "ajv-formats": "^3.0.1",
     "app-root-path": "^3.1.0",
     "conf": "^12.0.0",
@@ -64,6 +64,6 @@
     "@types/ip": "^1.1.3",
     "@types/js-yaml": "^4.0.9",
     "@types/minimist": "^1.2.5",
-    "@types/node": "^20.12.8"
+    "@types/node": "^20.12.12"
   }
 }
