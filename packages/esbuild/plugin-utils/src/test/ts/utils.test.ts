@@ -13,6 +13,8 @@ import {
   writeFiles,
   resolveEntryPointsPaths,
   parseContentsLayout,
+  injectCode,
+  injectFile,
   TTransformHook
 } from '../../main/ts/utils'
 
@@ -106,5 +108,26 @@ const foo = 'foo';
     assert.equal(layout.body, `
 const foo = 'foo';
 `)
+  })
+
+  it('injectCode() injects code into a given script', () => {
+    const contents = `#!/usr/bin/env node
+console.log('test')`
+    const extra = `console.log('extra')`
+    const result = injectCode(contents, extra)
+    const expected = `#!/usr/bin/env node
+console.log('extra')
+console.log('test')`
+
+    assert.equal(result, expected)
+  })
+
+  it('injectFile() injects file contents into a given script', () => {
+    const contents = `'use strict';`
+    const file = path.resolve(fixtures, 'a.ts')
+    const result = injectFile(contents, file)
+    const expected = `'use strict';\nexport const a = 'a'\n`
+
+    assert.equal(result, expected)
   })
 })
