@@ -12,27 +12,21 @@ export type TPluginOpts = {
   hooks?: THook[]
 }
 
-export const transformExtPlugin = (options: TPluginOpts = {}): Plugin => {
+export const transformExtPlugin = (options: TPluginOpts = {}): Plugin => ({
+  name: 'transform-ext',
+  setup(build) {
+    const hooks = (options.hooks || []).map(hook => ({
+      pattern: hook.pattern || /./,
+      on: 'end',
+      transform: (contents: string) => transformLocalRefExt(contents, hook.map || build.initialOptions.outExtension),
+    }))
 
-
-  return {
-    name: 'transform-ext',
-    setup(build) {
-      console.log('!!!', build.initialOptions.outExtension)
-      const hooks = (options.hooks || []).map(hook => ({
-        pattern: hook.pattern || /./,
-        on: 'end',
-        transform: (contents: string) => transformLocalRefExt(contents, hook.map || build.initialOptions.outExtension),
-      }))
-
-      return transformHookPlugin({
-        ...options,
-        hooks
-      }).setup(build)
-    }
+    return transformHookPlugin({
+      ...options,
+      hooks
+    }).setup(build)
   }
-
-}
+})
 
 export const transformLocalRefExt = async (contents: string, map: Record<string, string> = {}) =>
   patchRefs(contents, ref => {
