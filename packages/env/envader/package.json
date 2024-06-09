@@ -46,6 +46,6 @@
   "homepage": "https://github.com/antongolub/misc#readme",
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
-    "@types/node": "^20.12.12"
+    "@types/node": "^20.14.2"
   }
 }
