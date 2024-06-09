@@ -2220,7 +2220,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"esbuild-plugin-transform-hook@workspace:packages/esbuild/plugin-transform-hook":
+"esbuild-plugin-transform-ext@workspace:packages/esbuild/plugin-transform-ext":
+  version: 0.0.0-use.local
+  resolution: "esbuild-plugin-transform-ext@workspace:packages/esbuild/plugin-transform-ext"
+  dependencies:
+    "@antongolub/infra": "workspace:*"
+    "@types/node": "npm:^20.12.12"
+    depseek: "workspace:*"
+    esbuild: "npm:>=0.19.0"
+    esbuild-plugin-transform-hook: "workspace:*"
+  peerDependencies:
+    esbuild: ">=0.19.0"
+  languageName: unknown
+  linkType: soft
+
+"esbuild-plugin-transform-hook@workspace:*, esbuild-plugin-transform-hook@workspace:packages/esbuild/plugin-transform-hook":
   version: 0.0.0-use.local
   resolution: "esbuild-plugin-transform-hook@workspace:packages/esbuild/plugin-transform-hook"
   dependencies:
