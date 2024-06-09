@@ -22,7 +22,7 @@ export const transformExtPlugin = (options: TPluginOpts = {}): Plugin => {
       const hooks = (options.hooks || []).map(hook => ({
         pattern: hook.pattern || /./,
         on: 'end',
-        transform: (contents: string) => transformLocalRefExt(contents, hook.map || build.initialOptions.outExtension || {}),
+        transform: (contents: string) => transformLocalRefExt(contents, hook.map || build.initialOptions.outExtension),
       }))
 
       return transformHookPlugin({
@@ -34,7 +34,7 @@ export const transformExtPlugin = (options: TPluginOpts = {}): Plugin => {
 
 }
 
-export const transformLocalRefExt = async (contents: string, map: THook['map']) =>
+export const transformLocalRefExt = async (contents: string, map: Record<string, string> = {}) =>
   patchRefs(contents, ref => {
     if (ref.startsWith('.')) {
       const ext = path.extname(ref)
