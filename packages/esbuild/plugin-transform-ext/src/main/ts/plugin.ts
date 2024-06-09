@@ -15,7 +15,7 @@ export type TPluginOpts = {
 export const transformExtPlugin = (options: TPluginOpts = {}): Plugin => ({
   name: 'transform-ext',
   setup(build) {
-    const hooks = (options.hooks || []).map(hook => ({
+    const hooks = (options.hooks || [{}]).map(hook => ({
       pattern: hook.pattern || /./,
       on: 'end',
       transform: (contents: string) => transformLocalRefExt(contents, hook.map || build.initialOptions.outExtension),
