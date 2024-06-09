@@ -1,9 +1,15 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { foo } from '../../main/ts'
+import plugin, { transformExtPlugin } from '../../main/ts'
 
-describe('foo()', () => {
-  it('is callable', () => {
-    assert.equal(foo(), undefined)
+describe('transformHookPlugin()', () => {
+  it('has default export', () => {
+    assert.equal(plugin, transformExtPlugin)
+  })
+
+  it('is a plugin factory', () => {
+    const plugin = transformExtPlugin()
+    assert.equal(plugin.name, 'transform-ext')
+    assert.equal(typeof plugin.setup, 'function')
   })
 })

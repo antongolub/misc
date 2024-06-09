@@ -10,22 +10,24 @@ But it [lacks the ability](https://github.com/evanw/esbuild/issues/2600) to tran
 import { build, BuildOptions } from 'esbuild'
 import { transformExtPlugin } from 'esbuild-plugin-transform-ext'
 
-const plugin = transformExtPlugin([
-  {
-    pattern: /\.cjs$/, // if not specified, the plugin will apply to all files
-    map: {
-      '': '.cjs',
-      '.js': '.cjs',
+const plugin = transformExtPlugin({
+  cwd: 'target/mjs', // defaults to build.initialOptions.absWorkingDir || process.cwd()
+  rules: [
+    {
+      pattern: /\.cjs$/, // if not specified, the plugin will apply to all files
+      map: { // defautls to build.initialOptions.outExtension
+        '': '.cjs',
+        '.js': '.cjs',
+      }
+    },
+    {
+      pattern: /\.mjs$/,
+      map: {
+        '.js': '.mjs',
+      }
     }
-  },
-  {
-    pattern: /\.mjs$/,
-    cwd: 'target/mjs', // defaults to buildOptions.outdir || process.cwd()
-    map: {
-      '.js': '.mjs',
-    }
-  }
-])
+  ]
+})
 
 const config: BuildOptions = {
   entryPoints: ['index.ts'],

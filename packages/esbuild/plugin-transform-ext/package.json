@@ -2,7 +2,6 @@
   "name": "esbuild-plugin-transform-ext",
   "version": "0.0.0",
   "description": "Esbuild plugin for changing file extensions in output",
-  "private": true,
   "type": "module",
   "main": "target/cjs/index.cjs",
   "exports": {
