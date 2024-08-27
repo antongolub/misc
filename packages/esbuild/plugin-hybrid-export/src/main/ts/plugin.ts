@@ -122,7 +122,7 @@ const getExports = async (contents: string, file: string): Promise<string[]> => 
     }
   }
 
-  return refs
+  return [...new Set(refs)]
 }
 
 const trimCommonPrefix = (files: string[]): string[] =>
