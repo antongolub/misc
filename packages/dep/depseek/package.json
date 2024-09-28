@@ -47,7 +47,7 @@
   "homepage": "https://github.com/antongolub/misc/tree/master/packages/dep/depseek",
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
-    "@types/node": "^20.14.2",
+    "@types/node": "^22.7.4",
     "benchmark": "^2.1.4",
     "deps-regex": "^0.2.0",
     "esprima": "^4.0.1"

@@ -22,20 +22,20 @@
     "bulk:topobuild": "cd $INIT_CWD && zx-bulk-release --dry-run --include-private --ignore=@antongolub/infra,@antongolub/blank,@fixtures/config-with-extends"
   },
   "devDependencies": {
-    "@antongolub/git-root": "^1.5.13",
+    "@antongolub/git-root": "^1.5.14",
     "@semrel-extra/topo": "^1.14.1",
-    "@types/node": "^20.14.2",
+    "@types/node": "^22.7.4",
     "c8": "^10.1.2",
-    "concurrently": "^8.2.2",
-    "esbuild": "^0.21.5",
-    "esbuild-node-externals": "^1.13.1",
+    "concurrently": "^9.0.1",
+    "esbuild": "^0.24.0",
+    "esbuild-node-externals": "^1.15.0",
     "eslint": "^8.57.0",
     "eslint-config-qiwi": "^2.1.3",
     "fast-glob": "^3.3.2",
-    "oxlint": "^0.4.3",
+    "oxlint": "^0.9.9",
     "ts-node": "^10.9.2",
-    "typedoc": "^0.25.13",
-    "typescript": "^5.4.5",
-    "zx-bulk-release": "^2.15.16"
+    "typedoc": "^0.26.7",
+    "typescript": "^5.6.2",
+    "zx-bulk-release": "^2.15.23"
   }
 }
