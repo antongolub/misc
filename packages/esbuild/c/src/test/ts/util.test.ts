@@ -1,6 +1,11 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import {splitNth, toCamelCase} from '../../main/ts/util'
+import {
+  objectToCamelCase,
+  omitUndefinedKeys,
+  splitNth,
+  toCamelCase
+} from '../../main/ts/util'
 
 describe('splitNth()', () => {
   it('splits string', () => {
@@ -33,4 +38,28 @@ describe('toCamelCase()', () => {
       assert.deepEqual(toCamelCase(input), output)
     })
   })
+})
+
+describe('objectToCamelCase()', () => {
+  it('converts object keys to camel case', () => {
+    const cases = [
+      [{ 'foo-bar': 'baz' }, { fooBar: 'baz' }],
+      [{ 'foo-bar': 'baz', 'qux-quux': 'corge' }, { fooBar: 'baz', quxQuux: 'corge' }],
+    ]
+
+    cases.forEach(([input, output]) =>
+      assert.deepEqual(objectToCamelCase(input), output)
+    )
+  })
+})
+
+describe('omitUndefinedKeys()', () => {
+  const cases = [
+    [{ foo: 'bar', baz: undefined }, { foo: 'bar' }],
+    [{ foo: 'bar', baz: null }, { foo: 'bar', baz: null }],
+  ]
+
+  cases.forEach(([input, output]) =>
+    assert.deepEqual(omitUndefinedKeys(input), output)
+  )
 })
