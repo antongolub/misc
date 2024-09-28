@@ -19,3 +19,6 @@ export const toCamelCase = (str: string) => str.replace(/-([a-z])/g, (_, c) => c
 
 export const objectToCamelCase = (obj: Record<string, any>) =>
   Object.fromEntries(Object.entries(obj).map(([k, v]) => [toCamelCase(k), v]))
+
+export const omitUndefinedKeys = (obj: Record<string, any>) =>
+  Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined))

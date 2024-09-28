@@ -3,7 +3,7 @@
 import * as process from 'node:process'
 import esbuild, {BuildOptions} from 'esbuild'
 import { parseArgv, loadConfig } from './index.ts'
-import {objectToCamelCase} from './util.ts'
+import {objectToCamelCase, omitUndefinedKeys} from './util.ts'
 
 (async () => {
   try {
@@ -12,12 +12,12 @@ import {objectToCamelCase} from './util.ts'
       cwd: process.cwd(),
       searchPlaces: flags.config
     })
-    const config = objectToCamelCase({
+    const config = omitUndefinedKeys(objectToCamelCase({
       ..._config,
       ...flags,
       _: undefined,
       config: undefined
-    }) as BuildOptions
+    })) as BuildOptions
 
     await esbuild.build(config)
     process.exit(0)
