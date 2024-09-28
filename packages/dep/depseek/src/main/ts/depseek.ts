@@ -32,7 +32,7 @@ const normalizeOpts = (opts?: TOpts): TOptsNormalized => ({
   offset: 19,
   ...opts
 })
-export const depseek = (stream: Readable | string | Buffer, opts?: TOpts): Promise<TCodeRef[]> => new Promise((resolve, reject) => {
+export const depseek = (stream: string | Buffer | Readable, opts?: TOpts): Promise<TCodeRef[]> => new Promise((resolve, reject) => {
   if (typeof stream === 'string' || stream instanceof Buffer) {
     return resolve(depseekSync(stream, opts))
   }

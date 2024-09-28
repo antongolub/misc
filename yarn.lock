@@ -5805,6 +5805,7 @@ __metadata:
     "@types/node": "npm:^22.7.4"
     depseek: "workspace:*"
     minimist: "npm:^1.2.8"
+    semver: "npm:^7.6.3"
   peerDependencies:
     typescript: ">=4.0.0"
   bin:
