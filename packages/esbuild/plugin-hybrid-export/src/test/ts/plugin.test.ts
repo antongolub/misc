@@ -82,7 +82,7 @@ export default __default__
     await build(config)
 
     assert.equal(await fs.readFile(path.resolve(temp, 'mixed/index.mjs'), 'utf8'), `"use strict";
-import __module__ from "./index.js"
+import * as __module__ from "./index.js"
 const {
   bar,
   foo,

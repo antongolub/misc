@@ -77,7 +77,7 @@ const formatRefs = (link: string, refs: string[], loader = 'require'): string =>
   const module = ({
     'require': `const __module__ = require("${link}")`,
     'import': `const __module__ = await import("${link}")`,
-    'reexport': `import __module__ from "${link}"`
+    'reexport': `import * as __module__ from "${link}"`
   })[loader]
 
   return `${module}
