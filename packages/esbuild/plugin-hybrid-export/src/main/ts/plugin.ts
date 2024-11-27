@@ -10,7 +10,7 @@ type TOpts = {
   to: string
   toExt: string
   entryPoints: string[]
-  loader: string
+  loader: 'import' | 'require' | 'reexport'
 }
 
 type TPluginOpts = Partial<TOpts>
@@ -74,11 +74,16 @@ const onEnd = async (result: OnEndResult, opts: TOpts) => {
 const formatRefs = (link: string, refs: string[], loader = 'require'): string => {
   const hasDefault = refs.includes('default')
   const _refs = refs.filter(r => r !== 'default')
-  const load = loader === 'require' ? 'require' : 'await import'
+  const module = ({
+    'require': `const __module__ = require("${link}")`,
+    'import': `const __module__ = await import("${link}")`,
+    'reexport': `import __module__ from "${link}"`
+  })[loader]
 
-  return `const {
+  return `${module}
+const {
 ${renderList([..._refs, hasDefault ? 'default: __default__' : '',].filter(Boolean))}
-} = ${load}('${link}')
+} = __module__
 export {
 ${renderList(_refs)}
 }

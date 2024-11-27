@@ -38,12 +38,13 @@ describe('plugin()', () => {
     await build(config)
 
     assert.equal(await fs.readFile(path.resolve(temp, 'mixed/index.mjs'), 'utf8'), `"use strict";
+const __module__ = require("./index.js")
 const {
   bar,
   foo,
   qux,
   default: __default__
-} = require('./index.js')
+} = __module__
 export {
   bar,
   foo,
@@ -52,6 +53,50 @@ export {
 export default __default__
 `
 )
+  })
+
+  it('generates esm files via reexport', async () => {
+    const cwd = path.resolve(fixtures, 'mixed-exports')
+    const plugin = hybridExportPlugin({
+      to: '../../temp/mixed',
+      toExt: '.mjs',
+      loader: 'reexport'
+    })
+    const config: BuildOptions = {
+      entryPoints: [
+        'index.ts',
+      ],
+      plugins: [plugin],
+      platform: 'node',
+      external: ['node:*'],
+      bundle: true,
+      minify: false,
+      sourcemap: false,
+      format: 'cjs',
+      legalComments: 'none',
+      absWorkingDir: cwd,
+      outdir: path.resolve(temp, 'mixed'),
+      allowOverwrite: true,
+    }
+
+    await build(config)
+
+    assert.equal(await fs.readFile(path.resolve(temp, 'mixed/index.mjs'), 'utf8'), `"use strict";
+import __module__ from "./index.js"
+const {
+  bar,
+  foo,
+  qux,
+  default: __default__
+} = __module__
+export {
+  bar,
+  foo,
+  qux
+}
+export default __default__
+`
+    )
   })
 
   it('generates esm files (full reexport case)', async () => {
@@ -83,13 +128,14 @@ export default __default__
 
     assert.equal(await fs.readFile(path.resolve(temp, 'reexport/index.mjs'), 'utf8'), `#!/usr/bin/env node
 "use strict";
+const __module__ = await import("./index.js")
 const {
   a,
   baz,
   bar,
   foo,
   default: __default__
-} = await import('./index.js')
+} = __module__
 export {
   a,
   baz,
