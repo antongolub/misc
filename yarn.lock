@@ -3642,6 +3642,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"envapi@workspace:packages/env/envapi":
+  version: 0.0.0-use.local
+  resolution: "envapi@workspace:packages/env/envapi"
+  dependencies:
+    "@antongolub/infra": "workspace:*"
+    "@types/node": "npm:^22.10.2"
+  languageName: unknown
+  linkType: soft
+
 "envimist@workspace:packages/env/envimist":
   version: 0.0.0-use.local
   resolution: "envimist@workspace:packages/env/envimist"
