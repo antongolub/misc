@@ -57,6 +57,9 @@ export const onResolve = (ctx: OnResolveArgs, opts: TOpts): OnResolveResult | un
 
 export const onLoad = async (ctx: OnLoadArgs, opts: TOpts): Promise<OnLoadResult> => {
   const input = await fs.promises.readFile(ctx.path, 'utf8')
+  if (ctx.path.endsWith('.json')) {
+    return { contents: input, loader: 'json' }
+  }
   const base = path.dirname(ctx.path)
   const deps = depseekSync(input)
   const {entryPoints, ext} = opts
