@@ -2,7 +2,7 @@ import * as assert from 'node:assert'
 import * as path from 'node:path'
 import * as fs from 'node:fs/promises'
 import { describe, it } from 'node:test'
-import {fileURLToPath} from 'node:url'
+import { fileURLToPath } from 'node:url'
 
 import {type BuildOptions, build} from 'esbuild'
 import { entryChunksPlugin } from '../../main/ts'
