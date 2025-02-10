@@ -33,13 +33,15 @@ const plugin = transformHookPlugin({
         return path.replace(/\.ts$/, '.js')
       }
     }
-  ]
+  ],
+  // optional first-level pattern, defaults to /.$/
+  pattern: /^(?!.*\.html$)/, 
 })
 const config: BuildOptions = {
   entryPoints: ['index.ts'],
   outdir: 'target/cjs',
   plugins: [plugin],
-  format: 'cjs'
+  format: 'cjs',
 }
 
 await build(config)

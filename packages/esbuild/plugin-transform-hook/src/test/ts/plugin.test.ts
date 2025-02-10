@@ -16,9 +16,9 @@ describe('plugin', () => {
     const cwd = fixtures
     const plugin = transformHookPlugin({
       hooks: [{
-        pattern: /a/,
+        pattern: /\/\w\.ts$/,
         on: 'load',
-        transform: c => c.replace("'a'", "'A'"),
+        transform: c => c.replace(/'\w'/, (m) => `${m.toUpperCase()}`),
       }, {
         pattern: /index/,
         on: 'end',
@@ -26,6 +26,7 @@ describe('plugin', () => {
           return name.replace(/\.js$/, '.cjs')
         },
       }],
+      pattern: /(a|b|index)\.ts$/
     })
     const config: BuildOptions = {
       entryPoints: [
@@ -46,6 +47,10 @@ describe('plugin', () => {
 
     await build(config)
 
-    assert.ok((await fs.readFile(path.resolve(temp, 'index.cjs'), 'utf8')).includes(`var a = "A";`))
+    const data = (await fs.readFile(path.resolve(temp, 'index.cjs'), 'utf8'))
+
+    assert.ok(data.includes(`var a = "A";`))
+    assert.ok(data.includes(`var b = "B";`))
+    assert.ok(data.includes(`var c = "c";`)) // ← not transformed
   })
 })
