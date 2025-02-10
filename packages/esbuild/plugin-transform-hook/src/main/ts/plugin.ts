@@ -14,6 +14,7 @@ export type TOpts = {
   cwd: string
   hooks: THook[],
   outdir?: string
+  pattern?: RegExp
 }
 
 export type TOutputFile = {
@@ -32,6 +33,7 @@ export const transformHookPlugin = (options: Record<string, any> = {}): Plugin =
         cwd = absWorkingDir,
         outdir,
         hooks = [],
+        pattern = /.*/
       } = { ...build.initialOptions, ...options } as BuildOptions & TPluginOpts
       const opts: TOpts = {
         cwd,
@@ -39,7 +41,7 @@ export const transformHookPlugin = (options: Record<string, any> = {}): Plugin =
         outdir
       }
 
-      build.onLoad({ filter: /.*/ }, async (args: OnLoadArgs) => onLoad(args, opts))
+      build.onLoad({ filter: pattern }, async (args: OnLoadArgs) => onLoad(args, opts))
       build.onEnd(async (result: BuildResult) => onEnd(result, opts))
     }
   }
