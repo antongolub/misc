@@ -126,7 +126,9 @@ require 'foo'
     ])
   })
 
+
   it('handles escape chars', () => {
+/* eslint-disable no-useless-escape */
     const contents = `
 const foo = require("./foo.js");
 const s1 = "\\"
@@ -141,6 +143,7 @@ const a2 = 1/+/"/
 const a3 = 1/require("./a.js")
 const baz= require("./baz.js");
 `
+/* eslint-enable no-useless-escape */
     assert.deepEqual(depseekSync(contents), [
       { type: 'dep', value: './foo.js', index: 22 },
       { type: 'dep', value: './bar.js', index: 84 },
