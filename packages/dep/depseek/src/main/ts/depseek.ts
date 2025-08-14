@@ -23,8 +23,9 @@ export const importRequireRe =  /((\.{3}|\s|[!%&(*+,/:;<=>?[^{|}~-]|^)(require\s
 export const requireRe =        /((\.{3}|\s|[!%&(*+,/:;<=>?[^{|}~-]|^)require\s?\(\s?)\s?$/
 export const requireResolveRe = /((\.{3}|\s|[!%&(*+,/:;<=>?[^{|}~-]|^)(require\s?(\.\s?resolve\s?)?\(\s?))\s?$/
 
-const isDep = (proposal: string, re: RegExp) => !!proposal && re.test(proposal)
-const isSpace = (value: string) => value === ' ' || value === '\n' || value === '\t'
+const isDep = (v: string, re: RegExp) => !!v && re.test(v)
+const isSpace = (v: string) => v === ' ' || v === '\n' || v === '\t'
+const isQ = (v: string) => `"'\``.includes(v)
 const normalizeOpts = (opts?: TOpts): TOptsNormalized => ({
   bufferSize: 1000,
   comments: false,
@@ -41,10 +42,10 @@ export const depseek = (stream: string | Buffer | Readable, opts?: TOpts): Promi
   // https://stackoverflow.com/questions/45891242/how-to-pass-a-buffer-as-argument-of-fs-createreadstream
   // https://stackoverflow.com/questions/30096691/read-a-file-one-character-at-a-time-in-node-js
   // https://stackoverflow.com/questions/12755997/how-to-create-streams-from-string-in-node-js
-  stream
+  (stream as Readable)
     .setEncoding('utf8')
     .on('readable', () => {
-      resolve(extract(stream, opts))
+      resolve(extract(stream as Readable, opts))
     })
     .on('error', reject)
 })
@@ -86,18 +87,18 @@ const extract = (readable: TPseudoReadable, _opts?: TOpts): TCodeRef[] => {
   while (null !== (chunk = readable.read(bufferSize))) {
     const len = chunk.length
     let j = 0
-
     while (j < len) {
       const char = chunk[j]
       if (c === q) {
         if (isSpace(char)) {
           if (!isSpace(prev)) token += char
         }
-        else if (char === '"' || char === "'" || char === '`') q = char
         else if (prev === '/' && (char === '/' || char === '*')) c = char
+        else if (isQ(char)) q = char
         else token += char
       } else if (c === null) {
-        if (q === char && prev !== '\\') {
+        if (char === '\\' && prev === '\\') prev = ''
+        else if (isQ(char) && prev !== '\\') {
           if (strLiteral && isDep(token.slice(-offset), re)) pushRef('dep', strLiteral, i - strLiteral.length)
           strLiteral = ''
           token = ''
@@ -118,6 +119,5 @@ const extract = (readable: TPseudoReadable, _opts?: TOpts): TCodeRef[] => {
       j++
     }
   }
-
   return refs
 }

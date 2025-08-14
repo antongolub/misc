@@ -109,7 +109,6 @@ require 'foo'
     stream.push(null)
 
     const chunks = await depseek(stream, { comments: true })
-
     assert.deepEqual(chunks, [
       { type: 'dep', value: 'node:fs', index: 17 },
       { type: 'dep', value: 'foo', index: 34 },
@@ -124,6 +123,29 @@ require 'foo'
       { type: 'comment', value: ' @2 ', index: 289 },
       { type: 'comment', value: ' @3 ', index: 334 },
       { type: 'dep', value: 'baz', index: 367 }
+    ])
+  })
+
+  it('handles escape chars', () => {
+    const contents = `
+const foo = require("./foo.js");
+const s1 = "\\"
+const s2 = "\""
+const bar= require("./bar.js");
+const r1 = /[/]/
+const r2 = /\//
+const r3 = /\\\\'/
+const r4 = / require('re.js') /
+const a1 = 1/2/3
+const a2 = 1/+/"/
+const a3 = 1/require("./a.js")
+const baz= require("./baz.js");
+`
+    assert.deepEqual(depseekSync(contents), [
+      { type: 'dep', value: './foo.js', index: 22 },
+      { type: 'dep', value: './bar.js', index: 84 },
+      { type: 'dep', value: './a.js', index: 234 },
+      { type: 'dep', value: './baz.js', index: 263 },
     ])
   })
 
