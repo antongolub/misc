@@ -2,6 +2,7 @@
   "extends": ["eslint-config-qiwi"],
   "rules": {
     "sonarjs/cognitive-complexity": "off",
+    "unicorn/import-style": "off",
     "unicorn/no-object-as-default-parameter": "off"
   }
 }

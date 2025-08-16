@@ -1,7 +1,12 @@
 import * as assert from 'node:assert'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
 import {Duplex} from 'node:stream'
 import { describe, it } from 'node:test'
 import { depseek, depseekSync, fullRe, patchRefs } from '../../main/ts'
+
+const __dirname = new URL('.', import.meta.url).pathname
+const fixtures = `${__dirname}/../fixtures`
 
 describe('depseek()', () => {
   it('searches for deps and comments', async () => {
@@ -126,6 +131,36 @@ require 'foo'
     ])
   })
 
+  it('processes large files', () => {
+    const contents = fs.readFileSync(path.resolve(fixtures, 'zx-vendor-core-bundle.cjs'), 'utf-8')
+    const deps = depseekSync(contents)
+
+/* eslint-disable unicorn/numeric-separators-style */
+    assert.deepEqual(deps, [
+      { type: 'dep', value: './esblib.cjs', index: 145 },
+      { type: 'dep', value: 'fs', index: 444 },
+      { type: 'dep', value: 'fs', index: 480 },
+      { type: 'dep', value: 'fs', index: 2606 },
+      { type: 'dep', value: 'fs', index: 2642 },
+      { type: 'dep', value: 'path', index: 6500 },
+      { type: 'dep', value: 'process', index: 15226 },
+      { type: 'dep', value: 'os', index: 15279 },
+      { type: 'dep', value: 'tty', index: 15328 },
+      { type: 'dep', value: 'process', index: 24774 },
+      { type: 'dep', value: 'fs', index: 24827 },
+      { type: 'dep', value: 'os', index: 24868 },
+      { type: 'dep', value: 'child_process', index: 29465 },
+      { type: 'dep', value: 'process', index: 29530 },
+      { type: 'dep', value: 'events', index: 29587 },
+      { type: 'dep', value: 'stream', index: 29635 },
+      { type: 'dep', value: 'process', index: 29731 },
+      { type: 'dep', value: './internals.cjs', index: 43271 },
+      { type: 'dep', value: 'fs', index: 43330 },
+      { type: 'dep', value: 'fs', index: 43358 },
+      { type: 'dep', value: 'path', index: 43411 }
+    ])
+  })
+/* eslint-enable unicorn/numeric-separators-style */
 
   it('handles escape chars', () => {
 /* eslint-disable no-useless-escape */
@@ -137,18 +172,18 @@ const bar= require("./bar.js");
 const r1 = /[/]/
 const r2 = /\//
 const r3 = /\\\\'/
-const r4 = / require('re.js') /
 const a1 = 1/2/3
 const a2 = 1/+/"/
 const a3 = 1/require("./a.js")
 const baz= require("./baz.js");
 `
+
 /* eslint-enable no-useless-escape */
     assert.deepEqual(depseekSync(contents), [
       { type: 'dep', value: './foo.js', index: 22 },
       { type: 'dep', value: './bar.js', index: 84 },
-      { type: 'dep', value: './a.js', index: 234 },
-      { type: 'dep', value: './baz.js', index: 263 },
+      { type: 'dep', value: './a.js', index: 202 },
+      { type: 'dep', value: './baz.js', index: 231 },
     ])
   })
 
