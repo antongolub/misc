@@ -97,8 +97,7 @@ const extract = (readable: TPseudoReadable, _opts?: TOpts): TCodeRef[] => {
         else if (isQ(char)) q = char
         else token += char
       } else if (c === null) {
-        if (char === '\\' && prev === '\\') prev = ''
-        else if (isQ(char) && prev !== '\\') {
+        if (isSpace(char) || isQ(char)) {
           if (strLiteral && isDep(token.slice(-offset), re)) pushRef('dep', strLiteral, i - strLiteral.length)
           strLiteral = ''
           token = ''
