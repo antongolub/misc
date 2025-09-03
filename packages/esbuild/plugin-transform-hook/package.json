@@ -48,11 +48,11 @@
     "esbuild-plugin-utils": "workspace:*"
   },
   "peerDependencies": {
-    "esbuild": ">=0.19.0"
+    "esbuild": ">=0.25.0"
   },
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
     "@types/node": "^24.2.1",
-    "esbuild": ">=0.19.0"
+    "esbuild": ">=0.25.0"
   }
 }
