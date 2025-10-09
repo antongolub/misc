@@ -11,7 +11,8 @@ PoC
 By default, esbuild injects helpers [into each cjs module](https://github.com/evanw/esbuild/issues/1230). It's _fine_, when you have just a few, but definitely not when there are many. This plugin extracts helpers into a separate file.
 
 ## Usage
-```ts
+
+```js
 import { build, BuildOptions } from 'esbuild'
 import { extractHelpersPlugin } from 'esbuild-plugin-extract-helpers'
 
