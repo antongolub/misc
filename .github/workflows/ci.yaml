@@ -59,8 +59,7 @@ jobs:
       - name: Semantic Release
         if: github.ref == 'refs/heads/master'
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_PROVENANCE: true
+          NPM_OIDC: true
           GH_USER: ${{ secrets.GH_USER }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GIT_AUTHOR_NAME: ${{ secrets.GIT_AUTHOR_NAME }}
