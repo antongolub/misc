@@ -1,11 +1,11 @@
 import * as assert from 'node:assert'
-import * as path from 'node:path'
+import path from 'node:path'
 import * as fs from 'node:fs/promises'
 import { describe, it } from 'node:test'
 import { fileURLToPath } from 'node:url'
 
 import { type BuildOptions, build } from 'esbuild'
-import { transformHookPlugin } from '../../main/ts/plugin'
+import { transformHookPlugin } from '../../main/ts/plugin.ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const fixtures = path.resolve(__dirname, '../fixtures')

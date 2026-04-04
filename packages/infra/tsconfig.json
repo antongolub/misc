@@ -9,7 +9,8 @@
     "allowImportingTsExtensions": true,
     "noImplicitAny": true,
     "declaration": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node"]
   },
   "ts-node": {
     "transpileOnly": true,

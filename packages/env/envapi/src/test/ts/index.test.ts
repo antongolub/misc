@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { parse, stringify } from '../../main/ts'
+import { parse, stringify } from '../../main/ts/index.ts'
 
 describe('parse/stringify', () => {
   it('works', () => {

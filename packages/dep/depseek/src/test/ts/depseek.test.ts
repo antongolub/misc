@@ -1,9 +1,9 @@
 import * as assert from 'node:assert'
 import * as fs from 'node:fs'
-import * as path from 'node:path'
+import path from 'node:path'
 import {Duplex} from 'node:stream'
 import { describe, it } from 'node:test'
-import { depseek, depseekSync, fullRe, patchRefs } from '../../main/ts'
+import { depseek, depseekSync, fullRe, patchRefs } from '../../main/ts/index.ts'
 
 const __dirname = new URL('.', import.meta.url).pathname
 const fixtures = `${__dirname}/../fixtures`

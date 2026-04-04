@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { topoconfig } from '../../main/ts/topoconfig'
+import { topoconfig } from '../../main/ts/topoconfig.ts'
 
 describe('topoconfig()', () => {
   it('works', async () => {

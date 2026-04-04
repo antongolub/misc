@@ -1,10 +1,6 @@
 import * as assert from 'node:assert'
-import * as path from 'node:path'
 import { describe, it } from 'node:test'
-import { fileURLToPath } from 'node:url'
-import {depshot, TDepshot} from '../../main/ts'
-
-// const __dirname = path.dirname(fileURLToPath(import.meta.url))
+import {depshot, TDepshot} from '../../main/ts/index.ts'
 
 describe('depshot()', () => {
   const cases: [string, string, string, TDepshot][] = [

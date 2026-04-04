@@ -11,7 +11,7 @@ import {
   renderList,
   resolveEntryPointsPaths,
   parseContentsLayout
-} from '../../main/ts'
+} from '../../main/ts/index.ts'
 
 describe('utils', () => {
   it('has proper exports', () => {

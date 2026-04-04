@@ -15,7 +15,7 @@ declare module "package-name/d" {
     export const seek: (opts: any) => void;
 }
 declare module "package-name/e" {
-    export const seek2: (stream: string | Buffer | import("stream").Readable, opts?: import("depseek").TOpts) => Promise<import("depseek").TCodeRef[]>;
+    export const seek2: (stream: string | Buffer | Readable, opts?: import("depseek").TOpts) => Promise<import("depseek").TCodeRef[]>;
 }
 declare module "package-name/index" {
     import type { Readable } from "node:stream";

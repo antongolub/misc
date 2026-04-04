@@ -1,4 +1,4 @@
-import util from 'node:util'
+import { types } from 'node:util'
 
 export const isString = (value: any): value is string => typeof value === 'string'
 
@@ -9,7 +9,7 @@ export const isObject = (value: any) => value !== null && typeof value === 'obje
 
 export const isCloneable = (value: any) =>
   isObject(value) &&
-  !util.types.isProxy(value) &&
+  !types.isProxy(value) &&
   !isFn(value) &&
   ![RegExp, Date, Promise, Map, Set, WeakMap, WeakSet].some(c => value instanceof c)
 

@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { ip } from '../../main/ts'
+import { ip } from '../../main/ts/index.ts'
 
 describe('ip()', () => {
   it('returns current ip', () => {

@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { foo } from '../../main/ts'
+import { foo } from '../../main/ts/index.ts'
 
 describe('foo()', () => {
   it('is callable', () => {

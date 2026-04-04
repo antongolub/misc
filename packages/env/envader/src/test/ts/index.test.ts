@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import _envader, { envader, get, has, set, del } from '../../main/ts'
+import _envader, { envader, get, has, set, del } from '../../main/ts/index.ts'
 
 describe('envader', () => {
   it('provides default export', () => {

@@ -1,7 +1,7 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
 import * as process from 'node:process'
-import _envimist, { envimist } from '../../main/ts'
+import _envimist, { envimist } from '../../main/ts/index.ts'
 
 describe('envimist()', () => {
   it('provides default export', () => {

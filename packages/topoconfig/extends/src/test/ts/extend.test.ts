@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { extend, extendArray, extendObject } from '../../main/ts/extend'
+import { extend, extendArray, extendObject } from '../../main/ts/extend.ts'
 
 describe('extend', () => {
   const cases: [string, Parameters<typeof extend>[0], any][] = [

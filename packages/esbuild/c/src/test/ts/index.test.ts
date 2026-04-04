@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { loadConfig, normalizeConfig, loadPlugin, parseArgv } from '../../main/ts'
+import { loadConfig, normalizeConfig, loadPlugin, parseArgv } from '../../main/ts/index.ts'
 
 describe('index', () => {
   it('exports config and argv utils', () => {

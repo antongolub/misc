@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import plugin, { transformHookPlugin } from '../../main/ts'
+import plugin, { transformHookPlugin } from '../../main/ts/index.ts'
 
 describe('transformHookPlugin()', () => {
   it('has default export', () => {

@@ -5,7 +5,7 @@ import {
   omitUndefinedKeys,
   splitNth,
   toCamelCase
-} from '../../main/ts/util'
+} from '../../main/ts/util.ts'
 
 describe('splitNth()', () => {
   it('splits string', () => {

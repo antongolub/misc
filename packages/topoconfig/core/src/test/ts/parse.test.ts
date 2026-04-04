@@ -7,9 +7,9 @@ import {
   parseDataInjects,
   formatRefKey,
   resolveRefKey
-} from '../../main/ts/parse'
-import {TConfigDeclaration, TConfigGraph, TData, TDirective, TInjects, TParseContext} from '../../main/ts/interface'
-import {DATA, VARARG} from '../../main/ts/constants'
+} from '../../main/ts/parse.ts'
+import {TConfigDeclaration, TConfigGraph, TData, TDirective, TInjects, TParseContext} from '../../main/ts/interface.ts'
+import {DATA, VARARG} from '../../main/ts/constants.ts'
 
 describe('formatRefKey()', () => {
   it('formats key str', () => {

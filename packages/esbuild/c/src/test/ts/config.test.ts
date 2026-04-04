@@ -1,5 +1,5 @@
 import * as assert from 'node:assert'
-import * as path from 'node:path'
+import path from 'node:path'
 import { describe, it } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { nodeExternalsPlugin } from 'esbuild-node-externals'

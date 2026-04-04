@@ -19,7 +19,7 @@ export const _clone = <T = any>({
   vmap =      _vmap,
   prefix =    ''
 }: TPrepareCtx<T>): T => seed
-  ? getProps(value).reduce((m: any, k) => {
+  ? (memo.has(value) || memo.set(value, seed), getProps(value).reduce((m: any, k) => {
     const p = `${prefix}${k.toString()}`
     const v = vmap({
       value: (value as any)[k],
@@ -54,5 +54,5 @@ export const _clone = <T = any>({
     }
 
     return m
-  }, seed)
+  }, seed))
   : value

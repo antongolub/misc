@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { ajv } from '../../main/ts'
+import { ajv } from '../../main/ts/index.ts'
 
 describe('ajv()', () => {
   it('asserts schema to be defined', () => {

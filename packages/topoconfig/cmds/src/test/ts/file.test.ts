@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 import { describe, it } from 'node:test'
 import url from 'node:url'
-import { file } from '../../main/ts'
+import { file } from '../../main/ts/index.ts'
 
 describe('file()', () => {
   it('reads file contest', async () => {

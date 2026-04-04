@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import * as path from 'node:path'
+import path from 'node:path'
 import * as fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
@@ -272,7 +272,6 @@ describe('populate()', () => {
         compilerOptions: {
           allowImportingTsExtensions: true,
           allowJs: false,
-          baseUrl: './src/main/ts/',
           declaration: true,
           esModuleInterop: true,
           forceConsistentCasingInFileNames: true,
@@ -281,7 +280,8 @@ describe('populate()', () => {
           noImplicitAny: true,
           rootDir: './src/main/ts/',
           strict: true,
-          target: 'esnext'
+          target: 'esnext',
+          types: ['node']
         },
         exclude: [
           'node_modules',
@@ -410,7 +410,6 @@ describe('populateSync()', () => {
         compilerOptions: {
           allowImportingTsExtensions: true,
           allowJs: false,
-          baseUrl: './src/main/ts/',
           declaration: true,
           esModuleInterop: true,
           forceConsistentCasingInFileNames: true,
@@ -419,7 +418,8 @@ describe('populateSync()', () => {
           noImplicitAny: true,
           rootDir: './src/main/ts/',
           strict: true,
-          target: 'esnext'
+          target: 'esnext',
+          types: ['node']
         },
         exclude: [
           'node_modules',

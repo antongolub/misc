@@ -1,11 +1,11 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
 import {fileURLToPath} from 'node:url'
-import * as path from 'node:path'
-import {generate, nameGens} from '../../main/ts/generator'
-import {TKeeperCtx, TProposal} from '../../main/ts'
-import {normalizeConfig} from '../../main/ts/config'
-import {keeper as npm} from '../../main/ts/keepers/npm'
+import path from 'node:path'
+import {generate, nameGens} from '../../main/ts/generator.ts'
+import {TKeeperCtx, TProposal} from '../../main/ts/index.ts'
+import {normalizeConfig} from '../../main/ts/config.ts'
+import {keeper as npm} from '../../main/ts/keepers/npm.ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 

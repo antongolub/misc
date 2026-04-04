@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { cwd } from '../../main/ts'
+import { cwd } from '../../main/ts/index.ts'
 
 describe('cwd()', () => {
   it('returns current cwd', () => {

@@ -11,9 +11,9 @@ import {
   updateDeps,
   propose,
   script
-} from '../../main/ts/keepers/npm'
-import {TKeeperCtx} from '../../main/ts/interface'
-import * as path from 'node:path'
+} from '../../main/ts/keepers/npm.ts'
+import {TKeeperCtx} from '../../main/ts/interface.ts'
+import path from 'node:path'
 import {fileURLToPath} from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))

@@ -1,9 +1,9 @@
 import * as assert from 'node:assert'
-import * as path from 'node:path'
+import path from 'node:path'
 import * as fs from 'node:fs'
 import * as os from 'node:os'
 import { describe, it } from 'node:test'
-import { xtends } from '../../main/ts'
+import { xtends } from '../../main/ts/index.ts'
 
 const tempy = () => fs.mkdtempSync(path.join(os.tmpdir(), 'tempy-'))
 

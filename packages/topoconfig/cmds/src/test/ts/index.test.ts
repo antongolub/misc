@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import * as cmds from '../../main/ts'
+import * as cmds from '../../main/ts/index.ts'
 
 describe('index', () => {
   it('exports cmds as expected', () => {

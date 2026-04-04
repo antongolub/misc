@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { conf } from '../../main/ts'
+import { conf } from '../../main/ts/index.ts'
 
 describe('conf()', () => {
   it('wraps config with Conf API', () => {

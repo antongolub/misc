@@ -1,9 +1,9 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
 import * as fs from 'node:fs/promises'
-import * as path from 'node:path'
+import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import {parse, format, merge, collide, sum, badge, badgeJson, LCOV, LcovBadgeOptions} from '../../main/ts'
+import {parse, format, merge, collide, sum, badge, badgeJson, LCOV, LcovBadgeOptions} from '../../main/ts/index.ts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const fixtures = path.resolve(__dirname, '../fixtures')

@@ -1,11 +1,11 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import * as path from 'node:path'
+import path from 'node:path'
 import * as fs from 'node:fs/promises'
 import * as os from 'node:os'
 
-import {applyScript, getPatch, gitDiff} from '../../main/ts/common'
-import {spawn} from '../../main/ts/util'
+import {applyScript, getPatch, gitDiff} from '../../main/ts/common.ts'
+import {spawn} from '../../main/ts/util.ts'
 
 describe('`gitDiff`', () => {
   it('returns a git diff', async () => {

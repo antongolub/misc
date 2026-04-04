@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import {get} from '../../main/ts'
+import {get} from '../../main/ts/index.ts'
 
 describe('get()', () => {
   it('extracts value by path', () => {

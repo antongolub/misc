@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { entryChunksPlugin } from '../../main/ts'
+import { entryChunksPlugin } from '../../main/ts/index.ts'
 
 describe('entryChunksPlugin()', () => {
   it('is a plugin factory', () => {

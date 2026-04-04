@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { depseek, depseekSync, patchRefs } from '../../main/ts'
+import { depseek, depseekSync, patchRefs } from '../../main/ts/index.ts'
 
 describe('index', () => {
   it('has proper exports', () => {

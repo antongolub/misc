@@ -10,7 +10,7 @@ import {
   prepare,
   resolve,
   vmap
-} from '../../main/ts'
+} from '../../main/ts/index.ts'
 
 describe('index', () => {
   it('exports API', () => {

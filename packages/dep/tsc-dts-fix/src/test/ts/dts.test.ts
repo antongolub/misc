@@ -1,5 +1,5 @@
 import * as assert from 'node:assert'
-import * as path from 'node:path'
+import path from 'node:path'
 import { describe, it } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { generateDts, patchExt } from '../../main/ts/dts.ts'
@@ -18,6 +18,7 @@ const checkLineByLine = (a: string, b: string) => {
 
 describe('generateDts()', () => {
   const reftypesnode = gte(tsVersion, '5.6.0') ? '' : `/// <reference types="node" />\n`
+  const readableRef = gte(tsVersion, '6.0.0') ? 'Readable' : 'import("stream").Readable'
   const expected = `${reftypesnode}declare module "package-name/depseek" {
     export const foo = "bar";
 }
@@ -35,7 +36,7 @@ declare module "package-name/d" {
     export const seek: (opts: any) => void;
 }
 declare module "package-name/e" {
-    export const seek2: (stream: string | Buffer | import("stream").Readable, opts?: import("depseek").TOpts) => Promise<import("depseek").TCodeRef[]>;
+    export const seek2: (stream: string | Buffer | ${readableRef}, opts?: import("depseek").TOpts) => Promise<import("depseek").TCodeRef[]>;
 }
 declare module "package-name/index" {
     import type { Readable } from "node:stream";

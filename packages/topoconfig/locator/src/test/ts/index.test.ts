@@ -1,7 +1,7 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { parse, stringify, resolve } from '../../main/ts'
-import {TParseOpts, TReference, TStringifyOpts} from '../../main/ts/interface'
+import { parse, stringify, resolve } from '../../main/ts/index.ts'
+import {TParseOpts, TReference, TStringifyOpts} from '../../main/ts/interface.ts'
 
 describe('parse()', () => {
   const cases: [string, TParseOpts | undefined, TReference | Error][] = [

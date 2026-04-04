@@ -1,7 +1,7 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
 import * as url from 'node:url'
-import { pkg } from '../../main/ts'
+import { pkg } from '../../main/ts/index.ts'
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url))
 

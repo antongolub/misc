@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { argv } from '../../main/ts'
+import { argv } from '../../main/ts/index.ts'
 
 describe('argv()', () => {
   it('returns minimist-parsed argv', () => {
