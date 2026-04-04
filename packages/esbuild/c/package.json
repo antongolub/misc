@@ -48,7 +48,7 @@
   "homepage": "https://github.com/antongolub/misc/tree/master/packages/esbuild/c",
   "dependencies": {
     "@topoconfig/extends": "workspace:*",
-    "cosmiconfig": "^9.0.0",
+    "cosmiconfig": "^9.0.1",
     "minimist": "^1.2.8"
   },
   "peerDependencies": {
@@ -56,8 +56,8 @@
   },
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
-    "@types/node": "^24.7.0",
+    "@types/node": "^25.5.2",
     "esbuild": ">=0.21.4",
-    "esbuild-node-externals": "^1.18.0"
+    "esbuild-node-externals": "^1.21.0"
   }
 }

@@ -24,18 +24,18 @@
   "devDependencies": {
     "@antongolub/git-root": "^1.5.14",
     "@semrel-extra/topo": "^1.14.1",
-    "@types/node": "^24.7.0",
+    "@types/node": "^25.5.2",
     "c8": "^11.0.0",
     "concurrently": "^9.2.1",
-    "esbuild": "^0.25.10",
-    "esbuild-node-externals": "^1.18.0",
+    "esbuild": "^0.28.0",
+    "esbuild-node-externals": "^1.21.0",
     "eslint": "^8.57.0",
-    "eslint-config-qiwi": "^2.1.5",
+    "eslint-config-qiwi": "^2.1.9",
     "fast-glob": "^3.3.3",
-    "oxlint": "^1.22.0",
+    "oxlint": "^1.58.0",
     "ts-node": "^10.9.2",
-    "typedoc": "^0.28.13",
-    "typescript": "^5.9.3",
+    "typedoc": "^0.28.18",
+    "typescript": "^6.0.2",
     "zx-bulk-release": "^2.16.1"
   }
 }
