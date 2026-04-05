@@ -43,6 +43,12 @@ jobs:
       - name: Fetch deps
         run: yarn --silent --immutable
 
+      - name: Recover incomplete releases
+        if: github.ref == 'refs/heads/master'
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: npx zx-bulk-release --recover
+
       - name: Build
         run: |
           yarn warmup
