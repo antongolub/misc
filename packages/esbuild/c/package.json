@@ -2,6 +2,12 @@
   "name": "esbuild-c",
   "version": "0.0.0",
   "description": "Empowers esbuild with config processing",
+  "keywords": [
+    "esbuild",
+    "config",
+    "build",
+    "bundler"
+  ],
   "type": "module",
   "main": "target/cjs/index.cjs",
   "bin": "target/esm/cli.mjs",

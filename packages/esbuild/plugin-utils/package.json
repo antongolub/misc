@@ -2,6 +2,12 @@
   "name": "esbuild-plugin-utils",
   "version": "0.0.0",
   "description": "Common utils for esbuild plugins",
+  "keywords": [
+    "esbuild",
+    "plugin",
+    "utils",
+    "helpers"
+  ],
   "type": "module",
   "main": "target/cjs/index.cjs",
   "exports": {

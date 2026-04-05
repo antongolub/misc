@@ -2,6 +2,13 @@
   "name": "esbuild-plugin-extract-helpers",
   "version": "0.0.0",
   "description": "Esbuild plugin to extract cjs helpers (like tslib)",
+  "keywords": [
+    "esbuild",
+    "plugin",
+    "helpers",
+    "tslib",
+    "cjs"
+  ],
   "type": "module",
   "main": "target/cjs/index.cjs",
   "exports": {

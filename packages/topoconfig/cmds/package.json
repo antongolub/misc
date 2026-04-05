@@ -2,6 +2,12 @@
   "name": "@topoconfig/cmds",
   "version": "0.0.0",
   "description": "Topoconfig basic cmds preset",
+  "keywords": [
+    "config",
+    "topoconfig",
+    "commands",
+    "preset"
+  ],
   "type": "module",
   "main": "target/cjs/index.cjs",
   "exports": {

@@ -2,6 +2,12 @@
   "name": "depshot",
   "version": "0.0.0",
   "description": "Gathers deps snapshot by analyzing sources",
+  "keywords": [
+    "dependency",
+    "snapshot",
+    "graph",
+    "analysis"
+  ],
   "type": "module",
   "main": "target/cjs/index.cjs",
   "exports": {

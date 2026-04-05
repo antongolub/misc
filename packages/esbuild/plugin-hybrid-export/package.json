@@ -2,6 +2,14 @@
   "name": "esbuild-plugin-hybrid-export",
   "version": "0.0.0",
   "description": "Esbuild plugin to simplify hybrid (aka dual) packages forging",
+  "keywords": [
+    "esbuild",
+    "plugin",
+    "dual",
+    "hybrid",
+    "esm",
+    "cjs"
+  ],
   "type": "module",
   "main": "target/cjs/index.cjs",
   "exports": {

@@ -2,6 +2,12 @@
   "name": "topoconfig",
   "version": "0.0.0",
   "description": "Toposource-enhanced uniconfig",
+  "keywords": [
+    "config",
+    "topoconfig",
+    "toposource",
+    "uniconfig"
+  ],
   "type": "module",
   "main": "target/cjs/index.cjs",
   "exports": {

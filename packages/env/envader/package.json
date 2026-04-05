@@ -2,6 +2,12 @@
   "name": "envader",
   "version": "0.0.1",
   "description": "Occupies env vars for data storage",
+  "keywords": [
+    "env",
+    "environment",
+    "variables",
+    "storage"
+  ],
   "type": "module",
   "main": "target/cjs/index.cjs",
   "exports": {

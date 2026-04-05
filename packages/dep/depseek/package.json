@@ -2,6 +2,13 @@
   "name": "depseek",
   "version": "0.0.0",
   "description": "Seeks for dependency references in JS/TS code",
+  "keywords": [
+    "dependency",
+    "import",
+    "require",
+    "detect",
+    "static-analysis"
+  ],
   "type": "module",
   "main": "target/cjs/index.cjs",
   "exports": {

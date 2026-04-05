@@ -2,6 +2,13 @@
   "name": "envimist",
   "version": "0.0.1",
   "description": "Applies minimist to process.env",
+  "keywords": [
+    "env",
+    "environment",
+    "minimist",
+    "argv",
+    "cli"
+  ],
   "type": "module",
   "main": "target/cjs/index.cjs",
   "exports": {

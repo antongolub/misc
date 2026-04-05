@@ -2,6 +2,13 @@
   "name": "upkeeper",
   "version": "0.0.0",
   "description": "Script generator for deps updating",
+  "keywords": [
+    "dependency",
+    "update",
+    "upgrade",
+    "script",
+    "generator"
+  ],
   "type": "module",
   "main": "target/cjs/index.cjs",
   "exports": {

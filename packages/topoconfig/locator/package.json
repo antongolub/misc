@@ -2,6 +2,12 @@
   "name": "@topoconfig/locator",
   "version": "0.0.0",
   "description": "Reads and formats shareable configuration refs",
+  "keywords": [
+    "config",
+    "locator",
+    "shareable",
+    "topoconfig"
+  ],
   "type": "module",
   "main": "target/cjs/index.cjs",
   "exports": {
