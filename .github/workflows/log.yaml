@@ -2,21 +2,29 @@
 # If the tests pass and this is a push to the master branch it also runs Semantic Release.
 name: Log
 on: [push]
+
+permissions: {}
+
 jobs:
   push:
     name: Push ${{ github.ref }}
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
     steps:
       - name: Depth
-        run: echo "FETCH_DEPTH=$(echo '${{ toJSON(github.event.commits) }}' | jq 'length | if . < 20 then . + 1 else 0 end')" >> $GITHUB_ENV
+        env:
+          COMMITS_JSON: ${{ toJSON(github.event.commits) }}
+        run: echo "FETCH_DEPTH=$(echo "$COMMITS_JSON" | jq 'length | if . < 20 then . + 1 else 0 end')" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           fetch-depth: ${{ env.FETCH_DEPTH }}
+          persist-credentials: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
           node-version: 20
 

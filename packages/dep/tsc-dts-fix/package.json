@@ -37,7 +37,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/antongolub/misc.git"
+    "url": "git+https://github.com/antongolub/misc.git",
+    "directory": "packages/dep/tsc-dts-fix"
   },
   "author": "Anton Golub <antongolub@antongolub.com>",
   "license": "MIT",

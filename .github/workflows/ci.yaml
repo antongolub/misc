@@ -2,6 +2,9 @@
 # If the tests pass and this is a push to the master branch it also runs Semantic Release.
 name: CI
 on: [push, pull_request]
+
+permissions: {}
+
 jobs:
   push:
     name: Push ${{ github.ref }}
@@ -15,23 +18,25 @@ jobs:
       id-token: write
     steps:
       - name: Fetch depth
-        run: echo "FETCH_DEPTH=$(echo '${{ toJSON(github.event.commits) }}' | jq 'length | if . < 20 then . + 1 else 0 end')" >> $GITHUB_ENV
+        env:
+          COMMITS_JSON: ${{ toJSON(github.event.commits) }}
+        run: echo "FETCH_DEPTH=$(echo "$COMMITS_JSON" | jq 'length | if . < 20 then . + 1 else 0 end')" >> $GITHUB_ENV
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: ${{ env.FETCH_DEPTH }}
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 24
           cache: 'yarn'
 
       - name: Setup Bun Runtime
-        uses: antongolub/action-setup-bun@v1
+        uses: antongolub/action-setup-bun@38d526c08108ece77f46bf61e78988c7fc0ce5ab # v1.9.1
 
-      - uses: denoland/setup-deno@v1
+      - uses: denoland/setup-deno@667a34cdef165d8d2b2e98dde39547c9daac7282 # v2.0.4
         with:
           deno-version: v1.x
 
@@ -51,7 +56,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Qlty.sh (codeclimate)
-        uses: qltysh/qlty-action/coverage@v2
+        uses: qltysh/qlty-action/coverage@a19242102d17e497f437d7466aa01b528537e899 # v2.2.0
         with:
           token: ${{ secrets.QLTY_TOKEN }}
           files: ${{github.workspace}}/lcov.info
@@ -72,28 +77,33 @@ jobs:
     if: github.event_name == 'pull_request'
     name: PR
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     steps:
       # https://github.com/actions/checkout/issues/552
       - name: Fetch depth
-        run: echo "PR_FETCH_DEPTH=$(( ${{ github.event.pull_request.commits }} + 1 ))" >> "${GITHUB_ENV}"
+        env:
+          PR_COMMITS: ${{ github.event.pull_request.commits }}
+        run: echo "PR_FETCH_DEPTH=$(( PR_COMMITS + 1 ))" >> "${GITHUB_ENV}"
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: ${{ env.PR_FETCH_DEPTH }}
+          persist-credentials: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 20
           cache: 'yarn'
 
       - name: Setup Bun Runtime
-        uses: antongolub/action-setup-bun@v1
+        uses: antongolub/action-setup-bun@38d526c08108ece77f46bf61e78988c7fc0ce5ab # v1.9.1
 
       - name: Setup Deno
-        uses: denoland/setup-deno@v1
+        uses: denoland/setup-deno@667a34cdef165d8d2b2e98dde39547c9daac7282 # v2.0.4
         with:
           deno-version: v1.x
 
@@ -106,7 +116,7 @@ jobs:
           yarn build
 
       - name: Save artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: target
           path: |
@@ -119,6 +129,8 @@ jobs:
   pr-compat:
     needs: pr
     name: Compat test (Node v${{ matrix.node-version }}, OS ${{ matrix.os }})
+    permissions:
+      contents: read
     strategy:
       matrix:
         os: [ ubuntu-24.04, windows-latest ]
@@ -129,29 +141,27 @@ jobs:
     steps:
       # https://github.com/actions/checkout/issues/552
       - name: Fetch depth
+        env:
+          PR_COMMITS: ${{ github.event.pull_request.commits }}
         run: |
-          echo "PR_FETCH_DEPTH=$(( ${{ github.event.pull_request.commits }} + 1 ))" >> $env:GITHUB_ENV
-          echo "PR_FETCH_DEPTH=$(( ${{ github.event.pull_request.commits }} + 1 ))" >> "${GITHUB_ENV}"
+          echo "PR_FETCH_DEPTH=$(( $env:PR_COMMITS + 1 ))" >> $env:GITHUB_ENV
+          echo "PR_FETCH_DEPTH=$(( PR_COMMITS + 1 ))" >> "${GITHUB_ENV}"
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: ${{ env.PR_FETCH_DEPTH }}
+          persist-credentials: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
 
-#      - name: Log
-#        run: node -e "console.log('commits=', process.env.COMMITS)"
-#        env:
-#          COMMITS: ${{ toJSON(github.event.pull_request.commits) }}
-
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: target
 

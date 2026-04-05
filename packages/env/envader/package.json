@@ -36,14 +36,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/antongolub/misc.git"
+    "url": "git+https://github.com/antongolub/misc.git",
+    "directory": "packages/env/envader"
   },
   "author": "Anton Golub <antongolub@antongolub.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/antongolub/misc/issues"
   },
-  "homepage": "https://github.com/antongolub/misc#readme",
+  "homepage": "https://github.com/antongolub/misc/tree/master/packages/env/envader",
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
     "@types/node": "^25.5.2"

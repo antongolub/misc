@@ -36,7 +36,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/antongolub/misc.git"
+    "url": "git+https://github.com/antongolub/misc.git",
+    "directory": "packages/topoconfig/cmds"
   },
   "author": "Anton Golub <antongolub@antongolub.com>",
   "license": "MIT",
