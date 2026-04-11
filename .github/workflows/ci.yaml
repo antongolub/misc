@@ -43,12 +43,6 @@ jobs:
       - name: Fetch deps
         run: yarn --silent --immutable
 
-      - name: Recover incomplete releases
-        if: github.ref == 'refs/heads/master'
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: npx zx-bulk-release --recover
-
       - name: Build
         run: |
           yarn warmup
@@ -67,17 +61,54 @@ jobs:
           token: ${{ secrets.QLTY_TOKEN }}
           files: ${{github.workspace}}/lcov.info
 
-      - name: Semantic Release
+      - name: Pack
         if: github.ref == 'refs/heads/master'
         env:
-          NPM_OIDC: true
-          GH_USER: ${{ secrets.GH_USER }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GIT_AUTHOR_NAME: ${{ secrets.GIT_AUTHOR_NAME }}
           GIT_AUTHOR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
           GIT_COMMITTER_NAME: ${{ secrets.GIT_COMMITTER_NAME }}
           GIT_COMMITTER_EMAIL: ${{ secrets.GIT_COMMITTER_EMAIL }}
-        run: npm_config_yes=true npx zx-bulk-release --no-build
+        run: npm_config_yes=true npx zx-bulk-release --no-build --pack
+
+      - name: Update parcels
+        if: github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v7
+        with:
+          name: parcels
+          path: parcels
+          retention-days: 1
+
+  deliver:
+    name: Deliver
+    needs: push
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+    steps:
+      - name: Download parcels
+        uses: actions/download-artifact@v8
+        with:
+          name: parcels
+          path: parcels
+
+      - name: Deliver
+        env:
+          NPM_OIDC: true
+          GH_USER: ${{ secrets.GH_USER }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: npx zx-bulk-release --deliver
+
+      - name: Update delivery status
+        uses: actions/upload-artifact@v7
+        with:
+          name: parcels
+          path: parcels
+          overwrite: true
+          retention-days: 1
 
   pr:
     if: github.event_name == 'pull_request'
