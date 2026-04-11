@@ -149,7 +149,7 @@ export const patchModuleDeclarations = (declarations: TDeclarations, namesMap: R
   }))
 
 export const genEntryPointsDeclarations = (namesMap: Record<string, string>, opts: TOptionsNormalized) => {
-  const {entryPoints, pkgName, ext} = opts
+  const {entryPoints, pkgName} = opts
   return Object.entries(entryPoints).map(([entry, ref]) => {
     const _ref = namesMap[patchExt(path.join(namesMap._root, ref), '')]
 
