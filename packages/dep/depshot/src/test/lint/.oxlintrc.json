@@ -1,0 +1,6 @@
+{
+  "extends": ["../../../../../infra/.oxlintrc.json"],
+  "rules": {
+    "typescript/no-unused-vars": "off"
+  }
+}

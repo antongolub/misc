@@ -52,9 +52,8 @@ export const onEnd = async (result: BuildResult, opts: TOpts) => {
   const hook: TTransformHook = {
     on: 'end',
     pattern: opts.include,
-    // eslint-disable-next-line sonarjs/cognitive-complexity
     transform(c, p) {
-      const { lines, header, body }  = parseContentsLayout(c.trim())
+      const { lines, header }  = parseContentsLayout(c.trim())
       const headerSize = header ? header.split('\n').length : 0
       const output: string[] = []
       const helperPath = getRelativePath(opts.cwd, p, opts.helper)
