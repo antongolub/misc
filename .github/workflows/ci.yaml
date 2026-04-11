@@ -94,8 +94,11 @@ jobs:
         with:
           name: parcels
           path: parcels
+        id: download
+        continue-on-error: true
 
       - name: Deliver
+        if: steps.download.outcome == 'success'
         env:
           NPM_OIDC: true
           GH_USER: ${{ secrets.GH_USER }}
@@ -103,6 +106,7 @@ jobs:
         run: npx zx-bulk-release --deliver
 
       - name: Update delivery status
+        if: steps.download.outcome == 'success'
         uses: actions/upload-artifact@v7
         with:
           name: parcels

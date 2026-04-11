@@ -1,5 +1,3 @@
-import { Duplex } from 'node:stream'
-
 export type TDepshotEntry = {
   raw:      string
   index:    number
