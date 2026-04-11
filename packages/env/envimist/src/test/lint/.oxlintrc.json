@@ -1,0 +1,6 @@
+{
+  "extends": ["../../../../../infra/.oxlintrc.json"],
+  "rules": {
+    "unicorn/prefer-array-flat-map": "off"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "extends": ["../../../../../infra/.oxlintrc.json"],
+  "rules": {
+    "prefer-const": "off",
+    "unicorn/explicit-length-check": "off"
+  }
+}

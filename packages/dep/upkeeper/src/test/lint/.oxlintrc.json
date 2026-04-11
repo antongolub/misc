@@ -1,0 +1,7 @@
+{
+  "extends": ["../../../../../infra/.oxlintrc.json"],
+  "rules": {
+    "no-control-regex": "off",
+    "no-unused-expressions": "off"
+  }
+}

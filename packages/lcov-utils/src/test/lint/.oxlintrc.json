@@ -1,0 +1,7 @@
+{
+  "extends": ["../../../../infra/.oxlintrc.json"],
+  "rules": {
+    "no-unused-expressions": "off",
+    "unicorn/consistent-function-scoping": "off"
+  }
+}

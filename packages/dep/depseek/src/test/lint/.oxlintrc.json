@@ -1,5 +1,5 @@
 {
-  "extends": ["../../infra/.oxlintrc.json"],
+  "extends": ["../../../../../infra/.oxlintrc.json"],
   "ignorePatterns": ["src/test/fixtures", "src/test/benchmark"],
   "rules": {
     "unicorn/no-object-as-default-parameter": "off"
