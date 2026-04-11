@@ -1,9 +1,0 @@
-{
-  "extends": ["eslint-config-qiwi"],
-  "rules": {
-    "unicorn/better-regex": "off",
-    "unicorn/no-object-as-default-parameter": "off",
-    "unicorn/consistent-function-scoping": "off",
-    "@typescript-eslint/no-empty-function": "off"
-  }
-}

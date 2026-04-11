@@ -1,5 +1,0 @@
-{
-  "extends": ["eslint-config-qiwi"],
-  "rules": {},
-  "ignorePatterns": ["src/test/fixtures/**/*"]
-}
