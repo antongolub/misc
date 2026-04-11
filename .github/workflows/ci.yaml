@@ -89,6 +89,11 @@ jobs:
       packages: write
       id-token: write
     steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
       - name: Download parcels
         uses: actions/download-artifact@v8
         with:

@@ -1,7 +1,7 @@
 import path from 'node:path'
 import fs from 'node:fs'
 import {depseekSync} from 'depseek'
-import type {OnLoadArgs, OnResolveArgs, OnLoadResult, Plugin, OnResolveResult, BuildOptions} from 'esbuild'
+import type {OnLoadArgs, OnResolveArgs, OnLoadResult, Plugin, OnResolveResult} from 'esbuild'
 import { resolveEntryPointsPaths } from 'esbuild-plugin-utils'
 
 type TOpts = {
