@@ -1,7 +1,11 @@
 # This is a Github Workflow that runs tests on any push or pull request.
 # If the tests pass and this is a push to the master branch it also runs Semantic Release.
 name: CI
-on: [push, pull_request]
+on:
+  push:
+    branches: [master]
+    tags: ['zbr-rebuild.*']
+  pull_request:
 
 permissions: {}
 
@@ -40,6 +44,21 @@ jobs:
         with:
           deno-version: v1.x
 
+      - name: Receive
+        if: github.ref == 'refs/heads/master'
+        id: receive
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: npm_config_yes=true npx zx-bulk-release --receive
+
+      - name: Upload context
+        if: github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v7
+        with:
+          name: context-${{ github.run_id }}
+          path: .zbr-context.json
+          retention-days: 1
+
       - name: Fetch deps
         run: yarn --silent --immutable
 
@@ -62,20 +81,14 @@ jobs:
           files: ${{github.workspace}}/lcov.info
 
       - name: Pack
-        if: github.ref == 'refs/heads/master'
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          GIT_AUTHOR_NAME: ${{ secrets.GIT_AUTHOR_NAME }}
-          GIT_AUTHOR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
-          GIT_COMMITTER_NAME: ${{ secrets.GIT_COMMITTER_NAME }}
-          GIT_COMMITTER_EMAIL: ${{ secrets.GIT_COMMITTER_EMAIL }}
+        if: github.ref == 'refs/heads/master' && steps.receive.outputs.status == 'proceed'
         run: npm_config_yes=true npx zx-bulk-release --no-build --pack
 
-      - name: Update parcels
-        if: github.ref == 'refs/heads/master'
+      - name: Upload parcels
+        if: github.ref == 'refs/heads/master' && steps.receive.outputs.status == 'proceed'
         uses: actions/upload-artifact@v7
         with:
-          name: parcels
+          name: parcels-${{ github.run_id }}
           path: parcels
           retention-days: 1
 
@@ -94,13 +107,23 @@ jobs:
         with:
           node-version: 24
 
+      - name: Download context
+        uses: actions/download-artifact@v8
+        with:
+          name: context-${{ github.run_id }}
+          path: .
+
       - name: Download parcels
         uses: actions/download-artifact@v8
         with:
-          name: parcels
-          path: parcels
+          name: parcels-${{ github.run_id }}
+          path: parcels-unverified
         id: download
         continue-on-error: true
+
+      - name: Verify
+        if: steps.download.outcome == 'success'
+        run: npx zx-bulk-release --verify parcels-unverified/
 
       - name: Deliver
         if: steps.download.outcome == 'success'
@@ -108,13 +131,15 @@ jobs:
           NPM_OIDC: true
           GH_USER: ${{ secrets.GH_USER }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GIT_COMMITTER_NAME: ${{ secrets.GIT_COMMITTER_NAME }}
+          GIT_COMMITTER_EMAIL: ${{ secrets.GIT_COMMITTER_EMAIL }}
         run: npx zx-bulk-release --deliver
 
       - name: Update delivery status
         if: steps.download.outcome == 'success'
         uses: actions/upload-artifact@v7
         with:
-          name: parcels
+          name: parcels-${{ github.run_id }}
           path: parcels
           overwrite: true
           retention-days: 1
