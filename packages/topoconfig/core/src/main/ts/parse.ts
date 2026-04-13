@@ -59,7 +59,6 @@ export const parseWords = (value: string): string[] => {
   let bb = 0 // brackets balance
   let qb = '' // quotes balance
 
-  // eslint-disable-next-line sonarjs/cognitive-complexity
   chars.forEach((c, i) => {
     const prev = chars[i - 1]
     const next = chars[i + 1]
