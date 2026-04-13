@@ -13,7 +13,7 @@ export const findBase = (files: string[]) => {
   if (files.length === 0) return ''
   if (files.length === 1) return dirname(first)
 
-  return dirname(first.slice(0, first.split('').findIndex((c, i) => files.some(f => f.charAt(i) !== c))))
+  return dirname(first.slice(0, [...first].findIndex((c, i) => files.some(f => f.charAt(i) !== c))))
 }
 
 export const logValue = (any: any) => { console.log(any); return any }
