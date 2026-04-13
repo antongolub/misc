@@ -4,8 +4,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import os from 'node:os'
 
-// eslint-disable-next-line
-// @ts-ignore
+// @ts-expect-error dynamic default import
 const _Conf = _conf?.default ?? _conf
 const tempy = () => fs.mkdtempSync(path.join(os.tmpdir(), 'tempy-'))
 

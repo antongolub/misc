@@ -56,7 +56,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: context-${{ github.run_id }}
-          path: .zbr-context.json
+          path: zbr-context.json
           retention-days: 1
 
       - name: Fetch deps
@@ -112,8 +112,11 @@ jobs:
         with:
           name: context-${{ github.run_id }}
           path: .
+        id: context
+        continue-on-error: true
 
       - name: Download parcels
+        if: steps.context.outcome == 'success'
         uses: actions/download-artifact@v8
         with:
           name: parcels-${{ github.run_id }}
@@ -122,11 +125,11 @@ jobs:
         continue-on-error: true
 
       - name: Verify
-        if: steps.download.outcome == 'success'
+        if: steps.context.outcome == 'success' && steps.download.outcome == 'success'
         run: npx zx-bulk-release --verify parcels-unverified/
 
       - name: Deliver
-        if: steps.download.outcome == 'success'
+        if: steps.context.outcome == 'success' && steps.download.outcome == 'success'
         env:
           NPM_OIDC: true
           GH_USER: ${{ secrets.GH_USER }}
@@ -136,7 +139,7 @@ jobs:
         run: npx zx-bulk-release --deliver
 
       - name: Update delivery status
-        if: steps.download.outcome == 'success'
+        if: steps.context.outcome == 'success' && steps.download.outcome == 'success'
         uses: actions/upload-artifact@v7
         with:
           name: parcels-${{ github.run_id }}
