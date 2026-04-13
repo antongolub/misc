@@ -44,7 +44,6 @@ export const spawn = (
 })
 
 export function quote(arg: string) {
-  // eslint-disable-next-line unicorn/better-regex
   if (/^[a-z0-9/_.\-@:=]+$/i.test(arg) || arg === '') {
     return arg
   }
