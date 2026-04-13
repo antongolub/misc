@@ -13,7 +13,6 @@ export const findBase = (files: string[]) => {
   if (files.length === 0) return ''
   if (files.length === 1) return dirname(first)
 
-  // eslint-disable-next-line
   return dirname(first.slice(0, first.split('').findIndex((c, i) => files.some(f => f.charAt(i) !== c))))
 }
 

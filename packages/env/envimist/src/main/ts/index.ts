@@ -19,7 +19,6 @@ export const envimist = (env: Record<string, string | undefined> = process.env, 
     }))
 }
 
-
 export default envimist
 
 const getSplitMap = (split: TOpts['split']): Record<string, string> => Object.fromEntries(split?.map(entry => {

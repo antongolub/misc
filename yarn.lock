@@ -37,7 +37,7 @@ __metadata:
     ts-node: "npm:^10.9.2"
     typedoc: "npm:^0.28.18"
     typescript: "npm:^6.0.2"
-    zx-bulk-release: "npm:^3.1.4"
+    zx-bulk-release: "npm:^3.1.5"
   languageName: unknown
   linkType: soft
 
@@ -3539,9 +3539,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zx-bulk-release@npm:^3.1.4":
-  version: 3.1.4
-  resolution: "zx-bulk-release@npm:3.1.4"
+"zx-bulk-release@npm:^3.1.5":
+  version: 3.1.5
+  resolution: "zx-bulk-release@npm:3.1.5"
   dependencies:
     "@semrel-extra/topo": "npm:^1.14.1"
     cosmiconfig: "npm:^9.0.1"
@@ -3550,7 +3550,7 @@ __metadata:
     zx-extra: "npm:4.0.20"
   bin:
     zx-bulk-release: src/main/js/cli.js
-  checksum: 10/4cccb8043b4ace78d82fe4cc7a778c017c0ab17638d22119a6ea68484c91f62d70341f70bfb8a14c6d169212a13ad3d235d8565b33ec76c6e782d840893e8fab
+  checksum: 10/4ae7c62c6dee0f488ad561d22f47099b03fe30237bbd49d649216223c12e31cf07722703d9d9e25c644380ec0c64064c53cdaba54b7fee75b2b0b47fb6964487
   languageName: node
   linkType: hard
 
