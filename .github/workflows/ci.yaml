@@ -35,7 +35,6 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: 'yarn'
 
       - name: Setup Bun Runtime
         uses: antongolub/action-setup-bun@38d526c08108ece77f46bf61e78988c7fc0ce5ab # v1.9.1
@@ -82,7 +81,7 @@ jobs:
 
       - name: Pack
         if: github.ref == 'refs/heads/master' && steps.receive.outputs.status == 'proceed'
-        run: npm_config_yes=true npx zx-bulk-release --no-build --pack
+        run: npm_config_yes=true npx zx-bulk-release --pack --no-build --no-test
 
       - name: Upload parcels
         if: github.ref == 'refs/heads/master' && steps.receive.outputs.status == 'proceed'
@@ -126,7 +125,7 @@ jobs:
 
       - name: Verify
         if: steps.context.outcome == 'success' && steps.download.outcome == 'success'
-        run: npx zx-bulk-release --verify parcels-unverified/
+        run: npx zx-bulk-release --verify parcels-unverified/:parcels/
 
       - name: Deliver
         if: steps.context.outcome == 'success' && steps.download.outcome == 'success'
@@ -171,7 +170,6 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 20
-          cache: 'yarn'
 
       - name: Setup Bun Runtime
         uses: antongolub/action-setup-bun@38d526c08108ece77f46bf61e78988c7fc0ce5ab # v1.9.1
@@ -232,7 +230,6 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'yarn'
 
       - name: Download artifacts
         uses: actions/download-artifact@v8
