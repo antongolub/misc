@@ -19,6 +19,7 @@
     "test": "yarn bulk:topobuild --no-build --no-publish",
     "test:all": "yarn workspaces foreach -Ap --exclude . run test",
     "test:clones": "npx jscpd@3.5.10 --pattern packages/**/src/main/ts/**/*.ts",
+    "test:zizmor": "zizmor .github/workflows -v -p --min-severity=medium",
     "cov": "node ./packages/infra/scripts/cov.mjs",
     "depup": "yarn workspace upkeeper build:js && upkeeper --config='{\"keepers\": [\"npm\"], \"diff\": \"sed\", \"combine\": true, \"post\": \"yarn\"}'",
     "lint": "yarn workspaces foreach -Ap --exclude packages/infra --exclude . run test:oxlint"
