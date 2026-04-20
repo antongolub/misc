@@ -23,16 +23,16 @@
   "devDependencies": {
     "@antongolub/git-root": "^1.5.14",
     "@semrel-extra/topo": "^1.14.1",
-    "@types/node": "^25.5.2",
+    "@types/node": "^25.6.0",
     "c8": "^11.0.0",
     "concurrently": "^9.2.1",
     "esbuild": "^0.28.0",
-    "esbuild-node-externals": "^1.21.0",
+    "esbuild-node-externals": "^1.22.0",
     "fast-glob": "^3.3.3",
-    "oxlint": "^1.58.0",
+    "oxlint": "^1.60.0",
     "ts-node": "^10.9.2",
-    "typedoc": "^0.28.18",
-    "typescript": "^6.0.2",
-    "zx-bulk-release": "^3.1.5"
+    "typedoc": "^0.28.19",
+    "typescript": "^6.0.3",
+    "zx-bulk-release": "^3.1.12"
   }
 }

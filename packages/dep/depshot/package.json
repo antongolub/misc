@@ -53,6 +53,6 @@
   "homepage": "https://github.com/antongolub/misc/tree/master/packages/dep/depshot",
   "devDependencies": {
     "@antongolub/infra": "workspace:*",
-    "@types/node": "^25.5.2"
+    "@types/node": "^25.6.0"
   }
 }
