@@ -232,11 +232,10 @@ jobs:
     steps:
       # https://github.com/actions/checkout/issues/552
       - name: Fetch depth
+        shell: bash
         env:
           PR_COMMITS: ${{ github.event.pull_request.commits }}
-        run: |
-          echo "PR_FETCH_DEPTH=$(( $env:PR_COMMITS + 1 ))" >> $env:GITHUB_ENV
-          echo "PR_FETCH_DEPTH=$(( PR_COMMITS + 1 ))" >> "${GITHUB_ENV}"
+        run: echo "PR_FETCH_DEPTH=$(( PR_COMMITS + 1 ))" >> "${GITHUB_ENV}"
 
       - name: Checkout
         uses: actions/checkout@v6
