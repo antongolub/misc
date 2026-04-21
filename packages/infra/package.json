@@ -18,7 +18,7 @@
     "test:all": "cd $INIT_CWD && concurrently 'npm:test:*'",
     "test:oxlint": "cd $INIT_CWD && oxlint -c ${OXLINTRC:-$PROJECT_CWD/packages/infra/.oxlintrc.json} src",
     "test:c8": "TS_NODE_PROJECT=$INIT_CWD/tsconfig.json c8 -r lcov -r text --src=$INIT_CWD -x '**/target' -x '**/src/test' -x '**/infra' --allowExternal -o $INIT_CWD/target/coverage node --import ./scripts/ts-node-register.mjs ./scripts/test.mjs --cwd=$INIT_CWD",
-    "bulk:topobuild": "cd $INIT_CWD && zx-bulk-release --dry-run --include-private --ignore=@antongolub/infra,@antongolub/blank,@fixtures/config-with-extends"
+    "bulk:topobuild": "cd $INIT_CWD && zx-bulk-release --dry-run --include-private --ignore=@antongolub/infra,@antongolub/blank,@fixtures/config-with-extends,@fixtures/config-shared"
   },
   "devDependencies": {
     "@antongolub/git-root": "^1.5.14",
