@@ -4,7 +4,7 @@ export const isString = (value: any): value is string => typeof value === 'strin
 
 export const isFn = (value: any): value is Function => typeof value === 'function'
 
-export const isObject = (value: any) => value !== null && typeof value === 'object'
+export const isObject = (value: any): value is Object => value !== null && typeof value === 'object'
 
 export const isCloneable = (value: any) =>
   isObject(value) &&
