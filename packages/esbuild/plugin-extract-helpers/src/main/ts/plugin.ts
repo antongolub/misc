@@ -1,6 +1,6 @@
 import path from 'node:path'
 import fs from 'node:fs/promises'
-import { Plugin, BuildOptions, BuildResult } from 'esbuild'
+import type { Plugin, BuildOptions, BuildResult } from 'esbuild'
 import {
   type TTransformHook,
   type TFileEntry,
