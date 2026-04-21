@@ -126,14 +126,14 @@ describe('populate()', () => {
       'loads config from external package (shared config)',
       [
         {
-          extends: 'eslint-config-qiwi',
+          extends: '@fixtures/config-shared',
           a: 'a'
         },
         {}
       ],
       {
         a: 'a',
-        ...__require('eslint-config-qiwi')
+        ...__require('@fixtures/config-shared')
       }
     ],
     [
